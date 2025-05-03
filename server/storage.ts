@@ -3,6 +3,8 @@ import {
   events, type Event, type InsertEvent,
   songRequests, type SongRequest, type InsertSongRequest
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -23,117 +25,110 @@ export interface IStorage {
   updateSongRequestStatus(id: number, status: string): Promise<SongRequest | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private events: Map<number, Event>;
-  private songRequests: Map<number, SongRequest>;
-  private userId: number;
-  private eventId: number;
-  private songRequestId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.events = new Map();
-    this.songRequests = new Map();
-    this.userId = 1;
-    this.eventId = 1;
-    this.songRequestId = 1;
-    
-    // Add a demo event
-    const demoEvent: Event = {
-      id: this.eventId++,
-      name: "Saturday Night Live",
-      venue: "Club Neon",
-      djName: "DJ Spinmaster",
-      startTime: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-      endTime: new Date(Date.now() + 5 * 60 * 60 * 1000), // 5 hours from now
-      isActive: true
-    };
-    this.events.set(1, demoEvent);
-  }
-
+export class DatabaseStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   // Event methods
   async getEvents(): Promise<Event[]> {
-    return Array.from(this.events.values());
+    return await db.select().from(events);
   }
 
   async getEvent(id: number): Promise<Event | undefined> {
-    return this.events.get(id);
+    const [event] = await db.select().from(events).where(eq(events.id, id));
+    return event || undefined;
   }
 
   async createEvent(insertEvent: InsertEvent): Promise<Event> {
-    const id = this.eventId++;
-    const event: Event = { ...insertEvent, id };
-    this.events.set(id, event);
+    const [event] = await db
+      .insert(events)
+      .values(insertEvent)
+      .returning();
     return event;
   }
 
   async updateEvent(id: number, eventUpdate: Partial<Event>): Promise<Event | undefined> {
-    const event = this.events.get(id);
-    if (!event) return undefined;
-    
-    const updatedEvent = { ...event, ...eventUpdate };
-    this.events.set(id, updatedEvent);
-    return updatedEvent;
+    const [event] = await db
+      .update(events)
+      .set(eventUpdate)
+      .where(eq(events.id, id))
+      .returning();
+    return event || undefined;
   }
 
   // Song request methods
   async getSongRequests(eventId: number, status?: string): Promise<SongRequest[]> {
-    return Array.from(this.songRequests.values()).filter(
-      (request) => 
-        request.eventId === eventId && 
-        (status ? request.status === status : true)
-    );
+    if (status) {
+      return await db
+        .select()
+        .from(songRequests)
+        .where(
+          and(
+            eq(songRequests.eventId, eventId),
+            eq(songRequests.status, status)
+          )
+        );
+    } else {
+      return await db
+        .select()
+        .from(songRequests)
+        .where(eq(songRequests.eventId, eventId));
+    }
   }
 
   async getSongRequest(id: number): Promise<SongRequest | undefined> {
-    return this.songRequests.get(id);
+    const [songRequest] = await db
+      .select()
+      .from(songRequests)
+      .where(eq(songRequests.id, id));
+    return songRequest || undefined;
   }
 
   async createSongRequest(insertRequest: InsertSongRequest): Promise<SongRequest> {
-    const id = this.songRequestId++;
     const requestTime = new Date();
-    const request: SongRequest = { 
-      ...insertRequest, 
-      id, 
-      requestTime,
-      playedTime: null
-    };
-    this.songRequests.set(id, request);
-    return request;
+    const [songRequest] = await db
+      .insert(songRequests)
+      .values({
+        ...insertRequest,
+        requestTime,
+        playedTime: null
+      })
+      .returning();
+    return songRequest;
   }
 
   async updateSongRequestStatus(id: number, status: string): Promise<SongRequest | undefined> {
-    const request = this.songRequests.get(id);
-    if (!request) return undefined;
+    const playedTime = status === 'played' ? new Date() : undefined;
+    const updateValues: Partial<SongRequest> = { status };
     
-    const updatedRequest: SongRequest = { 
-      ...request, 
-      status,
-      playedTime: status === 'played' ? new Date() : request.playedTime
-    };
+    if (playedTime) {
+      updateValues.playedTime = playedTime;
+    }
     
-    this.songRequests.set(id, updatedRequest);
-    return updatedRequest;
+    const [songRequest] = await db
+      .update(songRequests)
+      .set(updateValues)
+      .where(eq(songRequests.id, id))
+      .returning();
+    
+    return songRequest || undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
