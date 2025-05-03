@@ -7,7 +7,10 @@ import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import RequestPage from "@/pages/request";
 import NotFound from "@/pages/not-found";
+import AuthPage from "@/pages/auth-page";
 import Header from "./components/layout/header";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
 
 function Router() {
   return (
@@ -16,7 +19,8 @@ function Router() {
       <div className="flex-1">
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/dashboard" component={Dashboard} />
+          <ProtectedRoute path="/dashboard" component={Dashboard} />
+          <Route path="/auth" component={AuthPage} />
           <Route path="/event/:id/request" component={RequestPage} />
           <Route component={NotFound} />
         </Switch>
@@ -28,10 +32,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -1,8 +1,21 @@
 import { Link, useLocation } from 'wouter';
-import { Music } from 'lucide-react';
+import { Music, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function Header() {
   const [location] = useLocation();
+  const { user, logoutMutation } = useAuth();
+  
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
   
   return (
     <nav className="bg-secondary sticky top-0 z-50 shadow-lg">
@@ -21,12 +34,38 @@ export default function Header() {
             >
               Home
             </Link>
-            <Link 
-              href="/dashboard" 
-              className={`text-white ${location === '/dashboard' ? 'text-accent' : 'hover:text-accent'} text-sm px-3 py-2 rounded-md`}
-            >
-              DJ Dashboard
-            </Link>
+            
+            {user ? (
+              <>
+                <Link 
+                  href="/dashboard" 
+                  className={`text-white ${location === '/dashboard' ? 'text-accent' : 'hover:text-accent'} text-sm px-3 py-2 rounded-md`}
+                >
+                  DJ Dashboard
+                </Link>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="text-white hover:text-accent">
+                      <User className="h-5 w-5 mr-1" />
+                      {user.username}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <Link href="/auth">
+                <Button variant="outline" size="sm" className="text-white border-primary hover:bg-primary hover:text-white">
+                  Login / Register
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
