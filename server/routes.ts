@@ -46,7 +46,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Song requests endpoints
-  app.get("/api/events/:eventId/song-requests", async (req, res) => {
+  app.get("/api/events/:eventId/song-requests", requireAuth, async (req, res) => {
     try {
       const eventId = parseInt(req.params.eventId);
       const status = req.query.status as string | undefined;
@@ -85,7 +85,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/song-requests/:id/status", async (req, res) => {
+  app.patch("/api/song-requests/:id/status", requireAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { status } = req.body;
@@ -145,7 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update endpoint to manually mark song requests as played
-  app.post("/api/rekordbox/mark-played/:id", async (req, res) => {
+  app.post("/api/rekordbox/mark-played/:id", requireAuth, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const request = await rekordboxService.markSongRequestAsPlayed(id);
@@ -161,7 +161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Simulate endpoints for testing the rekordbox integration
-  app.post("/api/rekordbox/simulate/playing", (req, res) => {
+  app.post("/api/rekordbox/simulate/playing", requireAuth, (req, res) => {
     const { title, artist, id } = req.body;
     
     if (!title || !artist) {
@@ -180,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ message: "Track updated successfully" });
   });
 
-  app.post("/api/rekordbox/simulate/playlist", (req, res) => {
+  app.post("/api/rekordbox/simulate/playlist", requireAuth, (req, res) => {
     const { tracks } = req.body;
     
     if (!Array.isArray(tracks)) {
