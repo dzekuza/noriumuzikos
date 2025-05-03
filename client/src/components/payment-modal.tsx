@@ -156,6 +156,11 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4 px-6 pb-6">
+      <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-2">
+        <ShieldCheck className="h-4 w-4 mr-2" />
+        Test Mode: No real payment will be processed
+      </div>
+      
       <PaymentElement />
       
       <Button 
@@ -176,6 +181,11 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
         )}
       </Button>
       
+      <div className="text-xs text-gray-300 mt-2 p-3 bg-background rounded">
+        <p className="mb-1">For testing, use card number: <code className="bg-gray-800 p-1 rounded">4242 4242 4242 4242</code></p>
+        <p>Expiry: any future date, CVC: any 3 digits, ZIP: any 5 digits</p>
+      </div>
+      
       <div className="flex items-center justify-center mt-2">
         <ShieldCheck className="text-gray-400 mr-1 h-3 w-3" />
         <span className="text-xs text-gray-400">Payments are secure and encrypted</span>
@@ -187,6 +197,10 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
 function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: boolean }) {
   return (
     <div className="space-y-4">
+      <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-2">
+        <ShieldCheck className="h-4 w-4 mr-2" />
+        Test Mode: No real payment will be processed
+      </div>
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-2">Card Information</label>
         <div className="bg-background border border-gray-700 rounded-lg p-3">

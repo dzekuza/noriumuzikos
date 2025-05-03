@@ -12,10 +12,18 @@ if (!process.env.STRIPE_SECRET_KEY) {
   console.warn('Missing Stripe secret key. Set STRIPE_SECRET_KEY in environment variables');
 }
 
-// Initialize Stripe client if secret key is available
+// Initialize Stripe client if secret key is available - explicitly set to test mode
 const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY) 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      typescript: true,
+      appInfo: {
+        name: 'DJ Request System',
+        version: '1.0.0',
+      },
+    })
   : null;
+
+console.log("Stripe initialized in test mode with test API keys");
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
