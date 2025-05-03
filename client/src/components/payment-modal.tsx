@@ -125,11 +125,10 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
     
     try {
       console.log('Processing payment in TEST mode...');
-      const { error, paymentIntent } = await stripe.confirmPayment({
+      // Process the payment in test mode
+      const { error } = await stripe.confirmPayment({
         elements,
-        redirect: 'if_required',
         confirmParams: {
-          // Make it obvious to Stripe that we're in test mode
           return_url: window.location.origin
         }
       });
@@ -191,9 +190,12 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
         )}
       </Button>
       
-      <div className="text-xs text-gray-300 mt-2 p-3 bg-background rounded">
-        <p className="mb-1">For testing, use card number: <code className="bg-gray-800 p-1 rounded">4242 4242 4242 4242</code></p>
-        <p>Expiry: any future date, CVC: any 3 digits, ZIP: any 5 digits</p>
+      <div className="text-sm text-gray-300 mt-4 p-4 bg-background rounded border border-gray-700">
+        <h4 className="font-bold mb-2">TEST CARD DETAILS</h4>
+        <p className="mb-2">Card number: <code className="bg-gray-800 p-1 rounded text-white">4242 4242 4242 4242</code></p>
+        <p className="mb-1">Expiry: <code className="bg-gray-800 p-1 rounded text-white">Any future date</code></p>
+        <p className="mb-1">CVC: <code className="bg-gray-800 p-1 rounded text-white">Any 3 digits</code></p>
+        <p>ZIP: <code className="bg-gray-800 p-1 rounded text-white">Any 5 digits</code></p>
       </div>
       
       <div className="flex items-center justify-center mt-2">

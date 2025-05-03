@@ -16,6 +16,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const stripe = process.env.STRIPE_SECRET_KEY 
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
       typescript: true,
+      apiVersion: '2023-10-16',
       appInfo: {
         name: 'DJ Request System',
         version: '1.0.0',
@@ -23,7 +24,12 @@ const stripe = process.env.STRIPE_SECRET_KEY
     })
   : null;
 
-console.log("Stripe initialized in test mode with test API keys");
+// Ensure we're using a test key
+if (stripe && process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_SECRET_KEY.startsWith('sk_test_')) {
+  console.warn('⚠️ Warning: Using a non-test Stripe key. Please use a test key for this application.');
+} else {
+  console.log("✅ Stripe initialized in test mode with test API keys");
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
