@@ -5,6 +5,7 @@ import { insertSongRequestSchema } from "@shared/schema";
 import Stripe from "stripe";
 import { z } from "zod";
 import { rekordboxService } from "./rekordbox";
+import { setupAuth, requireAuth } from "./auth";
 
 // Validate Stripe secret key
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -17,6 +18,8 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication
+  setupAuth(app);
   // Events endpoints
   app.get("/api/events", async (req, res) => {
     try {
