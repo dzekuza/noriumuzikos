@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertSongRequestSchema } from "@shared/schema";
 import Stripe from "stripe";
 import { z } from "zod";
+import { rekordboxService } from "./rekordbox";
 
 // Validate Stripe secret key
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -12,7 +13,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 
 // Initialize Stripe client if secret key is available
 const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" }) 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY) 
   : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -124,6 +125,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Rekordbox integration endpoints
+  app.get("/api/rekordbox/current-track", (req, res) => {
+    const currentTrack = rekordboxService.getCurrentTrack();
+    res.json(currentTrack || { message: "No track currently playing" });
+  });
+
+  app.get("/api/rekordbox/playlist", (req, res) => {
+    const playlist = rekordboxService.getPlaylist();
+    res.json(playlist);
+  });
+
+  app.get("/api/rekordbox/recently-played", (req, res) => {
+    const recentlyPlayed = rekordboxService.getRecentlyPlayed();
+    res.json(recentlyPlayed);
+  });
+
+  // Update endpoint to manually mark song requests as played
+  app.post("/api/rekordbox/mark-played/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const request = await rekordboxService.markSongRequestAsPlayed(id);
+      
+      if (!request) {
+        return res.status(404).json({ message: "Song request not found" });
+      }
+      
+      res.json(request);
+    } catch (error: any) {
+      res.status(500).json({ message: `Error marking request as played: ${error.message}` });
+    }
+  });
+
+  // Simulate endpoints for testing the rekordbox integration
+  app.post("/api/rekordbox/simulate/playing", (req, res) => {
+    const { title, artist, id } = req.body;
+    
+    if (!title || !artist) {
+      return res.status(400).json({ message: "Title and artist are required" });
+    }
+    
+    rekordboxService.updateCurrentTrack({
+      id: id || `track-${Date.now()}`,
+      title,
+      artist,
+      duration: req.body.duration || 180,
+      position: 0,
+      status: 'playing'
+    });
+    
+    res.json({ message: "Track updated successfully" });
+  });
+
+  app.post("/api/rekordbox/simulate/playlist", (req, res) => {
+    const { tracks } = req.body;
+    
+    if (!Array.isArray(tracks)) {
+      return res.status(400).json({ message: "Tracks must be an array" });
+    }
+    
+    rekordboxService.updatePlaylist(tracks);
+    res.json({ message: "Playlist updated successfully" });
+  });
+
   const httpServer = createServer(app);
+  
+  // Initialize the rekordbox service with the HTTP server
+  rekordboxService.init(httpServer);
   return httpServer;
 }
