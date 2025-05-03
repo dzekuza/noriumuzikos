@@ -124,30 +124,37 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
     setPaymentProcessing(true);
     
     try {
-      const { error } = await stripe.confirmPayment({
+      console.log('Processing payment in TEST mode...');
+      const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         redirect: 'if_required',
+        confirmParams: {
+          // Make it obvious to Stripe that we're in test mode
+          return_url: window.location.origin
+        }
       });
       
       if (error) {
+        console.error('Stripe error:', error);
         toast({
-          title: "Payment Failed",
-          description: error.message,
+          title: "Test Payment Failed",
+          description: error.message || "The test card was declined. Try 4242 4242 4242 4242.",
           variant: "destructive",
         });
         setPaymentProcessing(false);
       } else {
+        // This is a test payment
         toast({
-          title: "Payment Successful",
-          description: "Your song request is being processed!",
+          title: "Test Payment Successful",
+          description: "Your test song request is being processed! No real charge occurred.",
         });
         onPay();
       }
     } catch (e) {
       console.error('Payment error:', e);
       toast({
-        title: "Payment Error",
-        description: "An unexpected error occurred. Please try again.",
+        title: "Test Payment Error",
+        description: "An unexpected error occurred in test mode. Please try again with a different test card.",
         variant: "destructive",
       });
       setPaymentProcessing(false);
@@ -156,9 +163,12 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4 px-6 pb-6">
-      <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-2">
-        <ShieldCheck className="h-4 w-4 mr-2" />
-        Test Mode: No real payment will be processed
+      <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
+        <ShieldCheck className="h-5 w-5 mr-2" />
+        <div>
+          <strong className="font-bold block">TEST MODE ONLY</strong>
+          <span>No real payments will be processed. This is a test environment.</span>
+        </div>
       </div>
       
       <PaymentElement />
@@ -197,9 +207,12 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
 function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: boolean }) {
   return (
     <div className="space-y-4">
-      <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-2">
-        <ShieldCheck className="h-4 w-4 mr-2" />
-        Test Mode: No real payment will be processed
+      <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
+        <ShieldCheck className="h-5 w-5 mr-2" />
+        <div>
+          <strong className="font-bold block">TEST MODE ONLY</strong>
+          <span>No real payments will be processed. This is a test environment.</span>
+        </div>
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-2">Card Information</label>

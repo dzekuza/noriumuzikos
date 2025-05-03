@@ -122,15 +122,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Create a payment intent for €5
+      console.log('Creating Stripe payment intent in TEST mode');
       const paymentIntent = await stripe.paymentIntents.create({
         amount: 500, // €5.00 in cents
         currency: "eur",
         automatic_payment_methods: {
           enabled: true,
         },
-      }, {
-        // Ensure test mode is explicitly used
-        apiKey: process.env.STRIPE_SECRET_KEY
+        // Explicitly add metadata to indicate test mode
+        metadata: {
+          integration_check: 'accept_a_payment',
+          mode: 'test'
+        },
       });
       
       res.json({ clientSecret: paymentIntent.client_secret });
