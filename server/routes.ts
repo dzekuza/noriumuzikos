@@ -128,6 +128,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         automatic_payment_methods: {
           enabled: true,
         },
+      }, {
+        // Ensure test mode is explicitly used
+        apiKey: process.env.STRIPE_SECRET_KEY
       });
       
       res.json({ clientSecret: paymentIntent.client_secret });

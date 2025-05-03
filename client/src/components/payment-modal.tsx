@@ -72,7 +72,7 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-secondary text-white p-0 max-w-lg">
+      <DialogContent className="bg-secondary text-white p-0 max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader className="p-6 pb-2">
           <div className="flex justify-between items-center mb-4">
             <DialogTitle className="text-xl font-bold text-white">Payment</DialogTitle>
