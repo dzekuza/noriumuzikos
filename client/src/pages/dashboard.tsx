@@ -5,6 +5,7 @@ import QRCodeDisplay from '@/components/qr-code-display';
 import EventControls from '@/components/event-controls';
 import PendingRequests from '@/components/pending-requests';
 import PlayedSongs from '@/components/played-songs';
+import RekordboxPanel from '@/components/rekordbox/rekordbox-panel';
 import { useQuery } from '@tanstack/react-query';
 import { type Event } from '@shared/schema';
 
@@ -43,12 +44,16 @@ export default function Dashboard() {
             <TabsList className="w-full mb-6">
               <TabsTrigger value="pending" className="flex-1">Pending Requests</TabsTrigger>
               <TabsTrigger value="history" className="flex-1">Recently Played</TabsTrigger>
+              <TabsTrigger value="rekordbox" className="flex-1">Rekordbox</TabsTrigger>
             </TabsList>
             <TabsContent value="pending">
               <PendingRequests eventId={event.id} />
             </TabsContent>
             <TabsContent value="history">
               <PlayedSongs eventId={event.id} />
+            </TabsContent>
+            <TabsContent value="rekordbox">
+              <RekordboxPanel eventId={event.id} />
             </TabsContent>
           </Tabs>
         </div>
