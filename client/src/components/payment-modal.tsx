@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   PaymentElement,
@@ -113,6 +114,7 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
   const elements = useElements();
   const { toast } = useToast();
   const [paymentProcessing, setPaymentProcessing] = useState(false);
+  const [, setLocation] = useLocation();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,6 +150,13 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
           description: "Your test song request is being processed! No real charge occurred.",
         });
         onPay();
+        
+        // Extract event ID from URL
+        const urlParts = window.location.pathname.split('/');
+        const eventId = urlParts[2]; // From /event/:id/request
+        
+        // Redirect to thank you page
+        setLocation(`/thank-you?eventId=${eventId}`);
       }
     } catch (e) {
       console.error('Payment error:', e);
@@ -207,6 +216,19 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
 }
 
 function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: boolean }) {
+  const [, setLocation] = useLocation();
+  
+  const handlePay = () => {
+    onPay();
+    
+    // Extract event ID from URL
+    const urlParts = window.location.pathname.split('/');
+    const eventId = urlParts[2]; // From /event/:id/request
+    
+    // Redirect to thank you page
+    setLocation(`/thank-you?eventId=${eventId}`);
+  };
+  
   return (
     <div className="space-y-4">
       <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
@@ -270,7 +292,7 @@ function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: b
       </div>
       
       <Button 
-        onClick={onPay}
+        onClick={handlePay}
         disabled={isPending}
         className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 px-4 rounded-lg transition-all shadow-lg flex items-center justify-center"
       >

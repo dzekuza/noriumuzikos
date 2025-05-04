@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import RequestPage from "@/pages/request";
+import ThankYouPage from "@/pages/thank-you";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import Header from "./components/layout/header";
@@ -22,6 +23,7 @@ function Router() {
           <ProtectedRoute path="/dashboard" component={Dashboard} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/event/:id/request" component={RequestPage} />
+          <Route path="/thank-you" component={ThankYouPage} />
           <Route component={NotFound} />
         </Switch>
       </div>
