@@ -73,22 +73,22 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
   
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-secondary text-white p-0 max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-zinc-900 text-white p-0 max-w-lg max-h-[90vh] overflow-y-auto border border-zinc-800">
         <DialogHeader className="p-6 pb-2">
           <div className="flex justify-between items-center mb-4">
             <DialogTitle className="text-xl font-bold text-white">Payment</DialogTitle>
-            <Button variant="ghost" size="icon" onClick={onClose} className="text-gray-400 hover:text-white">
+            <Button variant="ghost" size="icon" onClick={onClose} className="text-white/60 hover:text-white bg-transparent">
               <X className="h-4 w-4" />
             </Button>
           </div>
           
-          <div className="bg-background rounded-lg p-4 mb-6">
+          <div className="bg-zinc-800/50 rounded-lg p-4 mb-6 border border-zinc-700">
             <div className="flex justify-between items-center">
               <div>
                 <h3 className="font-semibold text-white">{songData?.songName || 'Your song'}</h3>
-                <p className="text-sm text-gray-300">{songData?.artistName || 'Artist'}</p>
+                <p className="text-sm text-white/70">{songData?.artistName || 'Artist'}</p>
               </div>
-              <span className="text-accent font-bold">€5.00</span>
+              <span className="text-primary font-bold">€5.00</span>
             </div>
           </div>
         </DialogHeader>
@@ -189,11 +189,11 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
       <Button 
         type="submit" 
         disabled={!stripe || !elements || isPending || paymentProcessing}
-        className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 px-4 rounded-lg transition-all shadow-lg flex items-center justify-center"
+        className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 px-4 rounded-md transition-all flex items-center justify-center"
       >
         {paymentProcessing ? (
           <>
-            <span className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+            <span className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent"></span>
             Processing...
           </>
         ) : (
@@ -204,17 +204,17 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
         )}
       </Button>
       
-      <div className="text-sm text-gray-300 mt-4 p-4 bg-background rounded border border-gray-700">
+      <div className="text-sm text-white/80 mt-4 p-4 bg-zinc-800 rounded-md border border-zinc-700">
         <h4 className="font-bold mb-2">TEST CARD DETAILS</h4>
-        <p className="mb-2">Card number: <code className="bg-gray-800 p-1 rounded text-white">4242 4242 4242 4242</code></p>
-        <p className="mb-1">Expiry: <code className="bg-gray-800 p-1 rounded text-white">Any future date</code></p>
-        <p className="mb-1">CVC: <code className="bg-gray-800 p-1 rounded text-white">Any 3 digits</code></p>
-        <p>ZIP: <code className="bg-gray-800 p-1 rounded text-white">Any 5 digits</code></p>
+        <p className="mb-2">Card number: <code className="bg-zinc-900 p-1 rounded text-white">4242 4242 4242 4242</code></p>
+        <p className="mb-1">Expiry: <code className="bg-zinc-900 p-1 rounded text-white">Any future date</code></p>
+        <p className="mb-1">CVC: <code className="bg-zinc-900 p-1 rounded text-white">Any 3 digits</code></p>
+        <p>ZIP: <code className="bg-zinc-900 p-1 rounded text-white">Any 5 digits</code></p>
       </div>
       
       <div className="flex items-center justify-center mt-2">
-        <ShieldCheck className="text-gray-400 mr-1 h-3 w-3" />
-        <span className="text-xs text-gray-400">Payments are secure and encrypted</span>
+        <ShieldCheck className="text-white/40 mr-1 h-3 w-3" />
+        <span className="text-xs text-white/40">Payments are secure and encrypted</span>
       </div>
     </form>
   );
@@ -246,8 +246,8 @@ function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: b
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Card Information</label>
-        <div className="bg-background border border-gray-700 rounded-lg p-3">
+        <label className="block text-sm font-medium text-white/70 mb-2">Card Information</label>
+        <div className="bg-zinc-800 border border-zinc-700 rounded-md p-3">
           <div className="flex items-center">
             <div className="flex-1">
               <input 
@@ -256,7 +256,7 @@ function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: b
                 className="bg-transparent border-none w-full text-white focus:outline-none focus:ring-0"
               />
             </div>
-            <div className="flex space-x-1 text-gray-400">
+            <div className="flex space-x-1 text-white/60">
               <svg viewBox="0 0 38 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
                 <g fill="none" fillRule="evenodd">
                   <path d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z" fill="#000" opacity=".07"/>
@@ -283,33 +283,33 @@ function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: b
       </div>
       
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Name on Card</label>
+        <label className="block text-sm font-medium text-white/70 mb-2">Name on Card</label>
         <input 
           type="text" 
-          className="w-full bg-background border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full bg-zinc-800 border border-zinc-700 rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
       
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Email Receipt</label>
+        <label className="block text-sm font-medium text-white/70 mb-2">Email Receipt</label>
         <input 
           type="email" 
-          className="w-full bg-background border border-gray-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full bg-zinc-800 border border-zinc-700 rounded-md py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
       
       <Button 
         onClick={handlePay}
         disabled={isPending}
-        className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 px-4 rounded-lg transition-all shadow-lg flex items-center justify-center"
+        className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 px-4 rounded-md transition-all flex items-center justify-center"
       >
         <CreditCard className="mr-2 h-5 w-5" />
         Pay €5.00
       </Button>
       
       <div className="flex items-center justify-center mt-2">
-        <ShieldCheck className="text-gray-400 mr-1 h-3 w-3" />
-        <span className="text-xs text-gray-400">Payments are secure and encrypted</span>
+        <ShieldCheck className="text-white/40 mr-1 h-3 w-3" />
+        <span className="text-xs text-white/40">Payments are secure and encrypted</span>
       </div>
     </div>
   );

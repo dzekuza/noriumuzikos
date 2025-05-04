@@ -18,7 +18,7 @@ export default function Header() {
   };
   
   return (
-    <nav className="bg-secondary sticky top-0 z-50 shadow-lg">
+    <nav className="bg-black border-b border-zinc-800 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
@@ -30,7 +30,7 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <Link 
               href="/" 
-              className={`text-white ${location === '/' ? 'text-accent' : 'hover:text-accent'} text-sm px-3 py-2 rounded-md`}
+              className={`text-white/80 ${location === '/' ? 'text-primary' : 'hover:text-primary'} text-sm px-3 py-2 rounded-md`}
             >
               Home
             </Link>
@@ -39,13 +39,13 @@ export default function Header() {
               <>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-white hover:text-accent">
+                    <Button variant="ghost" size="sm" className="text-white/80 hover:text-primary bg-transparent">
                       <User className="h-5 w-5 mr-1" />
                       {user.username}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+                  <DropdownMenuContent align="end" className="bg-zinc-900 border border-zinc-800">
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
                       <LogOut className="h-4 w-4 mr-2" />
                       Logout
                     </DropdownMenuItem>
@@ -54,7 +54,7 @@ export default function Header() {
               </>
             ) : (
               <Link href="/auth">
-                <Button variant="outline" size="sm" className="text-white border-primary hover:bg-primary hover:text-white">
+                <Button variant="outline" size="sm" className="text-white border-zinc-700 hover:bg-primary hover:border-primary hover:text-black bg-transparent">
                   Login / Register
                 </Button>
               </Link>

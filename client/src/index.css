@@ -16,65 +16,83 @@
 }
 
 :root {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 100%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --primary: 280 76% 58%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 16.5%;
-  --secondary-foreground: 0 0% 98%;
-  --accent: 172 100% 48%;
-  --accent-foreground: 0 0% 0%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --success: 160 100% 48%;
-  --ring: 280 76% 58%;
-  --radius: 0.5rem;
-  --chart-1: 280 76% 58%;
-  --chart-2: 172 100% 48%;
-  --chart-3: 196 100% 50%;
-  --chart-4: 320 100% 60%;
-  --chart-5: 35 100% 60%;
+  /* Base colors */
+  --background: 0 0% 0%; /* Pure black */
+  --foreground: 0 0% 100%; /* White */
+  --muted: 0 0% 13%; /* Dark gray for backgrounds */
+  --muted-foreground: 0 0% 70%; /* Light gray for secondary text */
+  --popover: 0 0% 7%; /* Very dark gray for popovers */
+  --popover-foreground: 0 0% 98%; /* Off-white for text on popovers */
+  --card: 0 0% 7%; /* Very dark gray for cards */
+  --card-foreground: 0 0% 98%; /* Off-white for text on cards */
+  --border: 0 0% 20%; /* Medium gray for borders */
+  --input: 0 0% 9%; /* Dark gray for input backgrounds */
   
-  --sidebar-background: 280 76% 58%;
-  --sidebar-foreground: 0 0% 100%;
-  --sidebar-primary: 0 0% 100%;
-  --sidebar-primary-foreground: 280 76% 58%;
-  --sidebar-accent: 172 100% 48%;
-  --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 280 30% 65%;
-  --sidebar-ring: 172 100% 48%;
+  /* Brand colors */
+  --primary: 190 100% 50%; /* Cyan */
+  --primary-foreground: 0 0% 0%; /* Black - for text on primary */
+  --secondary: 0 0% 13%; /* Dark gray */
+  --secondary-foreground: 0 0% 98%; /* Off-white - for text on secondary */
+  --accent: 190 100% 50%; /* Cyan - same as primary for consistency */
+  --accent-foreground: 0 0% 0%; /* Black - for text on accent */
+  
+  /* Feedback colors */
+  --destructive: 0 84% 60%; /* Red */
+  --destructive-foreground: 0 0% 98%; /* Off-white - for text on destructive */
+  --success: 160 100% 48%; /* Green */
+  
+  /* Other */
+  --ring: 190 100% 50%; /* Cyan ring (focus) */
+  --radius: 0.5rem; /* Border radius */
+  
+  /* Chart colors */
+  --chart-1: 190 100% 50%; /* Cyan */
+  --chart-2: 220 100% 60%; /* Blue */
+  --chart-3: 196 100% 50%; /* Light blue */
+  --chart-4: 150 100% 60%; /* Green */
+  --chart-5: 310 100% 60%; /* Purple */
+  
+  /* Sidebar */
+  --sidebar-background: 190 100% 50%; /* Cyan */
+  --sidebar-foreground: 0 0% 0%; /* Black */
+  --sidebar-primary: 0 0% 0%; /* Black */
+  --sidebar-primary-foreground: 190 100% 50%; /* Cyan */
+  --sidebar-accent: 220 100% 60%; /* Blue */
+  --sidebar-accent-foreground: 0 0% 0%; /* Black */
+  --sidebar-border: 190 30% 65%; /* Lighter cyan */
+  --sidebar-ring: 220 100% 60%; /* Blue */
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --primary: 280 76% 58%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 16.5%;
-  --secondary-foreground: 0 0% 98%;
-  --accent: 172 100% 48%;
-  --accent-foreground: 0 0% 0%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
-  --success: 160 100% 48%;
-  --ring: 280 76% 58%;
-  --radius: 0.5rem;
+  /* Since our design is already dark, we'll just use the same color scheme */
+  /* Base colors */
+  --background: 0 0% 0%; /* Pure black */
+  --foreground: 0 0% 100%; /* White */
+  --muted: 0 0% 13%; /* Dark gray for backgrounds */
+  --muted-foreground: 0 0% 70%; /* Light gray for secondary text */
+  --popover: 0 0% 7%; /* Very dark gray for popovers */
+  --popover-foreground: 0 0% 98%; /* Off-white for text on popovers */
+  --card: 0 0% 7%; /* Very dark gray for cards */
+  --card-foreground: 0 0% 98%; /* Off-white for text on cards */
+  --border: 0 0% 20%; /* Medium gray for borders */
+  --input: 0 0% 9%; /* Dark gray for input backgrounds */
+  
+  /* Brand colors */
+  --primary: 190 100% 50%; /* Cyan */
+  --primary-foreground: 0 0% 0%; /* Black - for text on primary */
+  --secondary: 0 0% 13%; /* Dark gray */
+  --secondary-foreground: 0 0% 98%; /* Off-white - for text on secondary */
+  --accent: 190 100% 50%; /* Cyan - same as primary for consistency */
+  --accent-foreground: 0 0% 0%; /* Black - for text on accent */
+  
+  /* Feedback colors */
+  --destructive: 0 84% 60%; /* Red */
+  --destructive-foreground: 0 0% 98%; /* Off-white - for text on destructive */
+  --success: 160 100% 48%; /* Green */
+  
+  /* Other */
+  --ring: 190 100% 50%; /* Cyan ring (focus) */
+  --radius: 0.5rem; /* Border radius */
 }
 
 @layer base {

@@ -91,7 +91,7 @@ export default function Home() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-        <Card className="bg-secondary border-none shadow-lg">
+        <Card className="bg-zinc-900/50 border-zinc-800 shadow-lg hover:bg-zinc-900/70 transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center text-xl">
               <Music className="mr-2 text-primary" size={24} />
@@ -99,13 +99,13 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-300">
+            <p className="text-white/70">
               Easily request your favorite songs by scanning a QR code for your DJ event
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-secondary border-none shadow-lg">
+        <Card className="bg-zinc-900/50 border-zinc-800 shadow-lg hover:bg-zinc-900/70 transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center text-xl">
               <ListMusic className="mr-2 text-primary" size={24} />
@@ -113,13 +113,13 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-300">
+            <p className="text-white/70">
               DJs can manage song requests, track payments, and maintain the song queue
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-secondary border-none shadow-lg">
+        <Card className="bg-zinc-900/50 border-zinc-800 shadow-lg hover:bg-zinc-900/70 transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center text-xl">
               <Users className="mr-2 text-primary" size={24} />
@@ -127,7 +127,7 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-300">
+            <p className="text-white/70">
               Create a more interactive experience between DJs and the audience
             </p>
           </CardContent>
@@ -135,22 +135,22 @@ export default function Home() {
       </div>
 
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-center">Active DJ Events</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center text-white">Active DJ Events</h2>
         
         {events && events.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map(event => (
-              <Card key={event.id} className="bg-secondary border-none shadow-lg overflow-hidden">
+              <Card key={event.id} className="bg-zinc-900/50 border border-zinc-800 shadow-lg overflow-hidden hover:bg-zinc-900/70 transition-all">
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold text-white mb-2">{event.name}</h3>
-                  <p className="text-accent mb-1">{event.djName}</p>
-                  <p className="text-gray-400 mb-4">{event.venue}</p>
+                  <p className="text-primary mb-1">{event.djName}</p>
+                  <p className="text-white/60 mb-4">{event.venue}</p>
                   
                   <div className="flex space-x-3 mt-4">
                     <Button 
                       asChild
                       variant="default" 
-                      className="w-full bg-primary hover:bg-primary/90"
+                      className="w-full bg-primary hover:bg-primary/90 text-black font-medium"
                     >
                       <Link to={`/event/${event.id}/request`}>
                         Request Song
@@ -162,9 +162,9 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-secondary rounded-lg">
-            <h3 className="text-xl font-semibold text-gray-400">No Active Events</h3>
-            <p className="text-gray-500 mt-2">There are no DJ events currently active.</p>
+          <div className="text-center py-12 bg-zinc-900/50 border border-zinc-800 rounded-lg">
+            <h3 className="text-xl font-semibold text-white/70">No Active Events</h3>
+            <p className="text-white/50 mt-2">There are no DJ events currently active.</p>
           </div>
         )}
       </div>
