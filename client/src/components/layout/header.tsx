@@ -37,13 +37,6 @@ export default function Header() {
             
             {user ? (
               <>
-                <Link 
-                  href="/dashboard" 
-                  className={`text-white ${location === '/dashboard' ? 'text-accent' : 'hover:text-accent'} text-sm px-3 py-2 rounded-md`}
-                >
-                  DJ Dashboard
-                </Link>
-                
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="text-white hover:text-accent">

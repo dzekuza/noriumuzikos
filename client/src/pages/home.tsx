@@ -48,16 +48,6 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                asChild
-                className="bg-primary hover:bg-primary/90 text-white font-bold py-6 px-6 rounded-lg transition-all shadow-lg glow flex items-center justify-center"
-              >
-                <Link to="/dashboard">
-                  DJ Dashboard
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              
               {events && events.length > 1 && (
                 <div className="py-2">
                   <label className="block text-gray-300 mb-2 font-medium">Select Event</label>
@@ -150,19 +140,10 @@ export default function Home() {
                     <Button 
                       asChild
                       variant="default" 
-                      className="flex-1 bg-primary hover:bg-primary/90"
+                      className="w-full bg-primary hover:bg-primary/90"
                     >
                       <Link to={`/event/${event.id}/request`}>
                         Request Song
-                      </Link>
-                    </Button>
-                    <Button 
-                      asChild
-                      variant="secondary" 
-                      className="flex-1"
-                    >
-                      <Link to="/dashboard">
-                        DJ Dashboard
                       </Link>
                     </Button>
                   </div>
