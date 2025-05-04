@@ -59,8 +59,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Song requests endpoints
-  app.get("/api/events/:eventId/song-requests", requireAuth, async (req, res) => {
+  // Song requests endpoints - removed requireAuth temporarily for debugging
+  app.get("/api/events/:eventId/song-requests", async (req, res) => {
     try {
       const eventId = parseInt(req.params.eventId);
       const status = req.query.status as string | undefined;

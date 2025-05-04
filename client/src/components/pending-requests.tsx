@@ -30,9 +30,15 @@ export default function PendingRequests({ eventId }: PendingRequestsProps) {
   const { data: requests, isLoading, refetch } = useQuery<SongRequest[]>({
     queryKey: [`/api/events/${eventId}/song-requests`, 'pending'],
     queryFn: async ({ queryKey }) => {
+      console.log('Fetching song requests for eventId:', eventId, 'with status: pending');
       const response = await fetch(`${queryKey[0]}?status=pending`);
-      if (!response.ok) throw new Error('Failed to fetch pending requests');
-      return response.json();
+      if (!response.ok) {
+        console.error('Failed to fetch song requests:', response.status, response.statusText);
+        throw new Error('Failed to fetch pending requests');
+      }
+      const data = await response.json();
+      console.log('Received song requests:', data);
+      return data;
     },
   });
   

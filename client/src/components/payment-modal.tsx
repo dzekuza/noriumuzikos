@@ -149,9 +149,11 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
           title: "Test Payment Successful",
           description: "Your test song request is being processed! No real charge occurred.",
         });
+        
+        // Make sure the onPay callback gets called to create the song request
         onPay();
         
-        // Extract event ID from URL
+        // Then extract event ID from URL
         const urlParts = window.location.pathname.split('/');
         const eventId = urlParts[2]; // From /event/:id/request
         
