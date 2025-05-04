@@ -92,87 +92,78 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   
   return (
     <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="bg-secondary rounded-xl p-6 shadow-lg mb-8">
-          <FormField
-            control={form.control}
-            name="songName"
-            render={({ field }) => (
-              <FormItem className="mb-4">
-                <FormLabel className="text-gray-300">Song Name</FormLabel>
-                <FormControl>
-                  <Input 
-                    {...field} 
-                    placeholder="Enter song name" 
-                    className="bg-background border-gray-700 text-white focus:ring-primary"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="artistName"
-            render={({ field }) => (
-              <FormItem className="mb-4">
-                <FormLabel className="text-gray-300">Artist</FormLabel>
-                <FormControl>
-                  <Input 
-                    {...field} 
-                    placeholder="Enter artist name" 
-                    className="bg-background border-gray-700 text-white focus:ring-primary"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={form.control}
-            name="requesterName"
-            render={({ field }) => (
-              <FormItem className="mb-6">
-                <FormLabel className="text-gray-300">Your Name</FormLabel>
-                <FormControl>
-                  <Input 
-                    {...field} 
-                    placeholder="How should the DJ call you?" 
-                    className="bg-background border-gray-700 text-white focus:ring-primary"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <div className="mb-8 p-4 bg-background rounded-lg">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-300">Request Fee</span>
-              <span className="text-white font-bold">€5.00</span>
+      <div className="max-w-md mx-auto">
+        <h2 className="text-2xl font-semibold text-white mb-4">Request song</h2>
+        <p className="text-white/60 text-sm mb-6">Fill in the details of your requested song</p>
+        
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="bg-zinc-900/70 rounded-lg p-8 shadow-lg">
+            <FormField
+              control={form.control}
+              name="artistName"
+              render={({ field }) => (
+                <FormItem className="mb-4">
+                  <FormControl>
+                    <Input 
+                      {...field} 
+                      placeholder="Artist" 
+                      className="bg-zinc-800 border-none text-white focus:ring-cyan-500 py-5 text-base"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="songName"
+              render={({ field }) => (
+                <FormItem className="mb-6">
+                  <FormControl>
+                    <Input 
+                      {...field} 
+                      placeholder="Song title" 
+                      className="bg-zinc-800 border-none text-white focus:ring-cyan-500 py-5 text-base"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="requesterName"
+              render={({ field }) => (
+                <FormItem className="mb-6">
+                  <FormControl>
+                    <Input 
+                      {...field} 
+                      placeholder="Your name" 
+                      className="bg-zinc-800 border-none text-white focus:ring-cyan-500 py-5 text-base"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <Button 
+              type="submit" 
+              disabled={isPending}
+              className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 px-4 rounded-md transition-all text-base"
+            >
+              Pay €5 and request a song
+            </Button>
+            
+            <div className="flex items-center justify-center mt-4">
+              <Lock className="text-white/40 mr-1 h-3 w-3" />
+              <span className="text-xs text-white/40">Secure payment via Stripe</span>
             </div>
-            <div className="text-xs text-gray-400">
-              Your song will be added to the DJ's queue after payment is confirmed.
-            </div>
-          </div>
-          
-          <Button 
-            type="submit" 
-            disabled={isPending}
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-7 px-4 rounded-lg transition-all shadow-lg glow flex items-center justify-center"
-          >
-            <CreditCard className="mr-2 h-5 w-5" />
-            Pay €5 and Request Song
-          </Button>
-          
-          <div className="flex items-center justify-center mt-4">
-            <Lock className="text-gray-400 mr-1 h-3 w-3" />
-            <span className="text-xs text-gray-400">Secure payment via Stripe</span>
-          </div>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </div>
       
       <PaymentModal 
         isOpen={isPaymentModalOpen} 

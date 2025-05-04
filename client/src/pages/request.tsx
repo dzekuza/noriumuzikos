@@ -35,17 +35,17 @@ export default function RequestPage() {
   }
   
   return (
-    <div className="container py-6 mx-auto max-w-xl">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2 text-white">Request Your Favorite Song</h1>
-        <p className="text-gray-300">Let the DJ know what you want to hear next! Only €5 per request.</p>
-      </div>
+    <div className="min-h-screen bg-black overflow-hidden">
+      <div className="container mx-auto py-6 px-4">
+        <div className="text-xs text-white/70 uppercase tracking-widest mb-4">Request song</div>
 
-      <EventCard event={event} />
-      
-      <SongRequestForm eventId={event.id} />
-      
-      <RecentSongs eventId={event.id} />
+        <SongRequestForm eventId={event.id} />
+        
+        {/* We'll keep the recent songs but style them differently */}
+        <div className="mt-12">
+          <RecentSongs eventId={event.id} />
+        </div>
+      </div>
     </div>
   );
 }

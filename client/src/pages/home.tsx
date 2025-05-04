@@ -28,55 +28,65 @@ export default function Home() {
 
   return (
     <div className="container py-10 mx-auto">
-      {/* Hero Section with Song Request Form */}
-      <div className="mb-16 bg-secondary/50 rounded-2xl p-8 shadow-xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div className="space-y-6">
-            <div className="inline-block bg-primary/20 px-4 py-2 rounded-full">
-              <div className="flex items-center space-x-2">
-                <Headphones className="text-primary h-5 w-5" />
-                <span className="text-primary font-semibold">DJ Song Request System</span>
-              </div>
-            </div>
+      {/* Hero Section with Song Request Form - Minimalist Dark Design */}
+      <div className="mb-16 min-h-[85vh] flex flex-col justify-center items-center text-center bg-black py-16">
+        <div className="container px-4 max-w-6xl mx-auto">
+          <div className="mb-12">
+            <div className="text-xs text-white/70 uppercase tracking-widest mb-4">Request song</div>
             
-            <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
-              Get Your Song <span className="text-primary">Played Next</span> at the Party
+            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight mb-8">
+              Get your song played<br />
+              <span className="text-white/90">without asking</span>
             </h1>
             
-            <p className="text-xl text-gray-300">
-              No more shouting over the music! Request your favorite songs instantly and get them played for just €5.
+            <p className="text-xl text-white/70 max-w-2xl mx-auto mb-10">
+              Request your favorite song and lets dance together
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4">
-              {events && events.length > 1 && (
-                <div className="py-2">
-                  <label className="block text-gray-300 mb-2 font-medium">Select Event</label>
-                  <select 
-                    className="bg-background border border-gray-700 text-white rounded-lg py-3 px-4 w-full focus:outline-none focus:ring-2 focus:ring-primary"
-                    value={selectedEventId || ''}
-                    onChange={(e) => setSelectedEventId(Number(e.target.value))}
-                  >
-                    {events.map(event => (
-                      <option key={event.id} value={event.id}>
-                        {event.name} ({event.djName} at {event.venue})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <div className="bg-secondary rounded-xl shadow-2xl overflow-hidden">
-            {selectedEventId ? (
-              <SongRequestForm eventId={selectedEventId} />
+            {events && events.length > 0 ? (
+              <Button 
+                asChild
+                className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 px-10 rounded-md text-lg"
+              >
+                {selectedEventId ? (
+                  <Link to={`/event/${selectedEventId}/request`}>Join session now</Link>
+                ) : (
+                  <Link to={`/event/${events[0].id}/request`}>Join session now</Link>
+                )}
+              </Button>
             ) : (
-              <div className="p-8 text-center">
-                <h3 className="text-xl font-semibold text-gray-300 mb-4">No Active Events</h3>
-                <p className="text-gray-400">There are no DJ events currently available for song requests.</p>
+              <div className="bg-zinc-900/70 rounded-md p-6 max-w-md mx-auto">
+                <h3 className="text-xl font-semibold text-white mb-2">No active sessions</h3>
+                <p className="text-white/60 mb-3">There are no DJ events currently available</p>
               </div>
             )}
           </div>
+          
+          {events && events.length > 1 && (
+            <div className="bg-zinc-900/70 rounded-lg p-8 max-w-md mx-auto mt-12">
+              <h2 className="text-xl font-semibold text-white mb-4">Session ID</h2>
+              <p className="text-white/60 text-sm mb-6">Enter event ID to join session</p>
+              
+              <select 
+                className="bg-zinc-800 text-white rounded-md py-3 px-4 w-full mb-5 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                value={selectedEventId || ''}
+                onChange={(e) => setSelectedEventId(Number(e.target.value))}
+              >
+                {events.map(event => (
+                  <option key={event.id} value={event.id}>
+                    {event.name} ({event.djName})
+                  </option>
+                ))}
+              </select>
+              
+              <Button 
+                asChild
+                className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 px-4 rounded-md"
+              >
+                <Link to={selectedEventId ? `/event/${selectedEventId}/request` : '#'}>Join session now</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
