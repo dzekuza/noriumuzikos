@@ -16,7 +16,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 const stripe = process.env.STRIPE_SECRET_KEY 
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
       typescript: true,
-      apiVersion: '2023-10-16',
+      apiVersion: '2025-04-30.basil',
       appInfo: {
         name: 'DJ Request System',
         version: '1.0.0',
@@ -74,10 +74,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/events/:eventId/song-requests", async (req, res) => {
     try {
+      console.log('Received song request:', req.body);
       const eventId = parseInt(req.params.eventId);
+      console.log('For event ID:', eventId);
+      
       const event = await storage.getEvent(eventId);
       
       if (!event) {
+        console.error('Event not found for ID:', eventId);
         return res.status(404).json({ message: "Event not found" });
       }
       
@@ -87,12 +91,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         amount: 500 // €5.00 in cents
       };
       
+      console.log('Preparing to save song request:', requestData);
       const validatedData = insertSongRequestSchema.parse(requestData);
+      console.log('Validated data:', validatedData);
+      
       const createdRequest = await storage.createSongRequest(validatedData);
+      console.log('Song request created successfully:', createdRequest);
       
       res.status(201).json(createdRequest);
     } catch (error) {
+      console.error('Error creating song request:', error);
       if (error instanceof z.ZodError) {
+        console.error('Validation error:', error.errors);
         return res.status(400).json({ message: "Invalid request data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create song request" });

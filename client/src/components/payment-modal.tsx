@@ -127,7 +127,12 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
     
     try {
       console.log('Processing payment in TEST mode...');
-      // Process the payment in test mode
+      
+      // CRITICAL CHANGE: Call onPay FIRST to ensure song request is created BEFORE payment processing
+      console.log('Creating song request before payment processing');
+      onPay();
+      
+      // Then process the payment in test mode
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -150,14 +155,12 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
           description: "Your test song request is being processed! No real charge occurred.",
         });
         
-        // Make sure the onPay callback gets called to create the song request
-        onPay();
-        
         // Then extract event ID from URL
         const urlParts = window.location.pathname.split('/');
         const eventId = urlParts[2]; // From /event/:id/request
         
         // Redirect to thank you page
+        console.log('Redirecting to thank-you page for event ID:', eventId);
         setLocation(`/thank-you?eventId=${eventId}`);
       }
     } catch (e) {
@@ -221,6 +224,7 @@ function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: b
   const [, setLocation] = useLocation();
   
   const handlePay = () => {
+    console.log('Mock payment: Creating song request before redirecting');
     onPay();
     
     // Extract event ID from URL
@@ -228,6 +232,7 @@ function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: b
     const eventId = urlParts[2]; // From /event/:id/request
     
     // Redirect to thank you page
+    console.log('Mock payment: Redirecting to thank-you page for event ID:', eventId);
     setLocation(`/thank-you?eventId=${eventId}`);
   };
   

@@ -51,20 +51,25 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: FormValues) => {
+      console.log('Submitting song request for event ID:', eventId, 'with data:', data);
       const response = await apiRequest('POST', `/api/events/${eventId}/song-requests`, {
         ...data,
         amount: 500, // €5.00 in cents
         eventId,
       });
-      return response.json();
+      const responseData = await response.json();
+      console.log('Song request API response:', responseData);
+      return responseData;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Song request created successfully:', data);
       queryClient.invalidateQueries({ queryKey: [`/api/events/${eventId}/song-requests`] });
       setIsPaymentModalOpen(false);
       setIsConfirmationModalOpen(true);
       form.reset();
     },
     onError: (error) => {
+      console.error('Error creating song request:', error);
       toast({
         title: "Error",
         description: "Failed to submit song request. Please try again.",
