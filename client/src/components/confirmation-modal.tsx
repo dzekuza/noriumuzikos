@@ -25,26 +25,26 @@ export default function ConfirmationModal({
 }: ConfirmationModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-secondary text-white max-w-lg">
+      <DialogContent className="bg-zinc-900 text-white max-w-lg border border-zinc-800">
         <div className="text-center mb-6">
-          <CheckCircle className="h-16 w-16 text-[#00F5A0] mx-auto mb-4" />
+          <CheckCircle className="h-16 w-16 text-primary mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white">Song Request Confirmed!</h2>
-          <p className="text-gray-300 mt-2">Your song has been successfully added to the DJ's queue.</p>
+          <p className="text-white/70 mt-2">Your song has been successfully added to the DJ's queue.</p>
         </div>
         
-        <div className="bg-background rounded-lg p-4 mb-6">
+        <div className="bg-zinc-800/50 rounded-md p-4 mb-6 border border-zinc-700">
           <h3 className="font-semibold text-white text-lg">{songData?.songName || "Your song"}</h3>
-          <p className="text-gray-300">{songData?.artistName || "Artist"}</p>
+          <p className="text-white/70">{songData?.artistName || "Artist"}</p>
           <div className="flex justify-between mt-2">
-            <span className="text-sm text-gray-400">
-              Requested by: <span>{songData?.requesterName || "You"}</span>
+            <span className="text-sm text-white/50">
+              Requested by: <span className="text-white/70">{songData?.requesterName || "You"}</span>
             </span>
-            <span className="text-accent font-bold">€5.00</span>
+            <span className="text-primary font-bold">€5.00</span>
           </div>
         </div>
         
         <div className="text-center mb-6">
-          <div className="inline-block bg-background rounded-full px-4 py-2 text-sm text-gray-300">
+          <div className="inline-block bg-zinc-800 rounded-full px-4 py-2 text-sm text-white/70">
             <Spinner className="inline-block mr-2 text-primary animate-spin" />
             <span>Estimated wait time: <span className="font-semibold text-white">15 minutes</span></span>
           </div>
@@ -53,14 +53,14 @@ export default function ConfirmationModal({
         <DialogFooter className="flex flex-col space-y-3">
           <Button 
             onClick={onClose}
-            className="w-full py-3 bg-primary rounded-lg text-white font-semibold hover:bg-primary/90 transition-all"
+            className="w-full py-3 bg-primary rounded-md text-black font-semibold hover:bg-primary/90 transition-all"
           >
             Done
           </Button>
           <Button 
             onClick={onRequestAnother}
             variant="outline"
-            className="w-full py-3 bg-background rounded-lg text-white font-semibold hover:bg-background/90 transition-all"
+            className="w-full py-3 bg-zinc-800 border-zinc-700 rounded-md text-white font-semibold hover:bg-zinc-700 transition-all"
           >
             Request Another Song
           </Button>

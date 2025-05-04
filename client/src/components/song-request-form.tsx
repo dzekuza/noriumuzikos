@@ -97,7 +97,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
         <p className="text-white/60 text-sm mb-6">Fill in the details of your requested song</p>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="bg-zinc-900/70 rounded-lg p-8 shadow-lg">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="bg-zinc-900 rounded-md p-8 shadow-lg border border-zinc-800">
             <FormField
               control={form.control}
               name="artistName"
@@ -107,7 +107,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
                     <Input 
                       {...field} 
                       placeholder="Artist" 
-                      className="bg-zinc-800 border-none text-white focus:ring-cyan-500 py-5 text-base"
+                      className="bg-zinc-800 border-zinc-700 text-white focus:ring-primary py-5 text-base"
                     />
                   </FormControl>
                   <FormMessage />
@@ -124,7 +124,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
                     <Input 
                       {...field} 
                       placeholder="Song title" 
-                      className="bg-zinc-800 border-none text-white focus:ring-cyan-500 py-5 text-base"
+                      className="bg-zinc-800 border-zinc-700 text-white focus:ring-primary py-5 text-base"
                     />
                   </FormControl>
                   <FormMessage />
@@ -141,7 +141,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
                     <Input 
                       {...field} 
                       placeholder="Your name" 
-                      className="bg-zinc-800 border-none text-white focus:ring-cyan-500 py-5 text-base"
+                      className="bg-zinc-800 border-zinc-700 text-white focus:ring-primary py-5 text-base"
                     />
                   </FormControl>
                   <FormMessage />
@@ -152,7 +152,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
             <Button 
               type="submit" 
               disabled={isPending}
-              className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 px-4 rounded-md transition-all text-base"
+              className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 px-4 rounded-md transition-all text-base"
             >
               Pay €5 and request a song
             </Button>
