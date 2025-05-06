@@ -27,6 +27,7 @@ export const songRequests = pgTable("song_requests", {
   songName: text("song_name").notNull(),
   artistName: text("artist_name").notNull(),
   requesterName: text("requester_name").notNull(),
+  wishes: text("wishes").default(""),  // User's wishes or message to the DJ
   amount: integer("amount").notNull(),
   status: text("status").notNull().default("pending"), // pending, played, skipped
   requestTime: timestamp("request_time").defaultNow().notNull(),

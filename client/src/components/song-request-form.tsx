@@ -26,6 +26,7 @@ const formSchema = z.object({
   songName: z.string().min(2, { message: "Song name must be at least 2 characters" }),
   artistName: z.string().min(2, { message: "Artist name must be at least 2 characters" }),
   requesterName: z.string().min(2, { message: "Your name must be at least 2 characters" }),
+  wishes: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -70,6 +71,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
       songName: '',
       artistName: '',
       requesterName: '',
+      wishes: '',
     },
   });
   
@@ -181,6 +183,24 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
                     <Input 
                       {...field} 
                       placeholder="Jūsų vardas" 
+                      className="bg-zinc-800 border-zinc-700 text-white focus:ring-primary py-5 text-base"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="wishes"
+              render={({ field }) => (
+                <FormItem className="mb-6">
+                  <FormLabel className="text-white/70 mb-1 block">Palinkėjimas</FormLabel>
+                  <FormControl>
+                    <Input 
+                      {...field} 
+                      placeholder="Jūsų palinkėjimas arba žinutė DJ" 
                       className="bg-zinc-800 border-zinc-700 text-white focus:ring-primary py-5 text-base"
                     />
                   </FormControl>
