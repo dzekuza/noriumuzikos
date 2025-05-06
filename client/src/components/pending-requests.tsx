@@ -27,6 +27,17 @@ export default function PendingRequests({ eventId }: PendingRequestsProps) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
+  // Fetch all song requests for this event to count user requests
+  const { data: allRequests } = useQuery<SongRequest[]>({
+    queryKey: [`/api/events/${eventId}/song-requests`, 'all'],
+    queryFn: async () => {
+      const response = await fetch(`/api/events/${eventId}/song-requests`);
+      if (!response.ok) throw new Error('Failed to fetch all requests');
+      return response.json();
+    },
+  });
+  
+  // Pending requests only
   const { data: requests, isLoading, refetch } = useQuery<SongRequest[]>({
     queryKey: [`/api/events/${eventId}/song-requests`, 'pending'],
     queryFn: async ({ queryKey }) => {
@@ -89,6 +100,12 @@ export default function PendingRequests({ eventId }: PendingRequestsProps) {
     });
   };
   
+  // Function to count how many songs a user has requested in total
+  const countUserRequests = (username: string) => {
+    if (!allRequests) return 0;
+    return allRequests.filter(req => req.requesterName.toLowerCase() === username.toLowerCase()).length;
+  };
+  
   const sortedRequests = sortRequests(requests);
   
   return (
@@ -140,8 +157,13 @@ export default function PendingRequests({ eventId }: PendingRequestsProps) {
                   <div className="flex-1">
                     <h3 className="font-semibold text-white text-lg">{request.songName}</h3>
                     <p className="text-gray-300">{request.artistName}</p>
-                    <div className="flex items-center mt-1">
-                      <span className="text-xs text-gray-400 mr-3">Requested by: {request.requesterName}</span>
+                    <div className="flex flex-wrap items-center mt-1">
+                      <span className="text-xs text-gray-400 mr-3">
+                        Requested by: {request.requesterName} 
+                        <span className="inline-flex items-center justify-center bg-zinc-700 text-white text-xs rounded-full h-4 w-4 ml-1">
+                          {countUserRequests(request.requesterName)}
+                        </span>
+                      </span>
                       <span className="text-xs text-gray-400">
                         {formatDistanceToNow(new Date(request.requestTime), { addSuffix: true })}
                       </span>

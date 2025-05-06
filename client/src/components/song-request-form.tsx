@@ -76,10 +76,13 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: FormValues) => {
       console.log('Submitting song request for event ID:', eventId, 'with data:', data);
-      console.log('Using price:', requestPrice, 'cents');
+      // For free requests, set amount to 0
+      const amount = isFreeRequest ? 0 : requestPrice;
+      console.log('Using price:', amount, 'cents (Free request:', isFreeRequest, ')');
+      
       const response = await apiRequest('POST', `/api/events/${eventId}/song-requests`, {
         ...data,
-        amount: requestPrice, // Use dynamic price from event
+        amount, // 0 for free, regular price for paid
         eventId,
       });
       const responseData = await response.json();
