@@ -158,11 +158,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Event not found" });
       }
       
-      // Use the event's custom request price or default to 500 cents (€5.00)
+      // Use the event's custom request price or default to 5 euros
       const requestData = {
         ...req.body,
         eventId,
-        amount: event.requestPrice || 500
+        amount: event.requestPrice || 5
       };
       
       console.log('Preparing to save song request:', requestData);
@@ -222,7 +222,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get the event ID from the request if available
       const eventId = req.body.eventId;
-      let amount = 500; // Default amount (€5.00)
+      let amount = 5; // Default amount (€5.00)
       
       // If eventId is provided, get the event's custom price
       if (eventId) {
@@ -230,17 +230,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const event = await storage.getEvent(Number(eventId));
           if (event && event.requestPrice) {
             amount = event.requestPrice;
-            console.log(`Using custom price ${amount} cents for event ${eventId}`);
+            console.log(`Using custom price ${amount} euros for event ${eventId}`);
           }
         } catch (err) {
           console.warn(`Could not fetch price for event ${eventId}, using default`);
         }
       }
       
-      // Create a payment intent
-      console.log(`Creating Stripe payment intent in TEST mode for ${amount} cents`);
+      // Create a payment intent - convert euros to cents for Stripe
+      const amountInCents = Math.round(amount * 100);
+      console.log(`Creating Stripe payment intent in TEST mode for ${amount} euros (${amountInCents} cents)`);
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: amount,
+        amount: amountInCents,
         currency: "eur",
         automatic_payment_methods: {
           enabled: true,
