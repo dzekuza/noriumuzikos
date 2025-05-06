@@ -30,7 +30,6 @@ function CreateEventDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState('');
   const [venue, setVenue] = useState('');
-  const [djName, setDjName] = useState('');
   const [entryCode, setEntryCode] = useState('');
   const [requestPrice, setRequestPrice] = useState(500);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,9 +53,9 @@ function CreateEventDialog() {
       await createEventMutation.mutateAsync({
         name,
         venue,
-        djName,
         entryCode,
-        requestPrice,
+        // Using requestPrice directly since it's already in cents
+        requestPrice, 
         startTime,
         endTime,
         isActive: true
@@ -65,9 +64,8 @@ function CreateEventDialog() {
       // Reset form and close dialog
       setName('');
       setVenue('');
-      setDjName('');
       setEntryCode('');
-      setRequestPrice(500);
+      setRequestPrice(500); // Default 500 cents (€5)
       setIsOpen(false);
     } catch (error) {
       console.error('Failed to create event:', error);
@@ -116,18 +114,7 @@ function CreateEventDialog() {
                 required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="djName" className="text-white col-span-4">
-                DJ vardas
-              </Label>
-              <Input
-                id="djName"
-                value={djName}
-                onChange={(e) => setDjName(e.target.value)}
-                className="col-span-4 bg-zinc-800 border-zinc-700 text-white"
-                required
-              />
-            </div>
+            {/* DJ Name field removed as requested */}
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="entryCode" className="text-white col-span-4">
                 Įėjimo kodas

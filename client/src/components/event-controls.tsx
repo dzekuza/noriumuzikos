@@ -41,16 +41,14 @@ export default function EventControls({ eventId }: EventControlsProps) {
   const [eventSettings, setEventSettings] = useState({
     name: '',
     venue: '',
-    djName: '',
     entryCode: '',
     requestPrice: 0,
   });
   const [newEventData, setNewEventData] = useState({
     name: '',
     venue: '',
-    djName: '',
     entryCode: '',
-    requestPrice: 5, // Default €5.00
+    requestPrice: 500, // Default 500 cents (€5)
     startTime: new Date().toISOString().split('T')[0] + 'T20:00', // Default 8:00 PM today
     endTime: new Date().toISOString().split('T')[0] + 'T23:59', // Default 11:59 PM today
   });
@@ -71,7 +69,6 @@ export default function EventControls({ eventId }: EventControlsProps) {
       setEventSettings({
         name: event.name,
         venue: event.venue,
-        djName: event.djName,
         entryCode: event.entryCode || '',
         requestPrice: event.requestPrice,
       });
@@ -172,7 +169,6 @@ export default function EventControls({ eventId }: EventControlsProps) {
     const updateData = {
       name: eventSettings.name,
       venue: eventSettings.venue,
-      djName: eventSettings.djName,
       entryCode: eventSettings.entryCode,
       requestPrice: Number(eventSettings.requestPrice),
     };
@@ -292,18 +288,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="djName" className="text-white/70">DJ Name</Label>
-                <Input
-                  id="djName"
-                  name="djName"
-                  value={newEventData.djName}
-                  onChange={handleInputChange}
-                  placeholder="DJ Awesome"
-                  className="bg-zinc-800 border-zinc-700 text-white"
-                  required
-                />
-              </div>
+              {/* DJ Name field removed as requested */}
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -433,18 +418,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="settings-djName" className="text-white/70">DJ Name</Label>
-                <Input
-                  id="settings-djName"
-                  name="djName"
-                  value={eventSettings.djName}
-                  onChange={handleSettingsChange}
-                  placeholder="DJ Awesome"
-                  className="bg-zinc-800 border-zinc-700 text-white"
-                  required
-                />
-              </div>
+              {/* DJ Name field removed as requested */}
               
               <div className="space-y-2">
                 <Label htmlFor="settings-entryCode" className="text-white/70">Entry Code</Label>
