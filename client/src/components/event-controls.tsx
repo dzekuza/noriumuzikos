@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { type Event } from '@shared/schema';
 import { Pause, Settings, StopCircle, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +36,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
   const [isPaused, setIsPaused] = useState(false);
   const [isEndEventDialogOpen, setIsEndEventDialogOpen] = useState(false);
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
+  const [isEventActive, setIsEventActive] = useState(true); // Assume active until checked
   const [newEventData, setNewEventData] = useState({
     name: '',
     venue: '',
@@ -48,6 +50,19 @@ export default function EventControls({ eventId }: EventControlsProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const createEventMutation = useCreateEvent();
+  
+  // Fetch event data to check if it's active
+  const { data: event } = useQuery<Event>({
+    queryKey: [`/api/events/${eventId}`],
+  });
+  
+  // Update the event active status when event data changes
+  useEffect(() => {
+    if (event) {
+      setIsEventActive(event.isActive);
+      console.log(`Event ${eventId} active status:`, event.isActive);
+    }
+  }, [event, eventId]);
   
   const { mutate: updateEvent } = useMutation({
     mutationFn: async (data: { isActive: boolean }) => {
@@ -134,17 +149,42 @@ export default function EventControls({ eventId }: EventControlsProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <Button 
-              onClick={handlePauseToggle}
-              variant="ghost" 
-              className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
-            >
-              <Pause className="text-primary mr-3 h-5 w-5" />
-              <span className="text-white">
-                {isPaused ? "Resume Requests" : "Pause Requests"}
-              </span>
-            </Button>
+            {/* Only show these controls if the event is active */}
+            {isEventActive ? (
+              <>
+                <Button 
+                  onClick={handlePauseToggle}
+                  variant="ghost" 
+                  className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
+                >
+                  <Pause className="text-primary mr-3 h-5 w-5" />
+                  <span className="text-white">
+                    {isPaused ? "Resume Requests" : "Pause Requests"}
+                  </span>
+                </Button>
+                
+                <Button 
+                  variant="ghost" 
+                  className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
+                >
+                  <Settings className="text-primary mr-3 h-5 w-5" />
+                  <span className="text-white">Settings</span>
+                </Button>
+                
+                <Button 
+                  onClick={() => setIsEndEventDialogOpen(true)}
+                  variant="ghost" 
+                  className="w-full py-3 px-4 bg-destructive/90 rounded-md text-left flex items-center hover:bg-destructive transition-all justify-start font-normal"
+                >
+                  <StopCircle className="mr-3 h-5 w-5" />
+                  <span className="text-white">End Event</span>
+                </Button>
+              </>
+            ) : (
+              <p className="text-white/60 text-sm mb-2">This event has ended.</p>
+            )}
             
+            {/* Always show the Create New Event button */}
             <Button 
               onClick={() => setIsCreateEventDialogOpen(true)}
               variant="ghost" 
@@ -152,23 +192,6 @@ export default function EventControls({ eventId }: EventControlsProps) {
             >
               <Plus className="text-primary mr-3 h-5 w-5" />
               <span className="text-white">Create New Event</span>
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
-            >
-              <Settings className="text-primary mr-3 h-5 w-5" />
-              <span className="text-white">Settings</span>
-            </Button>
-            
-            <Button 
-              onClick={() => setIsEndEventDialogOpen(true)}
-              variant="ghost" 
-              className="w-full py-3 px-4 bg-destructive/90 rounded-md text-left flex items-center hover:bg-destructive transition-all justify-start font-normal"
-            >
-              <StopCircle className="mr-3 h-5 w-5" />
-              <span className="text-white">End Event</span>
             </Button>
           </div>
         </CardContent>

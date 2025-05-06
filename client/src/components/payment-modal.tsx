@@ -38,9 +38,10 @@ interface PaymentModalProps {
     requesterName: string;
   } | null;
   isPending: boolean;
+  paymentAmount?: number; // Optional amount in cents
 }
 
-export default function PaymentModal({ isOpen, onClose, onPay, songData, isPending }: PaymentModalProps) {
+export default function PaymentModal({ isOpen, onClose, onPay, songData, isPending, paymentAmount: customAmount }: PaymentModalProps) {
   const [clientSecret, setClientSecret] = useState('');
   const [isPaymentModalInitialized, setIsPaymentModalInitialized] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState(500); // Default €5.00 in cents
