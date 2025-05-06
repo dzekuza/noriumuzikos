@@ -11,6 +11,8 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, userData: Partial<User>): Promise<User | undefined>;
+  updateUserPassword(id: number, newPasswordHash: string): Promise<User | undefined>;
   
   // Event methods
   getEvents(): Promise<Event[]>;
@@ -43,6 +45,32 @@ export class DatabaseStorage implements IStorage {
       .values(insertUser)
       .returning();
     return user;
+  }
+
+  async updateUser(id: number, userData: Partial<User>): Promise<User | undefined> {
+    // Don't allow password updates through this method for security
+    // Password changes should go through a separate secure method with verification
+    const userDataToUpdate = { ...userData };
+    if ('password' in userDataToUpdate) {
+      delete userDataToUpdate.password;
+    }
+    
+    const [user] = await db
+      .update(users)
+      .set(userDataToUpdate)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async updateUserPassword(id: number, newPasswordHash: string): Promise<User | undefined> {
+    // This method expects the password to already be hashed
+    const [user] = await db
+      .update(users)
+      .set({ password: newPasswordHash })
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
   }
 
   // Event methods
