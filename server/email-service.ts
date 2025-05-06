@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Verify the connection configuration
-transporter.verify(function (error, success) {
+transporter.verify(function (error: any, success: boolean) {
   if (error) {
     console.error('Email service error:', error);
   } else {
@@ -34,7 +34,7 @@ Artist: ${songRequest.artistName}
 Requested by: ${songRequest.requesterName}
 ${songRequest.wishes ? `Wishes: ${songRequest.wishes}` : ''}
 Status: ${songRequest.status}
-Amount Paid: €${(songRequest.amountPaid / 100).toFixed(2)}
+Amount Paid: €${(songRequest.amount / 100).toFixed(2)}
 
 Access your DJ dashboard to manage this request.
 `;
@@ -71,7 +71,7 @@ Access your DJ dashboard to manage this request.
     </tr>
     <tr>
       <td style="padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;">Amount Paid:</td>
-      <td style="padding: 8px; border-bottom: 1px solid #eee;">€${(songRequest.amountPaid / 100).toFixed(2)}</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee;">€${(songRequest.amount / 100).toFixed(2)}</td>
     </tr>
   </table>
   

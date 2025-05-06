@@ -148,6 +148,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const createdRequest = await storage.createSongRequest(validatedData);
       console.log('Song request created successfully:', createdRequest);
       
+      // Send email notification to the DJ/admin
+      try {
+        await sendSongRequestNotification(createdRequest);
+        console.log('Email notification sent for song request');
+      } catch (emailError) {
+        console.error('Failed to send email notification:', emailError);
+        // Continue with the response even if email fails
+      }
+      
       res.status(201).json(createdRequest);
     } catch (error) {
       console.error('Error creating song request:', error);
