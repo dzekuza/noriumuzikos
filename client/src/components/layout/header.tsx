@@ -45,19 +45,19 @@ export default function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-zinc-900 border border-zinc-800">
                     <Link href="/dashboard">
-                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-cyan-400 hover:bg-zinc-800 focus:bg-zinc-800">
-                        <LayoutDashboard className="h-4 w-4 mr-2" />
+                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-white hover:bg-zinc-800 focus:bg-zinc-800">
+                        <LayoutDashboard className="h-4 w-4 mr-2 text-cyan-400" />
                         Valdymo Skydelis
                       </DropdownMenuItem>
                     </Link>
                     <Link href="/profile">
-                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-cyan-400 hover:bg-zinc-800 focus:bg-zinc-800">
-                        <Settings className="h-4 w-4 mr-2" />
+                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-white hover:bg-zinc-800 focus:bg-zinc-800">
+                        <Settings className="h-4 w-4 mr-2 text-cyan-400" />
                         Mano Profilis
                       </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-cyan-400 hover:bg-zinc-800 focus:bg-zinc-800">
-                      <LogOut className="h-4 w-4 mr-2" />
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-white hover:bg-zinc-800 focus:bg-zinc-800">
+                      <LogOut className="h-4 w-4 mr-2 text-cyan-400" />
                       Atsijungti
                     </DropdownMenuItem>
                   </DropdownMenuContent>
