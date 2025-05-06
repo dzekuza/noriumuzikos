@@ -46,6 +46,14 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
   const [isPaymentModalInitialized, setIsPaymentModalInitialized] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState(500); // Default €5.00 in cents
   
+  // Use the customAmount when provided
+  useEffect(() => {
+    if (customAmount) {
+      console.log('Using custom payment amount:', customAmount);
+      setPaymentAmount(customAmount);
+    }
+  }, [customAmount]);
+
   useEffect(() => {
     // Only fetch when the modal is open and we haven't already initialized
     if (isOpen && !isPaymentModalInitialized && !clientSecret) {
@@ -56,10 +64,18 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
           const eventId = urlParts[2]; // From /event/:id/request
           
           console.log('Initializing payment for event ID:', eventId);
-          const response = await apiRequest('POST', '/api/create-payment-intent', { eventId });
+          const response = await apiRequest('POST', '/api/create-payment-intent', { 
+            eventId,
+            amount: customAmount // Pass the custom amount when available
+          });
           const data = await response.json();
           setClientSecret(data.clientSecret);
-          setPaymentAmount(data.amount || 500);
+          
+          // Only set payment amount if no custom amount was provided
+          if (!customAmount) {
+            setPaymentAmount(data.amount || 500);
+          }
+          
           setIsPaymentModalInitialized(true);
         } catch (error) {
           console.error('Error initializing payment:', error);
@@ -74,7 +90,7 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
       setIsPaymentModalInitialized(false);
       setClientSecret('');
     }
-  }, [isOpen, isPaymentModalInitialized, clientSecret]);
+  }, [isOpen, isPaymentModalInitialized, clientSecret, customAmount]);
 
   // If Stripe is not ready, we'll use a mock implementation for the payment
   const useMockImplementation = !stripePromise || !clientSecret;
