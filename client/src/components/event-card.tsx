@@ -19,12 +19,18 @@ export default function EventCard({ event, showEnterButton = false, translate = 
   
   let status: 'active' | 'planned' | 'ended';
   
-  if (!event.isActive && endTime < now) {
+  if (!event.isActive) {
+    // If event is marked as inactive, it's ended
     status = 'ended';
-  } else if (event.isActive && startTime <= now && endTime >= now) {
-    status = 'active';
-  } else {
+  } else if (startTime > now) {
+    // If start time is in the future, it's planned
     status = 'planned';
+  } else if (endTime < now) {
+    // If end time is in the past, it's ended
+    status = 'ended';
+  } else {
+    // Otherwise it's active (current time is between start and end)
+    status = 'active';
   }
   return (
     <div className="mb-8 bg-secondary rounded-xl p-6 shadow-lg">
