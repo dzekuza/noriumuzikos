@@ -95,7 +95,10 @@ export default function EventControls({ eventId }: EventControlsProps) {
   const handleEndEvent = () => {
     updateEvent({ isActive: false });
     setIsEndEventDialogOpen(false);
-    setIsCreateEventDialogOpen(true);
+    
+    // Redirect to the main dashboard
+    window.location.href = '/dashboard';
+    
     toast({
       title: "Event Ended",
       description: "This event has been marked as ended",
