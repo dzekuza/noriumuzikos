@@ -44,6 +44,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/events", requireAuth, async (req, res) => {
+    try {
+      console.log('Creating new event with data:', req.body);
+      const eventData = {
+        ...req.body,
+        // Ensure entry code and request price are properly formatted
+        entryCode: String(req.body.entryCode || ''),
+        requestPrice: Number(req.body.requestPrice || 500),
+      };
+      
+      const createdEvent = await storage.createEvent(eventData);
+      console.log('Event created successfully:', createdEvent);
+      res.status(201).json(createdEvent);
+    } catch (error) {
+      console.error('Error creating event:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid event data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create event" });
+    }
+  });
+
   app.get("/api/events/:id", async (req, res) => {
     try {
       const eventId = parseInt(req.params.id);
@@ -56,6 +78,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(event);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch event" });
+    }
+  });
+  
+  app.patch("/api/events/:id", requireAuth, async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.id);
+      console.log(`Updating event ${eventId} with data:`, req.body);
+      
+      const updatedEvent = await storage.updateEvent(eventId, req.body);
+      
+      if (!updatedEvent) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      
+      console.log('Event updated successfully:', updatedEvent);
+      res.json(updatedEvent);
+    } catch (error) {
+      console.error('Error updating event:', error);
+      res.status(500).json({ message: "Failed to update event" });
     }
   });
 
@@ -85,10 +126,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Event not found" });
       }
       
+      // Use the event's custom request price or default to 500 cents (€5.00)
       const requestData = {
         ...req.body,
         eventId,
-        amount: 500 // €5.00 in cents
+        amount: event.requestPrice || 500
       };
       
       console.log('Preparing to save song request:', requestData);
@@ -137,10 +179,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ message: "Stripe is not configured" });
       }
       
-      // Create a payment intent for €5
-      console.log('Creating Stripe payment intent in TEST mode');
+      // Get the event ID from the request if available
+      const eventId = req.body.eventId;
+      let amount = 500; // Default amount (€5.00)
+      
+      // If eventId is provided, get the event's custom price
+      if (eventId) {
+        try {
+          const event = await storage.getEvent(Number(eventId));
+          if (event && event.requestPrice) {
+            amount = event.requestPrice;
+            console.log(`Using custom price ${amount} cents for event ${eventId}`);
+          }
+        } catch (err) {
+          console.warn(`Could not fetch price for event ${eventId}, using default`);
+        }
+      }
+      
+      // Create a payment intent
+      console.log(`Creating Stripe payment intent in TEST mode for ${amount} cents`);
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: 500, // €5.00 in cents
+        amount: amount,
         currency: "eur",
         automatic_payment_methods: {
           enabled: true,
@@ -148,11 +207,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Explicitly add metadata to indicate test mode
         metadata: {
           integration_check: 'accept_a_payment',
-          mode: 'test'
+          mode: 'test',
+          eventId: eventId || 'unknown'
         },
       });
       
-      res.json({ clientSecret: paymentIntent.client_secret });
+      res.json({ 
+        clientSecret: paymentIntent.client_secret,
+        amount: amount
+      });
     } catch (error: any) {
       res.status(500).json({ message: `Error creating payment intent: ${error.message}` });
     }

@@ -43,15 +43,22 @@ interface PaymentModalProps {
 export default function PaymentModal({ isOpen, onClose, onPay, songData, isPending }: PaymentModalProps) {
   const [clientSecret, setClientSecret] = useState('');
   const [isPaymentModalInitialized, setIsPaymentModalInitialized] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState(500); // Default €5.00 in cents
   
   useEffect(() => {
     // Only fetch when the modal is open and we haven't already initialized
     if (isOpen && !isPaymentModalInitialized && !clientSecret) {
       const initializePayment = async () => {
         try {
-          const response = await apiRequest('POST', '/api/create-payment-intent', {});
+          // Get the event ID from the URL
+          const urlParts = window.location.pathname.split('/');
+          const eventId = urlParts[2]; // From /event/:id/request
+          
+          console.log('Initializing payment for event ID:', eventId);
+          const response = await apiRequest('POST', '/api/create-payment-intent', { eventId });
           const data = await response.json();
           setClientSecret(data.clientSecret);
+          setPaymentAmount(data.amount || 500);
           setIsPaymentModalInitialized(true);
         } catch (error) {
           console.error('Error initializing payment:', error);
@@ -88,7 +95,7 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
                 <h3 className="font-semibold text-white">{songData?.songName || 'Your song'}</h3>
                 <p className="text-sm text-white/70">{songData?.artistName || 'Artist'}</p>
               </div>
-              <span className="text-primary font-bold">€5.00</span>
+              <span className="text-primary font-bold">€{(paymentAmount / 100).toFixed(2)}</span>
             </div>
           </div>
         </DialogHeader>
@@ -96,12 +103,12 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
         {useMockImplementation ? (
           // Mock payment form when Stripe is not configured
           <div className="px-6 pb-6">
-            <MockPaymentForm onPay={onPay} isPending={isPending} />
+            <MockPaymentForm onPay={onPay} isPending={isPending} paymentAmount={paymentAmount} />
           </div>
         ) : (
           // Real Stripe payment form
           <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <CheckoutForm onPay={onPay} isPending={isPending} />
+            <CheckoutForm onPay={onPay} isPending={isPending} paymentAmount={paymentAmount} />
           </Elements>
         )}
       </DialogContent>
@@ -109,7 +116,7 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
   );
 }
 
-function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: boolean }) {
+function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => void, isPending: boolean, paymentAmount?: number }) {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -199,7 +206,7 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
         ) : (
           <>
             <CreditCard className="mr-2 h-5 w-5" />
-            Pay €5.00
+            Pay €{(paymentAmount / 100).toFixed(2)}
           </>
         )}
       </Button>
@@ -220,7 +227,7 @@ function CheckoutForm({ onPay, isPending }: { onPay: () => void, isPending: bool
   );
 }
 
-function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: boolean }) {
+function MockPaymentForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => void, isPending: boolean, paymentAmount?: number }) {
   const [, setLocation] = useLocation();
   
   const handlePay = () => {
@@ -304,7 +311,7 @@ function MockPaymentForm({ onPay, isPending }: { onPay: () => void, isPending: b
         className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 px-4 rounded-md transition-all flex items-center justify-center"
       >
         <CreditCard className="mr-2 h-5 w-5" />
-        Pay €5.00
+        Pay €{(paymentAmount / 100).toFixed(2)}
       </Button>
       
       <div className="flex items-center justify-center mt-2">
