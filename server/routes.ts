@@ -241,9 +241,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Create a payment intent - convert euros to cents for Stripe
-      const amountInCents = Math.round(amount * 100);
-      console.log(`Creating Stripe payment intent in TEST mode for ${amount} euros (${amountInCents} cents)`);
+      // The amount is already in cents, no need to convert
+      const amountInCents = amount;
+      console.log(`Creating Stripe payment intent in TEST mode for ${amount} cents (€${(amount / 100).toFixed(2)})`);
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents,
         currency: "eur",
