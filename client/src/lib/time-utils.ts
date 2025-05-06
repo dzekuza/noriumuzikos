@@ -1,20 +1,20 @@
 /**
- * Formats a date to a human-readable time string 
+ * Formats a date to a human-readable time string using Lithuanian format
  * @param date The date to format
- * @returns Formatted time string (e.g. "10:00 PM")
+ * @returns Formatted time string (e.g. "15:00")
  */
 export function formatTime(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
+  return new Intl.DateTimeFormat('lt-LT', {
+    hour: '2-digit',
     minute: '2-digit',
-    hour12: true
+    hour12: false
   }).format(date);
 }
 
 /**
- * Calculates the time elapsed since a given date
+ * Calculates the time elapsed since a given date in Lithuanian
  * @param date The date to calculate from
- * @returns A string like "2 min ago" or "just now"
+ * @returns A string like "prieš 2 min" or "ką tik"
  */
 export function timeElapsedSince(date: Date): string {
   const now = new Date();
@@ -24,30 +24,30 @@ export function timeElapsedSince(date: Date): string {
   const diffHours = Math.floor(diffMin / 60);
   
   if (diffSec < 60) {
-    return 'just now';
+    return 'ką tik';
   } else if (diffMin < 60) {
-    return `${diffMin} min ago`;
+    return `prieš ${diffMin} min`;
   } else {
-    return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    return `prieš ${diffHours} val`;
   }
 }
 
 /**
- * Calculates the estimated wait time for a song request
+ * Calculates the estimated wait time for a song request in Lithuanian
  * @param position Position in queue (1-based)
  * @param avgSongLength Average song length in minutes
- * @returns Formatted wait time string
+ * @returns Formatted wait time string in Lithuanian (e.g., "5 min" or "1 val 30 min")
  */
 export function estimateWaitTime(position: number, avgSongLength: number = 3): string {
   const waitTimeMinutes = position * avgSongLength;
   
   if (waitTimeMinutes < 1) {
-    return 'Up next';
+    return 'Greitai gros';
   } else if (waitTimeMinutes < 60) {
-    return `${waitTimeMinutes} minutes`;
+    return `${waitTimeMinutes} min`;
   } else {
     const hours = Math.floor(waitTimeMinutes / 60);
     const minutes = waitTimeMinutes % 60;
-    return `${hours} hour${hours !== 1 ? 's' : ''} ${minutes > 0 ? `${minutes} min` : ''}`;
+    return `${hours} val ${minutes > 0 ? `${minutes} min` : ''}`;
   }
 }

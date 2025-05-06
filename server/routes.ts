@@ -35,6 +35,30 @@ if (stripe && process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_SECRET_KEY.st
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
+  // Event entry code validation
+  app.post("/api/events/entry", async (req, res) => {
+    try {
+      const { entryCode } = req.body;
+      
+      if (!entryCode || entryCode.trim() === '') {
+        return res.status(400).json({ message: "Renginio kodas yra privalomas" });
+      }
+      
+      // Find event with matching entry code
+      const events = await storage.getEvents();
+      const event = events.find(e => e.entryCode === entryCode && e.isActive);
+      
+      if (!event) {
+        return res.status(404).json({ message: "Neteisingas renginio kodas arba renginys neaktyvus" });
+      }
+      
+      res.json({ eventId: event.id });
+    } catch (error) {
+      console.error('Error validating event entry code:', error);
+      res.status(500).json({ message: "Serverio klaida bandant patvirtinti renginio kodą" });
+    }
+  });
+
   // Events endpoints
   app.get("/api/events", async (req, res) => {
     try {
