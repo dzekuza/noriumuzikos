@@ -1,5 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import heroOverlay from "@assets/herooverlay.png";
+import group14Image from "@assets/Group 14.png";
 
 export default function Home() {
 

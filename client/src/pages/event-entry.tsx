@@ -47,6 +47,8 @@ export default function EventEntry() {
       const data = await response.json();
       
       if (response.ok) {
+        // Store verification in localStorage so we don't need to ask again
+        localStorage.setItem(`event-verified-${data.eventId}`, 'true');
         setLocation(`/event/${data.eventId}/request`);
       } else {
         toast({
