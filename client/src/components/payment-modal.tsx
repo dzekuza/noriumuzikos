@@ -36,6 +36,7 @@ interface PaymentModalProps {
     songName: string;
     artistName: string;
     requesterName: string;
+    wishes?: string;
   } | null;
   isPending: boolean;
   paymentAmount?: number; // Optional amount in cents
@@ -111,6 +112,9 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
               <div>
                 <h3 className="font-semibold text-white">{songData?.songName || 'Jūsų daina'}</h3>
                 <p className="text-sm text-white/70">{songData?.artistName || 'Atlikėjas'}</p>
+                {songData?.wishes && (
+                  <p className="text-xs text-white/60 mt-2 italic">Palinkėjimas: {songData.wishes}</p>
+                )}
               </div>
               <span className="text-primary font-bold">€{(paymentAmount / 100).toFixed(2)}</span>
             </div>

@@ -14,6 +14,7 @@ interface ConfirmationModalProps {
     songName: string;
     artistName: string;
     requesterName: string;
+    wishes?: string;
   } | null;
 }
 
@@ -35,6 +36,9 @@ export default function ConfirmationModal({
         <div className="bg-zinc-800/50 rounded-md p-4 mb-6 border border-zinc-700">
           <h3 className="font-semibold text-white text-lg">{songData?.songName || "Jūsų daina"}</h3>
           <p className="text-white/70">{songData?.artistName || "Atlikėjas"}</p>
+          {songData?.wishes && (
+            <p className="text-xs text-white/60 mt-2 italic">Palinkėjimas: {songData.wishes}</p>
+          )}
           <div className="flex justify-between mt-2">
             <span className="text-sm text-white/50">
               Užsakė: <span className="text-white/70">{songData?.requesterName || "Jūs"}</span>

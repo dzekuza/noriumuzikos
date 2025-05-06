@@ -168,6 +168,11 @@ export default function PendingRequests({ eventId }: PendingRequestsProps) {
                         {formatDistanceToNow(new Date(request.requestTime), { addSuffix: true })}
                       </span>
                     </div>
+                    {request.wishes && (
+                      <div className="mt-2">
+                        <p className="text-xs italic text-gray-400">Palinkėjimas: {request.wishes}</p>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="flex flex-col items-end">
