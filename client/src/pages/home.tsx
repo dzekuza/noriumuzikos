@@ -1,8 +1,8 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-// Use the proper path aliases for the asset imports
-import heroOverlay from "@/assets/herooverlay.png";
-import group14Image from "@/assets/Group 14.png";
+// Import images directly from the assets folder
+import heroOverlay from "../assets/herooverlay.png";
+import group14Image from "../assets/Group 14.png";
 
 export default function Home() {
 
