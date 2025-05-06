@@ -13,7 +13,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
   console.warn('Missing Stripe secret key. Set STRIPE_SECRET_KEY in environment variables');
 }
 
-// Initialize Stripe client if secret key is available - explicitly set to test mode
+// Initialize Stripe client if secret key is available
 const stripe = process.env.STRIPE_SECRET_KEY 
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
       typescript: true,
@@ -25,11 +25,15 @@ const stripe = process.env.STRIPE_SECRET_KEY
     })
   : null;
 
-// Ensure we're using a test key
-if (stripe && process.env.STRIPE_SECRET_KEY && !process.env.STRIPE_SECRET_KEY.startsWith('sk_test_')) {
-  console.warn('⚠️ Warning: Using a non-test Stripe key. Please use a test key for this application.');
-} else {
-  console.log("✅ Stripe initialized in test mode with test API keys");
+// Log Stripe initialization status
+if (stripe && process.env.STRIPE_SECRET_KEY) {
+  if (process.env.STRIPE_SECRET_KEY.startsWith('sk_test_')) {
+    console.log("✅ Stripe initialized in TEST mode with test API keys");
+  } else if (process.env.STRIPE_SECRET_KEY.startsWith('sk_live_')) {
+    console.log("✅ Stripe initialized in LIVE mode with production API keys");
+  } else {
+    console.warn('⚠️ Warning: Unrecognized Stripe key format');
+  }
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -243,17 +247,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // The amount is already in cents, no need to convert
       const amountInCents = amount;
-      console.log(`Creating Stripe payment intent in TEST mode for ${amount} cents (€${(amount / 100).toFixed(2)})`);
+      const isTestMode = process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
+      console.log(`Creating Stripe payment intent in ${isTestMode ? 'TEST' : 'LIVE'} mode for ${amount} cents (€${(amount / 100).toFixed(2)})`);
+      
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents,
         currency: "eur",
         automatic_payment_methods: {
           enabled: true,
         },
-        // Explicitly add metadata to indicate test mode
         metadata: {
           integration_check: 'accept_a_payment',
-          mode: 'test',
+          mode: isTestMode ? 'test' : 'live',
           eventId: eventId || 'unknown'
         },
       });

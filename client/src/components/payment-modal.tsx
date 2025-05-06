@@ -154,13 +154,14 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
     setPaymentProcessing(true);
     
     try {
-      console.log('Processing payment in TEST mode...');
+      // Determine if we're in test mode based on the Stripe public key
+      const isTestMode = import.meta.env.VITE_STRIPE_PUBLIC_KEY?.startsWith('pk_test_');
+      console.log(`Processing payment in ${isTestMode ? 'TEST' : 'LIVE'} mode...`);
       
       // CRITICAL CHANGE: Call onPay FIRST to ensure song request is created BEFORE payment processing
       console.log('Creating song request before payment processing');
       onPay();
       
-      // Then process the payment in test mode
       // Extract event ID from URL for the return_url
       const urlParts = window.location.pathname.split('/');
       const eventId = urlParts[2]; // From /event/:id/request
@@ -175,16 +176,17 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
       if (error) {
         console.error('Stripe error:', error);
         toast({
-          title: "Test Payment Failed",
-          description: error.message || "The test card was declined. Try 4242 4242 4242 4242.",
+          title: `${isTestMode ? 'Test ' : ''}Payment Failed`,
+          description: error.message || (isTestMode ? "The test card was declined. Try 4242 4242 4242 4242." : "Your card was declined. Please try a different card."),
           variant: "destructive",
         });
         setPaymentProcessing(false);
       } else {
-        // This is a test payment
         toast({
-          title: "Test Payment Successful",
-          description: "Your test song request is being processed! No real charge occurred.",
+          title: `${isTestMode ? 'Test ' : ''}Payment Successful`,
+          description: isTestMode 
+            ? "Your test song request is being processed! No real charge occurred." 
+            : "Your song request is being processed! You'll be redirected shortly.",
         });
         
         // Note: Stripe will handle the redirect via the return_url
@@ -192,24 +194,32 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
       }
     } catch (e) {
       console.error('Payment error:', e);
+      const isTestMode = import.meta.env.VITE_STRIPE_PUBLIC_KEY?.startsWith('pk_test_');
       toast({
-        title: "Test Payment Error",
-        description: "An unexpected error occurred in test mode. Please try again with a different test card.",
+        title: `${isTestMode ? 'Test ' : ''}Payment Error`,
+        description: isTestMode 
+          ? "An unexpected error occurred in test mode. Please try again with a different card." 
+          : "An unexpected error occurred. Please try again later.",
         variant: "destructive",
       });
       setPaymentProcessing(false);
     }
   };
   
+  // Determine if we're in test mode based on the Stripe public key
+  const isTestMode = import.meta.env.VITE_STRIPE_PUBLIC_KEY?.startsWith('pk_test_');
+  
   return (
     <form onSubmit={handleSubmit} className="space-y-4 px-6 pb-6">
-      <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
-        <ShieldCheck className="h-5 w-5 mr-2" />
-        <div>
-          <strong className="font-bold block">TEST MODE ONLY</strong>
-          <span>No real payments will be processed. This is a test environment.</span>
+      {isTestMode && (
+        <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
+          <ShieldCheck className="h-5 w-5 mr-2" />
+          <div>
+            <strong className="font-bold block">TEST MODE ONLY</strong>
+            <span>No real payments will be processed. This is a test environment.</span>
+          </div>
         </div>
-      </div>
+      )}
       
       <PaymentElement />
       
@@ -231,13 +241,15 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
         )}
       </Button>
       
-      <div className="text-sm text-white/80 mt-4 p-4 bg-zinc-800 rounded-md border border-zinc-700">
-        <h4 className="font-bold mb-2">TEST CARD DETAILS</h4>
-        <p className="mb-2">Card number: <code className="bg-zinc-900 p-1 rounded text-white">4242 4242 4242 4242</code></p>
-        <p className="mb-1">Expiry: <code className="bg-zinc-900 p-1 rounded text-white">Any future date</code></p>
-        <p className="mb-1">CVC: <code className="bg-zinc-900 p-1 rounded text-white">Any 3 digits</code></p>
-        <p>ZIP: <code className="bg-zinc-900 p-1 rounded text-white">Any 5 digits</code></p>
-      </div>
+      {isTestMode && (
+        <div className="text-sm text-white/80 mt-4 p-4 bg-zinc-800 rounded-md border border-zinc-700">
+          <h4 className="font-bold mb-2">TEST CARD DETAILS</h4>
+          <p className="mb-2">Card number: <code className="bg-zinc-900 p-1 rounded text-white">4242 4242 4242 4242</code></p>
+          <p className="mb-1">Expiry: <code className="bg-zinc-900 p-1 rounded text-white">Any future date</code></p>
+          <p className="mb-1">CVC: <code className="bg-zinc-900 p-1 rounded text-white">Any 3 digits</code></p>
+          <p>ZIP: <code className="bg-zinc-900 p-1 rounded text-white">Any 5 digits</code></p>
+        </div>
+      )}
       
       <div className="flex items-center justify-center mt-2">
         <ShieldCheck className="text-white/40 mr-1 h-3 w-3" />
@@ -263,15 +275,20 @@ function MockPaymentForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () 
     setLocation(`/thank-you?eventId=${eventId}`);
   };
   
+  // Determine if we're in test mode based on the Stripe public key
+  const isTestMode = import.meta.env.VITE_STRIPE_PUBLIC_KEY?.startsWith('pk_test_');
+  
   return (
     <div className="space-y-4">
-      <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
-        <ShieldCheck className="h-5 w-5 mr-2" />
-        <div>
-          <strong className="font-bold block">TEST MODE ONLY</strong>
-          <span>No real payments will be processed. This is a test environment.</span>
+      {isTestMode && (
+        <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
+          <ShieldCheck className="h-5 w-5 mr-2" />
+          <div>
+            <strong className="font-bold block">TEST MODE ONLY</strong>
+            <span>No real payments will be processed. This is a test environment.</span>
+          </div>
         </div>
-      </div>
+      )}
       <div>
         <label className="block text-sm font-medium text-white/70 mb-2">Card Information</label>
         <div className="bg-zinc-800 border border-zinc-700 rounded-md p-3">

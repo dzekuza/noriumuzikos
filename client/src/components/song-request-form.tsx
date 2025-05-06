@@ -248,7 +248,11 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
         isOpen={isConfirmationModalOpen} 
         onClose={() => setIsConfirmationModalOpen(false)}
         onRequestAnother={() => setIsConfirmationModalOpen(false)}
-        songData={currentRequest ? { ...currentRequest, isFree: isFreeRequest } : null}
+        songData={currentRequest ? { 
+          ...currentRequest, 
+          isFree: isFreeRequest,
+          amount: requestPrice
+        } : null}
       />
     </>
   );
