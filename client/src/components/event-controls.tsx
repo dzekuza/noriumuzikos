@@ -111,10 +111,10 @@ export default function EventControls({ eventId }: EventControlsProps) {
   const handlePauseToggle = () => {
     setIsPaused(!isPaused);
     toast({
-      title: isPaused ? "Accepting Requests" : "Paused Requests",
+      title: isPaused ? "Užsakymai atnaujinti" : "Užsakymai pristabdyti",
       description: isPaused 
-        ? "Customers can now submit song requests" 
-        : "New song requests have been paused",
+        ? "Klientai vėl gali siųsti dainų užsakymus" 
+        : "Nauji dainų užsakymai buvo pristabdyti",
     });
   };
   
@@ -126,8 +126,8 @@ export default function EventControls({ eventId }: EventControlsProps) {
     window.location.href = '/dashboard';
     
     toast({
-      title: "Event Ended",
-      description: "This event has been marked as ended",
+      title: "Renginys baigtas",
+      description: "Renginys pažymėtas kaip baigtas",
     });
   };
   
@@ -146,8 +146,8 @@ export default function EventControls({ eventId }: EventControlsProps) {
     createEventMutation.mutate(eventData, {
       onSuccess: (newEvent) => {
         toast({
-          title: "Event Created",
-          description: `Successfully created "${newEvent.name}" event`,
+          title: "Renginys sukurtas",
+          description: `Renginys "${newEvent.name}" sėkmingai sukurtas`,
         });
         setIsCreateEventDialogOpen(false);
         // Redirect to the new event dashboard would happen here in a real app
@@ -155,8 +155,8 @@ export default function EventControls({ eventId }: EventControlsProps) {
       },
       onError: (error) => {
         toast({
-          title: "Error Creating Event",
-          description: error instanceof Error ? error.message : "Unknown error",
+          title: "Klaida kuriant renginį",
+          description: error instanceof Error ? error.message : "Nežinoma klaida",
           variant: "destructive",
         });
       }
@@ -193,8 +193,8 @@ export default function EventControls({ eventId }: EventControlsProps) {
     setIsSettingsDialogOpen(false);
     
     toast({
-      title: "Settings Updated",
-      description: "The event settings have been updated",
+      title: "Nustatymai atnaujinti",
+      description: "Renginio nustatymai buvo atnaujinti",
     });
   };
   
@@ -202,7 +202,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
     <>
       <Card className="bg-zinc-900 border border-zinc-800 shadow-lg">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xl text-white">Event Controls</CardTitle>
+          <CardTitle className="text-xl text-white">Renginio valdymas</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -216,7 +216,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
                 >
                   <Pause className="text-primary mr-3 h-5 w-5" />
                   <span className="text-white">
-                    {isPaused ? "Resume Requests" : "Pause Requests"}
+                    {isPaused ? "Atnaujinti užsakymus" : "Pristabdyti užsakymus"}
                   </span>
                 </Button>
                 
@@ -226,7 +226,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
                   className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
                 >
                   <Settings className="text-primary mr-3 h-5 w-5" />
-                  <span className="text-white">Settings</span>
+                  <span className="text-white">Nustatymai</span>
                 </Button>
                 
                 <Button 
@@ -235,11 +235,11 @@ export default function EventControls({ eventId }: EventControlsProps) {
                   className="w-full py-3 px-4 bg-destructive/90 rounded-md text-left flex items-center hover:bg-destructive transition-all justify-start font-normal"
                 >
                   <StopCircle className="mr-3 h-5 w-5" />
-                  <span className="text-white">End Event</span>
+                  <span className="text-white">Baigti renginį</span>
                 </Button>
               </>
             ) : (
-              <p className="text-white/60 text-sm mb-2">This event has ended.</p>
+              <p className="text-white/60 text-sm mb-2">Šis renginys jau baigtas.</p>
             )}
             
             {/* We've removed the Create New Event button as requested */}
@@ -251,16 +251,16 @@ export default function EventControls({ eventId }: EventControlsProps) {
       <AlertDialog open={isEndEventDialogOpen} onOpenChange={setIsEndEventDialogOpen}>
         <AlertDialogContent className="bg-zinc-900 border border-zinc-800 text-white">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-white">End this event?</AlertDialogTitle>
+            <AlertDialogTitle className="text-white">Baigti šį renginį?</AlertDialogTitle>
             <AlertDialogDescription className="text-white/70">
-              This will stop accepting new song requests and mark this event as ended.
-              This action cannot be undone.
+              Tai sustabdys naujų dainų užsakymų priėmimą ir pažymės renginį kaip baigtą.
+              Šio veiksmo negalima atšaukti.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700">Atšaukti</AlertDialogCancel>
             <AlertDialogAction onClick={handleEndEvent} className="bg-destructive text-white">
-              End Event
+              Baigti renginį
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
