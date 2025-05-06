@@ -94,7 +94,8 @@ export default function EventControls({ eventId }: EventControlsProps) {
       entryCode: String(newEventData.entryCode),
       requestPrice: Number(newEventData.requestPrice),
       startTime: new Date(newEventData.startTime),
-      endTime: new Date(newEventData.endTime)
+      endTime: new Date(newEventData.endTime),
+      isActive: true // Default to active for new events
     };
     
     createEventMutation.mutate(eventData, {
