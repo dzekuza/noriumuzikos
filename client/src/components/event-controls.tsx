@@ -163,7 +163,13 @@ export default function EventControls({ eventId }: EventControlsProps) {
                   </span>
                 </Button>
                 
-                <Button 
+                <Button
+                  onClick={() => {
+                    toast({
+                      title: "Event Settings",
+                      description: "Event settings and customization coming soon",
+                    });
+                  }} 
                   variant="ghost" 
                   className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
                 >
@@ -184,15 +190,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
               <p className="text-white/60 text-sm mb-2">This event has ended.</p>
             )}
             
-            {/* Always show the Create New Event button */}
-            <Button 
-              onClick={() => setIsCreateEventDialogOpen(true)}
-              variant="ghost" 
-              className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
-            >
-              <Plus className="text-primary mr-3 h-5 w-5" />
-              <span className="text-white">Create New Event</span>
-            </Button>
+            {/* We've removed the Create New Event button as requested */}
           </div>
         </CardContent>
       </Card>

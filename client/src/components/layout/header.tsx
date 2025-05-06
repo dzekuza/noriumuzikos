@@ -32,13 +32,7 @@ export default function Header() {
             
             {user ? (
               <>
-                {/* On desktop show the dashboard button */}
-                <Link href="/dashboard" className="hidden md:block">
-                  <Button variant="ghost" size="sm" className="text-white/80 hover:text-primary bg-transparent mr-2">
-                    <LayoutDashboard className="h-5 w-5 mr-1" />
-                    Valdymo Skydelis
-                  </Button>
-                </Link>
+                {/* Removed the dashboard button as requested */}
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
