@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'wouter';
-import { Music, LogOut, User } from 'lucide-react';
+import { Music, LogOut, User, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,14 +32,30 @@ export default function Header() {
             
             {user ? (
               <>
+                {/* On desktop show the dashboard button */}
+                <Link href="/dashboard" className="hidden md:block">
+                  <Button variant="ghost" size="sm" className="text-white/80 hover:text-primary bg-transparent mr-2">
+                    <LayoutDashboard className="h-5 w-5 mr-1" />
+                    Valdymo Skydelis
+                  </Button>
+                </Link>
+                
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-white/80 hover:text-primary bg-transparent">
-                      <User className="h-5 w-5 mr-1" />
-                      {user.username}
-                    </Button>
+                    <Link href="/dashboard" className="inline-block">
+                      <Button variant="ghost" size="sm" className="text-white/80 hover:text-primary bg-transparent">
+                        <User className="h-5 w-5 mr-1" />
+                        {user.username}
+                      </Button>
+                    </Link>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-zinc-900 border border-zinc-800">
+                    <Link href="/dashboard">
+                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
+                        <LayoutDashboard className="h-4 w-4 mr-2" />
+                        Valdymo Skydelis
+                      </DropdownMenuItem>
+                    </Link>
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
                       <LogOut className="h-4 w-4 mr-2" />
                       Atsijungti
@@ -49,8 +65,9 @@ export default function Header() {
               </>
             ) : (
               <Link href="/auth">
-                <Button variant="outline" size="sm" className="text-white border-zinc-700 hover:bg-primary hover:border-primary hover:text-black bg-transparent">
-                  Administratoriaus Valdymo Skydelis
+                <Button variant="ghost" size="sm" className="text-white/80 hover:text-primary bg-transparent">
+                  <User className="h-5 w-5 mr-1" />
+                  Prisijungti
                 </Button>
               </Link>
             )}
