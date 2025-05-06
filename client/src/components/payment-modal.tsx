@@ -138,7 +138,7 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
               <DialogDescription className="sr-only">
                 Payment form for song request
               </DialogDescription>
-              <CheckoutForm onPay={onPay} isPending={isPending} paymentAmount={paymentAmount} />
+              <CheckoutForm onPay={onPay} isPending={isPending} paymentAmount={paymentAmount} songData={songData} />
             </div>
           </Elements>
         )}
@@ -147,7 +147,17 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
   );
 }
 
-function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => void, isPending: boolean, paymentAmount?: number }) {
+function CheckoutForm({ onPay, isPending, paymentAmount = 500, songData }: { 
+  onPay: () => void, 
+  isPending: boolean, 
+  paymentAmount?: number,
+  songData: {
+    songName: string;
+    artistName: string;
+    requesterName: string;
+    wishes?: string;
+  } | null
+}) {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -220,7 +230,13 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 px-6 pb-6">
       
-      <PaymentElement />
+      {/* Simple PaymentElement that works with the Stripe API */}
+      <PaymentElement 
+        options={{
+          layout: 'tabs',
+          business: { name: 'NoriuMuzikos' }
+        }}
+      />
       
       <Button 
         type="submit" 
