@@ -161,10 +161,14 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
       onPay();
       
       // Then process the payment in test mode
+      // Extract event ID from URL for the return_url
+      const urlParts = window.location.pathname.split('/');
+      const eventId = urlParts[2]; // From /event/:id/request
+      
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: window.location.origin
+          return_url: `${window.location.origin}/thank-you?eventId=${eventId}`
         }
       });
       
@@ -183,13 +187,8 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
           description: "Your test song request is being processed! No real charge occurred.",
         });
         
-        // Then extract event ID from URL
-        const urlParts = window.location.pathname.split('/');
-        const eventId = urlParts[2]; // From /event/:id/request
-        
-        // Redirect to thank you page
-        console.log('Redirecting to thank-you page for event ID:', eventId);
-        setLocation(`/thank-you?eventId=${eventId}`);
+        // Note: Stripe will handle the redirect via the return_url
+        // No need to setLocation here since Stripe redirects using the return_url
       }
     } catch (e) {
       console.error('Payment error:', e);
