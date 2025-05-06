@@ -1,17 +1,13 @@
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Music, ListMusic, Users, Headphones, ArrowRight } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type Event } from "@shared/schema";
-import SongRequestForm from "@/components/song-request-form";
-import { useState } from "react";
 
 export default function Home() {
   const { data: events, isLoading } = useQuery<Event[]>({
     queryKey: ['/api/events'],
   });
-  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
 
   if (isLoading) {
     return (
@@ -19,11 +15,6 @@ export default function Home() {
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
       </div>
     );
-  }
-  
-  // Select the first event by default if available
-  if (events && events.length > 0 && selectedEventId === null) {
-    setSelectedEventId(events[0].id);
   }
 
   return (
@@ -47,11 +38,7 @@ export default function Home() {
               asChild
               className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 px-10 rounded-md text-lg"
             >
-              {selectedEventId ? (
-                <Link to={`/event/${selectedEventId}/request`}>Prisijungti dabar</Link>
-              ) : (
-                <Link to={`/event/${events[0].id}/request`}>Prisijungti dabar</Link>
-              )}
+              <Link to={`/event/${events[0].id}/request`}>Prisijungti dabar</Link>
             </Button>
           ) : (
             <div className="bg-zinc-900/70 rounded-md p-6 max-w-md mx-auto">
@@ -60,32 +47,6 @@ export default function Home() {
             </div>
           )}
         </div>
-        
-        {events && events.length > 1 && (
-          <div className="bg-zinc-900/70 rounded-lg p-8 max-w-md mx-auto mt-12">
-            <h2 className="text-xl font-semibold text-white mb-4">Sesijos ID</h2>
-            <p className="text-white/60 text-sm mb-6">Įveskite renginio ID, kad prisijungtumėte prie sesijos</p>
-            
-            <select 
-              className="bg-zinc-800 text-white rounded-md py-3 px-4 w-full mb-5 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-              value={selectedEventId || ''}
-              onChange={(e) => setSelectedEventId(Number(e.target.value))}
-            >
-              {events.map(event => (
-                <option key={event.id} value={event.id}>
-                  {event.name} ({event.djName})
-                </option>
-              ))}
-            </select>
-            
-            <Button 
-              asChild
-              className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 px-4 rounded-md"
-            >
-              <Link to={selectedEventId ? `/event/${selectedEventId}/request` : '#'}>Prisijungti dabar</Link>
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
