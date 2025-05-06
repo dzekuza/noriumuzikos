@@ -60,7 +60,17 @@ export default function EventCard({ event, showEnterButton = false, translate = 
               </Badge>
             )}
           </div>
-          <p className="text-accent">{event.djName} <span className="text-gray-400">• {event.venue}</span></p>
+          <p className="text-accent">{event.venue}</p>
+          <p className="text-sm text-gray-400 mt-1">
+            {new Intl.DateTimeFormat('lt-LT', { 
+              year: 'numeric', 
+              month: '2-digit', 
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            }).format(new Date(event.startTime))}
+          </p>
         </div>
       </div>
       

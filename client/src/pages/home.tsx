@@ -1,23 +1,7 @@
 import { Link } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-
 import { Button } from "@/components/ui/button";
-import { type Event } from "@shared/schema";
 
 export default function Home() {
-  const { data: events, isLoading } = useQuery<Event[]>({
-    queryKey: ['/api/events', { active: true }],
-  });
-  
-  // The events returned should already be filtered to active ones from the server
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
@@ -31,23 +15,35 @@ export default function Home() {
             <span className="text-white/90">vienu paspaudimu</span>
           </h1>
           
-          <p className="text-xl text-white/70 max-w-2xl mx-auto mb-10">
-            Užsakyk savo mėgstamiausią dainą ir šokime kartu
-          </p>
-          
-          {events && events.length > 0 ? (
-            <Button 
-              asChild
-              className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 px-10 rounded-md text-lg"
-            >
-              <Link to={`/event/${events[0].id}/request`}>Prisijungti dabar</Link>
-            </Button>
-          ) : (
-            <div className="bg-zinc-900/70 rounded-md p-6 max-w-md mx-auto">
-              <h3 className="text-xl font-semibold text-white mb-2">Nėra aktyvių sesijų</h3>
-              <p className="text-white/60 mb-3">Šiuo metu nėra aktyvių DJ renginių</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto mb-10 mt-12 text-center">
+            <div className="bg-zinc-900/70 rounded-lg p-6">
+              <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-black">1</span>
+              </div>
+              <p className="text-lg text-white/90">Spausk "Prisijungti"</p>
             </div>
-          )}
+            
+            <div className="bg-zinc-900/70 rounded-lg p-6">
+              <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-black">2</span>
+              </div>
+              <p className="text-lg text-white/90">Įvesk kodą</p>
+            </div>
+            
+            <div className="bg-zinc-900/70 rounded-lg p-6">
+              <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-black">3</span>
+              </div>
+              <p className="text-lg text-white/90">Užsisakyk dainą</p>
+            </div>
+          </div>
+          
+          <Button 
+            asChild
+            className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 px-10 rounded-md text-lg"
+          >
+            <Link to="/event">Prisijungti dabar</Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -12,6 +12,21 @@ export function formatTime(date: Date): string {
 }
 
 /**
+ * Formats a date to a complete date and time string using Lithuanian format
+ * @param date The date to format
+ * @returns Formatted date and time string (e.g. "2025-05-06 15:00")
+ */
+export function formatDateTime(date: Date): string {
+  const dateOptions: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+  const timeOptions: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+  
+  const dateString = new Intl.DateTimeFormat('lt-LT', dateOptions).format(date);
+  const timeString = new Intl.DateTimeFormat('lt-LT', timeOptions).format(date);
+  
+  return `${dateString} ${timeString}`;
+}
+
+/**
  * Calculates the time elapsed since a given date in Lithuanian
  * @param date The date to calculate from
  * @returns A string like "prieš 2 min" or "ką tik"
