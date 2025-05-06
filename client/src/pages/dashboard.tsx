@@ -9,7 +9,7 @@ import RekordboxPanel from '@/components/rekordbox/rekordbox-panel';
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'wouter';
 import { type Event } from '@shared/schema';
-import { useEvents, useCreateEvent } from '@/hooks/use-events';
+import { useEvents, useCreateEvent, useDeleteEvent } from '@/hooks/use-events';
 import EventCard from '@/components/event-card';
 import { Button } from '@/components/ui/button';
 import { Loader2, Plus, Music, Calendar, CalendarPlus, CalendarX } from 'lucide-react';
@@ -254,6 +254,18 @@ function EventDashboard({ eventId }: { eventId: number }) {
 // Main Dashboard component to handle both events list and single event view
 export default function Dashboard() {
   const { id } = useParams<{ id?: string }>();
+  const deleteEventMutation = useDeleteEvent();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<number | null>(null);
+  
+  // Handler for deleting an event
+  const handleDeleteEvent = async (eventId: number) => {
+    try {
+      await deleteEventMutation.mutateAsync(eventId);
+      setShowDeleteConfirm(null); // Close any confirmation dialog
+    } catch (error) {
+      console.error('Failed to delete event:', error);
+    }
+  };
   
   // If id is provided, show single event dashboard
   if (id) {
@@ -278,6 +290,13 @@ export default function Dashboard() {
     return event.isActive || endTime > now;
   }) || [];
   
+  // All past/inactive events
+  const pastEvents = events?.filter(event => {
+    const now = new Date();
+    const endTime = new Date(event.endTime);
+    return !event.isActive && endTime <= now;
+  }) || [];
+  
   return (
     <div className="container py-6 mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -285,7 +304,42 @@ export default function Dashboard() {
         <CreateEventDialog />
       </div>
       
-      {futureEvents.length === 0 ? (
+      {/* Delete Confirmation Dialog */}
+      {showDeleteConfirm && (
+        <Dialog open={showDeleteConfirm !== null} onOpenChange={() => setShowDeleteConfirm(null)}>
+          <DialogContent className="bg-zinc-900 border-zinc-800 text-white">
+            <DialogHeader>
+              <DialogTitle className="text-white">Patvirtinti ištrynimą</DialogTitle>
+              <DialogDescription className="text-white/70">
+                Ar tikrai norite ištrinti šį renginį? Šis veiksmas negrįžtamas.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex gap-2 justify-end">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowDeleteConfirm(null)}
+                className="border-zinc-700 text-white"
+              >
+                Atšaukti
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={() => handleDeleteEvent(showDeleteConfirm)}
+                className="bg-red-600 hover:bg-red-700"
+                disabled={deleteEventMutation.isPending}
+              >
+                {deleteEventMutation.isPending ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Ištrinama...</>
+                ) : (
+                  'Ištrinti renginį'
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+      
+      {futureEvents.length === 0 && pastEvents.length === 0 ? (
         <div className="bg-zinc-900 rounded-xl p-12 text-center border border-zinc-800">
           <div className="mx-auto w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center mb-6">
             <Calendar className="h-8 w-8 text-primary" />
@@ -297,16 +351,45 @@ export default function Dashboard() {
           <CreateEventDialog />
         </div>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2">
-          {futureEvents.map(event => (
-            <EventCard 
-              key={event.id} 
-              event={event} 
-              showEnterButton 
-              translate
-            />
-          ))}
-        </div>
+        <>
+          {/* Active/Future Events Section */}
+          {futureEvents.length > 0 && (
+            <>
+              <h2 className="text-xl font-bold mb-4 mt-8">Aktyvūs ir būsimi renginiai</h2>
+              <div className="grid gap-6 md:grid-cols-2">
+                {futureEvents.map(event => (
+                  <EventCard 
+                    key={event.id} 
+                    event={event} 
+                    showEnterButton 
+                    showDeleteButton
+                    onDelete={(id) => setShowDeleteConfirm(id)}
+                    translate
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          
+          {/* Past Events Section */}
+          {pastEvents.length > 0 && (
+            <>
+              <h2 className="text-xl font-bold mb-4 mt-8">Praeję renginiai</h2>
+              <div className="grid gap-6 md:grid-cols-2">
+                {pastEvents.map(event => (
+                  <EventCard 
+                    key={event.id} 
+                    event={event} 
+                    showEnterButton 
+                    showDeleteButton
+                    onDelete={(id) => setShowDeleteConfirm(id)}
+                    translate
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </>
       )}
     </div>
   );

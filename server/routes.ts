@@ -165,6 +165,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to update event" });
     }
   });
+  
+  // DELETE endpoint for events
+  app.delete("/api/events/:id", requireAuth, async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.id);
+      console.log(`Deleting event ${eventId}`);
+      
+      // First check if event exists
+      const event = await storage.getEvent(eventId);
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      
+      // Delete the event
+      const result = await storage.deleteEvent(eventId);
+      
+      if (!result) {
+        return res.status(500).json({ message: "Failed to delete event" });
+      }
+      
+      console.log(`Event ${eventId} deleted successfully`);
+      res.json({ success: true, message: "Event deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      res.status(500).json({ message: "Failed to delete event" });
+    }
+  });
 
   // Song requests endpoints - removed requireAuth temporarily for debugging
   app.get("/api/events/:eventId/song-requests", async (req, res) => {

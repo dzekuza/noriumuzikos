@@ -54,3 +54,24 @@ export function useCreateEvent() {
     },
   });
 }
+
+/**
+ * Hook to delete an event
+ */
+export function useDeleteEvent() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const response = await apiRequest('DELETE', `/api/events/${id}`);
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to delete event');
+      }
+      return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/events'] });
+    },
+  });
+}

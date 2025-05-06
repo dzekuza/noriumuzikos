@@ -19,6 +19,7 @@ export interface IStorage {
   getEvent(id: number): Promise<Event | undefined>;
   createEvent(event: InsertEvent): Promise<Event>;
   updateEvent(id: number, event: Partial<Event>): Promise<Event | undefined>;
+  deleteEvent(id: number): Promise<boolean>;
   
   // Song request methods
   getSongRequests(eventId: number, status?: string): Promise<SongRequest[]>;
@@ -98,6 +99,25 @@ export class DatabaseStorage implements IStorage {
       .where(eq(events.id, id))
       .returning();
     return event || undefined;
+  }
+  
+  async deleteEvent(id: number): Promise<boolean> {
+    try {
+      // First delete any associated song requests to maintain referential integrity
+      await db
+        .delete(songRequests)
+        .where(eq(songRequests.eventId, id));
+      
+      // Then delete the event
+      const result = await db
+        .delete(events)
+        .where(eq(events.id, id));
+        
+      return true;
+    } catch (error) {
+      console.error(`Error deleting event ${id}:`, error);
+      return false;
+    }
   }
 
   // Song request methods

@@ -1,4 +1,4 @@
-import { QrCode, ArrowRight, Calendar, CalendarCheck, CalendarOff } from 'lucide-react';
+import { QrCode, ArrowRight, Calendar, CalendarCheck, CalendarOff, Trash2 } from 'lucide-react';
 import { type Event } from '@shared/schema';
 import { generateEventQrCodeUrl } from '@/lib/qr-generator';
 import { Button } from '@/components/ui/button';
@@ -8,10 +8,18 @@ import { Link } from 'wouter';
 interface EventCardProps {
   event: Event;
   showEnterButton?: boolean;
+  showDeleteButton?: boolean;
+  onDelete?: (id: number) => void;
   translate?: boolean;
 }
 
-export default function EventCard({ event, showEnterButton = false, translate = false }: EventCardProps) {
+export default function EventCard({ 
+  event, 
+  showEnterButton = false, 
+  showDeleteButton = false,
+  onDelete,
+  translate = false 
+}: EventCardProps) {
   // Determine event status
   const now = new Date();
   const startTime = new Date(event.startTime);
@@ -85,17 +93,31 @@ export default function EventCard({ event, showEnterButton = false, translate = 
           </div>
         </div>
         
-        {showEnterButton && (
-          <Button 
-            asChild
-            variant="secondary"
-            className="ml-4 bg-primary hover:bg-primary/90 text-black"
-          >
-            <Link to={`/dashboard/${event.id}`}>
-              {translate ? 'Atidaryti' : 'Open'} <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        )}
+        <div className="flex items-center space-x-2">
+          {showDeleteButton && onDelete && (
+            <Button 
+              variant="destructive"
+              size="sm"
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => onDelete(event.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+              <span className="sr-only">{translate ? 'Ištrinti' : 'Delete'}</span>
+            </Button>
+          )}
+          
+          {showEnterButton && (
+            <Button 
+              asChild
+              variant="secondary"
+              className="bg-primary hover:bg-primary/90 text-black"
+            >
+              <Link to={`/dashboard/${event.id}`}>
+                {translate ? 'Atidaryti' : 'Open'} <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
