@@ -1,12 +1,16 @@
-import { QrCode } from 'lucide-react';
+import { QrCode, ArrowRight } from 'lucide-react';
 import { type Event } from '@shared/schema';
 import { generateEventQrCodeUrl } from '@/lib/qr-generator';
+import { Button } from '@/components/ui/button';
+import { Link } from 'wouter';
 
 interface EventCardProps {
   event: Event;
+  showEnterButton?: boolean;
+  translate?: boolean;
 }
 
-export default function EventCard({ event }: EventCardProps) {
+export default function EventCard({ event, showEnterButton = false, translate = false }: EventCardProps) {
   return (
     <div className="mb-8 bg-secondary rounded-xl p-6 shadow-lg">
       <div className="flex items-center">
@@ -19,14 +23,28 @@ export default function EventCard({ event }: EventCardProps) {
         </div>
       </div>
       
-      <div className="mt-4 flex items-center">
-        <div className="bg-background p-3 rounded-lg inline-flex items-center mr-3">
-          <QrCode className="h-5 w-5 text-primary" />
+      <div className="mt-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <div className="bg-background p-3 rounded-lg inline-flex items-center mr-3">
+            <QrCode className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm text-gray-300">{translate ? 'Pasidalinkite šiuo QR kodu!' : 'Share this QR code with your friends!'}</p>
+            <p className="text-xs text-gray-400">{translate ? 'Nuskenuokite, norėdami užsakyti dainas' : 'Scan to request songs at this event'}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm text-gray-300">Share this QR code with your friends!</p>
-          <p className="text-xs text-gray-400">Scan to request songs at this event</p>
-        </div>
+        
+        {showEnterButton && (
+          <Button 
+            asChild
+            variant="secondary"
+            className="ml-4 bg-primary hover:bg-primary/90 text-black"
+          >
+            <Link to={`/dashboard/${event.id}`}>
+              {translate ? 'Atidaryti' : 'Open'} <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        )}
       </div>
     </div>
   );

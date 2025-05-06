@@ -21,6 +21,7 @@ function Router() {
         <Switch>
           <Route path="/" component={Home} />
           <ProtectedRoute path="/dashboard" component={Dashboard} />
+          <ProtectedRoute path="/dashboard/:id" component={Dashboard} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/event/:id/request" component={RequestPage} />
           <Route path="/thank-you" component={ThankYouPage} />
