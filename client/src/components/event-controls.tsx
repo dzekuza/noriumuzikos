@@ -201,8 +201,9 @@ export default function EventControls({ eventId }: EventControlsProps) {
   
   // Generate event URL for sharing
   const getEventUrl = () => {
-    // Create URL to the event entry page with pre-filled entry code
-    const url = new URL(`${window.location.origin}/event-entry`);
+    // Create URL to the event entry page with event name in the slug
+    const eventName = event?.name ? encodeURIComponent(event.name.toLowerCase().replace(/\s+/g, '-')) : '';
+    const url = new URL(`${window.location.origin}/event-entry${eventName ? `/${eventName}` : ''}`);
     // We don't add the entry code to URL for security reasons, it should be entered manually
     return url.toString();
   };

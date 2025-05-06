@@ -27,6 +27,7 @@ function Router() {
           <ProtectedRoute path="/profile" component={ProfilePage} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/event-entry" component={EventEntry} />
+          <Route path="/event-entry/:eventName" component={EventEntry} />
           <Route path="/event/:id/request" component={RequestPage} />
           <Route path="/thank-you" component={ThankYouPage} />
           <Route component={NotFound} />

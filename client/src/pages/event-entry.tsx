@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useLocation } from "wouter";
+import { useState, useEffect } from "react";
+import { useLocation, useRoute } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,23 @@ export default function EventEntry() {
   const [isLoading, setIsLoading] = useState(false);
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
+  
+  // Check if we have an event name in the URL
+  const [matchEventName, params] = useRoute<{ eventName: string }>('/event-entry/:eventName');
+  const eventName = matchEventName ? params.eventName : null;
+  
+  useEffect(() => {
+    // Update the page title if we have an event name
+    if (eventName) {
+      // Convert hyphenated URL format back to readable name
+      const formattedName = decodeURIComponent(eventName).replace(/-/g, ' ')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      document.title = `${formattedName} | NoriuMuzikos`;
+    }
+  }, [eventName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +71,14 @@ export default function EventEntry() {
       <div className="container px-4 max-w-md mx-auto py-16">
         <Card className="bg-zinc-900 border-zinc-800 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-xl text-center text-white">Prisijunkite prie renginio</CardTitle>
+            <CardTitle className="text-xl text-center text-white">
+              Prisijunkite prie renginio
+              {eventName && (
+                <span className="block mt-1 text-cyan-500">
+                  "{decodeURIComponent(eventName).replace(/-/g, ' ')}"
+                </span>
+              )}
+            </CardTitle>
             <p className="text-center text-white/70 mt-2">Įveskite renginio kodą norint užsisakyti dainą.</p>
           </CardHeader>
           <CardContent>
