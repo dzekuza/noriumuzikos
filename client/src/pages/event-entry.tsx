@@ -54,7 +54,8 @@ export default function EventEntry() {
       <div className="container px-4 max-w-md mx-auto py-16">
         <Card className="bg-zinc-900 border-zinc-800 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-xl text-center text-white">Prisijungti prie renginio</CardTitle>
+            <CardTitle className="text-xl text-center text-white">Prisijunkite prie renginio</CardTitle>
+            <p className="text-center text-white/70 mt-2">Įveskite renginio kodą norint užsisakyti dainą.</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -78,7 +79,7 @@ export default function EventEntry() {
                     Tikrinama...
                   </div>
                 ) : (
-                  "Prisijungti"
+                  "Prisijungti prie renginio"
                 )}
               </Button>
             </form>

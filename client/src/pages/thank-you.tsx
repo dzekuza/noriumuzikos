@@ -40,7 +40,7 @@ export default function ThankYouPage() {
           
           <div className="bg-zinc-800/50 rounded-md p-6 mb-6 border border-zinc-700">
             <p className="text-center text-white/70 mb-4">
-              Jūsų dainos užsakymas gautas ir bus sugrojamas kuo greičiau.
+              Užsake dainą, jį bus įtraukta į DJ grojaraštį.
             </p>
             
             <div className="flex items-center justify-center space-x-2 mb-4">
