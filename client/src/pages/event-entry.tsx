@@ -69,7 +69,7 @@ export default function EventEntry() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
+    <div className="min-h-screen flex items-center justify-center bg-zinc-950">
       <div className="container px-4 max-w-md mx-auto py-16">
         <Card className="bg-zinc-900 border-zinc-800 shadow-xl">
           <CardHeader>

@@ -1,14 +1,25 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import heroOverlay from "@assets/herooverlay.png";
-import group14Image from "@assets/Group 14.png";
+// Use the proper path aliases for the asset imports
+import heroOverlay from "@/assets/herooverlay.png";
+import group14Image from "@/assets/Group 14.png";
 
 export default function Home() {
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
+    <div className="min-h-screen flex flex-col items-center justify-center relative">
+      {/* Background Image */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <img 
+          src={heroOverlay} 
+          alt="Background" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/60"></div>
+      </div>
+      
       {/* Hero Section with Song Request Form - Minimalist Dark Design */}
-      <div className="container px-4 max-w-6xl mx-auto py-16">
+      <div className="container px-4 max-w-6xl mx-auto py-16 relative z-10">
         <div className="text-center">
           <div className="text-xs text-white/70 uppercase tracking-widest mb-4">Užsakyti dainą</div>
           
@@ -46,6 +57,15 @@ export default function Home() {
           >
             <Link to="/event-entry">Prisijungti dabar</Link>
           </Button>
+          
+          {/* Group 14 image below the button */}
+          <div className="mt-16 max-w-md mx-auto">
+            <img 
+              src={group14Image} 
+              alt="DJ Setup" 
+              className="w-full h-auto"
+            />
+          </div>
         </div>
       </div>
     </div>

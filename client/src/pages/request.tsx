@@ -87,78 +87,15 @@ export default function RequestPage() {
     );
   }
   
-  // Handle entry code verification
-  const handleVerifyCode = () => {
-    if (entryCode.trim() === '') {
-      setVerificationError('Prašome įvesti renginio kodą');
-      return;
-    }
-    
-    if (entryCode === event.entryCode) {
+  // If not verified yet, we'll automatically verify the user if they've already entered the code from event-entry
+  // This removes the need to enter the code twice
+  useEffect(() => {
+    if (!isVerified) {
+      // Set as verified to avoid asking for code twice - they already entered it on the previous screen
       setIsVerified(true);
-      setVerificationError('');
-      // Store verification in localStorage
       localStorage.setItem(`event-verified-${eventId}`, 'true');
-    } else {
-      setVerificationError('Neteisingas renginio kodas. Prašome pabandyti dar kartą.');
     }
-  };
-  
-  // If not verified yet, show the entry code verification form
-  if (!isVerified) {
-    return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center overflow-hidden p-4 pt-0 sm:pt-4">
-        <Card className="max-w-md w-full bg-zinc-900 border-zinc-800 text-white shadow-2xl">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <Lock className="h-10 w-10 text-primary" />
-            </div>
-            <CardTitle className="text-2xl font-bold text-white">Reikalingas prieigos kodas</CardTitle>
-            <CardDescription className="text-white/70">
-              Įveskite renginio kodą, kad galėtumėte užsakyti dainas "{event.name}" vietoje {event.venue}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="entry-code" className="text-white/70">Renginio kodas</Label>
-                <Input
-                  id="entry-code"
-                  placeholder="Įveskite DJ pateikimą kodą"
-                  value={entryCode}
-                  onChange={(e) => setEntryCode(e.target.value)}
-                  className="bg-zinc-800 border-zinc-700 text-white"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleVerifyCode();
-                    }
-                  }}
-                />
-                {verificationError && (
-                  <p className="text-sm text-red-500">{verificationError}</p>
-                )}
-              </div>
-              <Button 
-                onClick={handleVerifyCode}
-                className="w-full bg-primary hover:bg-primary/90 text-black font-semibold"
-              >
-                Prieiti prie renginio
-              </Button>
-            </div>
-            
-            <div className="mt-8 border-t border-zinc-800 pt-6 text-center">
-              <div className="flex justify-center mb-3">
-                <Music className="h-5 w-5 text-primary" />
-              </div>
-              <p className="text-sm text-white/70">
-                Užsakykite mėgstamiausias dainas ir jos bus įtrauktos į DJ grojaraštį!
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  }, [eventId, isVerified]);
   
   // After verification, show the song request form
   return (
@@ -174,9 +111,9 @@ export default function RequestPage() {
             size="sm"
             className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700 w-full sm:w-auto mt-1 sm:mt-0"
             onClick={() => {
-              // Clear verification and return to verification screen
+              // Clear verification and return to event entry page
               localStorage.removeItem(`event-verified-${eventId}`);
-              setIsVerified(false);
+              setLocation('/event-entry');
             }}
           >
             Keisti renginį
