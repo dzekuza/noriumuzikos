@@ -226,9 +226,16 @@ export default function EventControls({ eventId }: EventControlsProps) {
   
   // Handle Facebook sharing
   const handleFacebookShare = () => {
+    // Build URL with all necessary parameters
     const url = encodeURIComponent(getEventUrl());
-    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-    window.open(facebookShareUrl, '_blank', 'width=600,height=400');
+    const title = encodeURIComponent(`Užsisakyk dainas renginye "${event?.name || ''}"`);
+    const description = encodeURIComponent(`Prisijunk prie NoriuMuzikos ir užsisakyk savo mėgstamiausią dainą. Prisijungimo kodas: ${event?.entryCode || ''}`);
+    
+    // Add OG parameters to help Facebook scraper
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${title}`;
+    
+    // Open in a popup window
+    window.open(facebookShareUrl, '_blank', 'width=600,height=400,resizable=yes');
   };
   
   return (
