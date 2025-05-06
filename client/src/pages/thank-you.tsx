@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Check, Music, ChevronRight } from 'lucide-react';
+import { Check, Music, ChevronRight, Home } from 'lucide-react';
 
 export default function ThankYouPage() {
-  const [timeLeft, setTimeLeft] = useState(5);
   const [, setLocation] = useLocation();
   const [eventId, setEventId] = useState<string | null>(null);
   
@@ -20,25 +19,6 @@ export default function ThankYouPage() {
       setEventId(localStorage.getItem('lastEventId'));
     }
   }, []);
-  
-  // Auto-redirect countdown
-  useEffect(() => {
-    if (timeLeft <= 0) {
-      // Redirect to request page for same event
-      if (eventId) {
-        setLocation(`/event/${eventId}/request`);
-      } else {
-        setLocation('/');
-      }
-      return;
-    }
-    
-    const timer = setTimeout(() => {
-      setTimeLeft(timeLeft - 1);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, [timeLeft, setLocation, eventId]);
   
   const handleRequestAnother = () => {
     if (eventId) {
@@ -67,17 +47,6 @@ export default function ThankYouPage() {
               <Music className="h-5 w-5 text-primary" />
               <span className="text-white">DJ buvo informuotas</span>
             </div>
-            
-            <div className="w-full bg-zinc-700 h-2 rounded-full overflow-hidden mb-2">
-              <div 
-                className="bg-primary h-full rounded-full transition-all duration-300" 
-                style={{ width: `${(timeLeft / 5) * 100}%` }}
-              />
-            </div>
-            
-            <p className="text-xs text-center text-white/50">
-              Nukreipiama po {timeLeft} sekundžių...
-            </p>
           </div>
           
           <div className="space-y-4">
@@ -87,6 +56,15 @@ export default function ThankYouPage() {
             >
               Užsakyti kitą dainą
               <ChevronRight className="ml-2 h-5 w-5" />
+            </Button>
+            
+            <Button 
+              onClick={() => setLocation('/')}
+              variant="outline"
+              className="w-full border-zinc-700 bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-4 px-4 rounded-md transition-all flex items-center justify-center"
+            >
+              Grįžti į pradžią
+              <Home className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>
