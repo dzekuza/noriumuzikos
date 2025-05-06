@@ -20,7 +20,7 @@ export default function RecentSongs({ eventId }: RecentSongsProps) {
 
   return (
     <div className="mt-8 max-w-md mx-auto">
-      <h3 className="text-white/70 text-sm font-medium mb-4">Recently played songs</h3>
+      <h3 className="text-white/70 text-sm font-medium mb-4">Neseniai grotos dainos</h3>
       
       <div className="space-y-3 max-h-80 overflow-y-auto pr-2 hide-scrollbar">
         {isLoading ? (
@@ -45,7 +45,7 @@ export default function RecentSongs({ eventId }: RecentSongsProps) {
           ))
         ) : (
           <div className="bg-zinc-900/50 rounded-md p-4 text-center">
-            <p className="text-white/40">No songs have been played yet</p>
+            <p className="text-white/40">Dar nėra grotų dainų</p>
           </div>
         )}
       </div>

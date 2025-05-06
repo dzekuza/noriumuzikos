@@ -90,7 +90,7 @@ export default function RequestPage() {
   // Handle entry code verification
   const handleVerifyCode = () => {
     if (entryCode.trim() === '') {
-      setVerificationError('Please enter the event code');
+      setVerificationError('Prašome įvesti renginio kodą');
       return;
     }
     
@@ -100,7 +100,7 @@ export default function RequestPage() {
       // Store verification in localStorage
       localStorage.setItem(`event-verified-${eventId}`, 'true');
     } else {
-      setVerificationError('Incorrect event code. Please try again.');
+      setVerificationError('Neteisingas renginio kodas. Prašome pabandyti dar kartą.');
     }
   };
   
