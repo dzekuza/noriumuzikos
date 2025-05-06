@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { type Event } from '@shared/schema';
-import { Pause, Settings, StopCircle, Plus } from 'lucide-react';
+import { Pause, Settings, StopCircle, Plus, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -36,7 +36,15 @@ export default function EventControls({ eventId }: EventControlsProps) {
   const [isPaused, setIsPaused] = useState(false);
   const [isEndEventDialogOpen, setIsEndEventDialogOpen] = useState(false);
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [isEventActive, setIsEventActive] = useState(true); // Assume active until checked
+  const [eventSettings, setEventSettings] = useState({
+    name: '',
+    venue: '',
+    djName: '',
+    entryCode: '',
+    requestPrice: 0,
+  });
   const [newEventData, setNewEventData] = useState({
     name: '',
     venue: '',
@@ -56,16 +64,23 @@ export default function EventControls({ eventId }: EventControlsProps) {
     queryKey: [`/api/events/${eventId}`],
   });
   
-  // Update the event active status when event data changes
+  // Update the event settings and status when event data changes
   useEffect(() => {
     if (event) {
       setIsEventActive(event.isActive);
-      console.log(`Event ${eventId} active status:`, event.isActive);
+      setEventSettings({
+        name: event.name,
+        venue: event.venue,
+        djName: event.djName,
+        entryCode: event.entryCode || '',
+        requestPrice: event.requestPrice,
+      });
+      console.log(`Event ${eventId} loaded:`, event);
     }
   }, [event, eventId]);
   
   const { mutate: updateEvent } = useMutation({
-    mutationFn: async (data: { isActive: boolean }) => {
+    mutationFn: async (data: Partial<Event>) => {
       const response = await apiRequest('PATCH', `/api/events/${eventId}`, data);
       return response.json();
     },
@@ -144,6 +159,33 @@ export default function EventControls({ eventId }: EventControlsProps) {
     }));
   };
   
+  const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setEventSettings(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  const handleSaveSettings = () => {
+    // Prepare the update data
+    const updateData = {
+      name: eventSettings.name,
+      venue: eventSettings.venue,
+      djName: eventSettings.djName,
+      entryCode: eventSettings.entryCode,
+      requestPrice: Number(eventSettings.requestPrice),
+    };
+    
+    updateEvent(updateData);
+    setIsSettingsDialogOpen(false);
+    
+    toast({
+      title: "Settings Updated",
+      description: "The event settings have been updated",
+    });
+  };
+  
   return (
     <>
       <Card className="bg-zinc-900 border border-zinc-800 shadow-lg">
@@ -167,12 +209,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
                 </Button>
                 
                 <Button
-                  onClick={() => {
-                    toast({
-                      title: "Event Settings",
-                      description: "Event settings and customization coming soon",
-                    });
-                  }} 
+                  onClick={() => setIsSettingsDialogOpen(true)} 
                   variant="ghost" 
                   className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
                 >
@@ -354,6 +391,119 @@ export default function EventControls({ eventId }: EventControlsProps) {
               className="bg-primary hover:bg-primary/90 text-black font-semibold"
             >
               {createEventMutation.isPending ? 'Creating...' : 'Create Event'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Settings Dialog */}
+      <Dialog open={isSettingsDialogOpen} onOpenChange={setIsSettingsDialogOpen}>
+        <DialogContent className="bg-zinc-900 text-white border border-zinc-800 max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Event Settings</DialogTitle>
+            <DialogDescription className="text-white/70">
+              Modify event details and preferences
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="settings-name" className="text-white/70">Event Name</Label>
+                <Input
+                  id="settings-name"
+                  name="name"
+                  value={eventSettings.name}
+                  onChange={handleSettingsChange}
+                  placeholder="Saturday Night Party"
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="settings-venue" className="text-white/70">Venue</Label>
+                <Input
+                  id="settings-venue"
+                  name="venue"
+                  value={eventSettings.venue}
+                  onChange={handleSettingsChange}
+                  placeholder="Club XYZ"
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="settings-djName" className="text-white/70">DJ Name</Label>
+                <Input
+                  id="settings-djName"
+                  name="djName"
+                  value={eventSettings.djName}
+                  onChange={handleSettingsChange}
+                  placeholder="DJ Awesome"
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="settings-entryCode" className="text-white/70">Entry Code</Label>
+                <Input
+                  id="settings-entryCode"
+                  name="entryCode"
+                  value={eventSettings.entryCode}
+                  onChange={handleSettingsChange}
+                  placeholder="PARTY123"
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  required
+                />
+                <p className="text-xs text-white/50">Customers will need this code to access the request page</p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="settings-requestPrice" className="text-white/70">Request Price (€)</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70">€</span>
+                  <Input
+                    id="settings-requestPrice"
+                    name="requestPrice"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={Number(eventSettings.requestPrice) / 100}
+                    onChange={(e) => {
+                      // Convert EUR to cents when saving
+                      const valueInEur = parseFloat(e.target.value);
+                      const valueInCents = Math.round(valueInEur * 100);
+                      setEventSettings(prev => ({
+                        ...prev,
+                        requestPrice: valueInCents
+                      }));
+                    }}
+                    placeholder="5.00"
+                    className="bg-zinc-800 border-zinc-700 text-white pl-8"
+                    required
+                  />
+                </div>
+                <p className="text-xs text-white/50">Price per request in EUR</p>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsSettingsDialogOpen(false)}
+              className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSaveSettings}
+              className="bg-primary hover:bg-primary/90 text-black font-semibold"
+            >
+              <Save className="mr-2 h-4 w-4" /> Save Settings
             </Button>
           </DialogFooter>
         </DialogContent>
