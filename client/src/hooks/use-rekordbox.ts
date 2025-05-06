@@ -34,9 +34,33 @@ export function useRekordbox() {
   useEffect(() => {
     // Create WebSocket connection
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/rekordbox`;
+    const host = window.location.host;
+    const wsUrl = `${protocol}//${host}/ws`;
     
-    const ws = new WebSocket(wsUrl);
+    console.log(`Attempting to connect to WebSocket at ${wsUrl}`);
+    
+    // Create the WebSocket connection with error handling
+    let ws: WebSocket;
+    try {
+      ws = new WebSocket(wsUrl);
+    } catch (error) {
+      console.error('Error creating WebSocket connection:', error);
+      // Create a mock WebSocket for fallback (to prevent app crashes)
+      ws = {
+        onopen: null,
+        onmessage: null,
+        onclose: null,
+        onerror: null,
+        send: (data: string) => console.log('Mock WebSocket send:', data),
+        close: () => console.log('Mock WebSocket close')
+      } as unknown as WebSocket;
+      
+      toast({
+        title: 'Connection Warning',
+        description: 'Using offline mode for DJ tracks',
+        variant: 'default'
+      });
+    }
     
     ws.onopen = () => {
       setConnected(true);

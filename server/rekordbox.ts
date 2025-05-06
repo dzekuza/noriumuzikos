@@ -30,8 +30,10 @@ export class RekordboxService {
   init(server: Server) {
     this.wss = new WebSocketServer({ 
       server,
-      path: '/ws/rekordbox' 
+      path: '/ws' 
     });
+    
+    console.log('[rekordbox] WebSocket server initialized at path /ws');
     
     this.wss.on('connection', (ws) => {
       log('New Rekordbox WebSocket connection', 'rekordbox');

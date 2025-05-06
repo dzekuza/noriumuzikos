@@ -345,14 +345,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(400).json({ message: "Tracks array is required" });
     }
     
-    // Format the tracks properly
+    // Format the tracks properly with correct typing
     const formattedTracks = tracks.map((track, index) => ({
       id: track.id || `track-${Date.now()}-${index}`,
       title: track.title,
       artist: track.artist,
       duration: track.duration || 180,
       position: index,
-      status: 'queued'
+      status: 'queued' as const
     }));
     
     rekordboxService.updatePlaylist(formattedTracks);
