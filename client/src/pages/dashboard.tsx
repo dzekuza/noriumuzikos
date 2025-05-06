@@ -32,6 +32,8 @@ function CreateEventDialog() {
   const [venue, setVenue] = useState('');
   const [entryCode, setEntryCode] = useState('');
   const [requestPrice, setRequestPrice] = useState(500);
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const createEventMutation = useCreateEvent();
@@ -40,14 +42,16 @@ function CreateEventDialog() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Create a date for today at noon
-    const today = new Date();
-    const startTime = new Date(today);
-    startTime.setHours(13, 0, 0, 0); // 1 PM
+    // Check if dates are provided
+    if (!startTime || !endTime) {
+      alert('Pasirinkite renginio pradžios ir pabaigos datą');
+      setIsSubmitting(false);
+      return;
+    }
     
-    // Create end time 3 hours later
-    const endTime = new Date(today);
-    endTime.setHours(3, 59, 0, 0); // 3:59 AM next day
+    // Parse the datetime-local input values
+    const eventStartTime = new Date(startTime);
+    const eventEndTime = new Date(endTime);
     
     try {
       await createEventMutation.mutateAsync({
@@ -57,8 +61,8 @@ function CreateEventDialog() {
         entryCode,
         // Using requestPrice directly since it's already in cents
         requestPrice, 
-        startTime,
-        endTime,
+        startTime: eventStartTime,
+        endTime: eventEndTime,
         isActive: true
       });
       
@@ -66,6 +70,8 @@ function CreateEventDialog() {
       setName('');
       setVenue('');
       setEntryCode('');
+      setStartTime('');
+      setEndTime('');
       setRequestPrice(500); // Default 500 cents (€5)
       setIsOpen(false);
     } catch (error) {
@@ -111,6 +117,33 @@ function CreateEventDialog() {
                 id="venue"
                 value={venue}
                 onChange={(e) => setVenue(e.target.value)}
+                className="col-span-4 bg-zinc-800 border-zinc-700 text-white"
+                required
+              />
+            </div>
+            {/* Event start and end time fields */}
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="startTime" className="text-white col-span-4">
+                Renginio pradžia
+              </Label>
+              <Input
+                id="startTime"
+                type="datetime-local"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="col-span-4 bg-zinc-800 border-zinc-700 text-white"
+                required
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="endTime" className="text-white col-span-4">
+                Renginio pabaiga
+              </Label>
+              <Input
+                id="endTime"
+                type="datetime-local"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
                 className="col-span-4 bg-zinc-800 border-zinc-700 text-white"
                 required
               />
