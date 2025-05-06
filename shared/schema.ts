@@ -10,6 +10,8 @@ export const events = pgTable("events", {
   startTime: timestamp("start_time").notNull(),
   endTime: timestamp("end_time").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
+  entryCode: text("entry_code").notNull().default(""),  // Code needed to access the event
+  requestPrice: integer("request_price").notNull().default(500),  // Price in cents (default €5.00)
 });
 
 export const insertEventSchema = createInsertSchema(events).omit({
