@@ -121,6 +121,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
     // Convert entry code to string and request price to number
     const eventData = {
       ...newEventData,
+      djName: "", // Providing empty value for djName since it's required but field was removed
       entryCode: String(newEventData.entryCode),
       requestPrice: Number(newEventData.requestPrice),
       startTime: new Date(newEventData.startTime),
@@ -169,6 +170,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
     const updateData = {
       name: eventSettings.name,
       venue: eventSettings.venue,
+      djName: "", // Providing empty value for djName since it's required but field was removed
       entryCode: eventSettings.entryCode,
       requestPrice: Number(eventSettings.requestPrice),
     };
@@ -333,30 +335,26 @@ export default function EventControls({ eventId }: EventControlsProps) {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="requestPrice" className="text-white/70">Request Price (€)</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70">€</span>
-                  <Input
-                    id="requestPrice"
-                    name="requestPrice"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={Number(newEventData.requestPrice)}
-                    onChange={(e) => {
-                      // Store the price directly in euros
-                      const valueInEur = parseFloat(e.target.value);
-                      setNewEventData(prev => ({
-                        ...prev,
-                        requestPrice: valueInEur
-                      }));
-                    }}
-                    placeholder="5.00"
-                    className="bg-zinc-800 border-zinc-700 text-white pl-8"
-                    required
-                  />
-                </div>
-                <p className="text-xs text-white/50">Default: €5.00 per request</p>
+                <Label htmlFor="requestPrice" className="text-white/70">Request Price (cents)</Label>
+                <Input
+                  id="requestPrice"
+                  name="requestPrice"
+                  type="number"
+                  min="0"
+                  value={newEventData.requestPrice}
+                  onChange={(e) => {
+                    // Store the price directly in cents
+                    const valueInCents = parseInt(e.target.value, 10);
+                    setNewEventData(prev => ({
+                      ...prev,
+                      requestPrice: valueInCents
+                    }));
+                  }}
+                  placeholder="500"
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  required
+                />
+                <p className="text-xs text-white/50">Price per request in cents (500 = €5.00)</p>
               </div>
             </div>
           </div>
@@ -435,30 +433,26 @@ export default function EventControls({ eventId }: EventControlsProps) {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="settings-requestPrice" className="text-white/70">Request Price (€)</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70">€</span>
-                  <Input
-                    id="settings-requestPrice"
-                    name="requestPrice"
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={Number(eventSettings.requestPrice)}
-                    onChange={(e) => {
-                      // Store the price directly in euros
-                      const valueInEur = parseFloat(e.target.value);
-                      setEventSettings(prev => ({
-                        ...prev,
-                        requestPrice: valueInEur
-                      }));
-                    }}
-                    placeholder="5.00"
-                    className="bg-zinc-800 border-zinc-700 text-white pl-8"
-                    required
-                  />
-                </div>
-                <p className="text-xs text-white/50">Price per request in EUR</p>
+                <Label htmlFor="settings-requestPrice" className="text-white/70">Request Price (cents)</Label>
+                <Input
+                  id="settings-requestPrice"
+                  name="requestPrice"
+                  type="number"
+                  min="0"
+                  value={eventSettings.requestPrice}
+                  onChange={(e) => {
+                    // Store the price directly in cents
+                    const valueInCents = parseInt(e.target.value, 10);
+                    setEventSettings(prev => ({
+                      ...prev,
+                      requestPrice: valueInCents
+                    }));
+                  }}
+                  placeholder="500"
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  required
+                />
+                <p className="text-xs text-white/50">Price per request in cents (500 = €5.00)</p>
               </div>
             </div>
           </div>

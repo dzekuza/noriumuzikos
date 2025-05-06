@@ -6,7 +6,7 @@ export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   venue: text("venue").notNull(),
-  djName: text("dj_name").notNull(),
+  djName: text("dj_name").default(""),  // Made optional as requested
   startTime: timestamp("start_time").notNull(),
   endTime: timestamp("end_time").notNull(),
   isActive: boolean("is_active").default(true).notNull(),

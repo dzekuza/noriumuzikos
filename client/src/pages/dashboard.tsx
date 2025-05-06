@@ -53,6 +53,7 @@ function CreateEventDialog() {
       await createEventMutation.mutateAsync({
         name,
         venue,
+        djName: "", // Providing empty value for djName since it's required but field was removed
         entryCode,
         // Using requestPrice directly since it's already in cents
         requestPrice, 
@@ -139,7 +140,9 @@ function CreateEventDialog() {
                 className="col-span-4 bg-zinc-800 border-zinc-700 text-white"
                 required
                 min="0"
+                placeholder="500"
               />
+              <p className="text-xs text-white/50 col-span-4">Kaina centais (500 = 5€)</p>
             </div>
           </div>
           <DialogFooter>
