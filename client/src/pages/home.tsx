@@ -27,8 +27,8 @@ export default function Home() {
           <div className="text-xs text-white/70 uppercase tracking-widest mb-4">Užsakyti dainą</div>
           
           <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight mb-8">
-            Išgirsk savo dainą<br />
-            <span className="text-white/90">be prašymo</span>
+            Užsisakyk sau dainą<br />
+            <span className="text-white/90">vienu paspaudimu</span>
           </h1>
           
           <p className="text-xl text-white/70 max-w-2xl mx-auto mb-10">
