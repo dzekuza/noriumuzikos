@@ -100,7 +100,7 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
       <DialogContent className="bg-zinc-900 text-white p-0 max-w-lg max-h-[90vh] overflow-y-auto border border-zinc-800">
         <DialogHeader className="p-6 pb-2">
           <div className="flex justify-between items-center mb-4">
-            <DialogTitle className="text-xl font-bold text-white">Payment</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-white">Mokėjimas</DialogTitle>
             <Button variant="ghost" size="icon" onClick={onClose} className="text-white/60 hover:text-white bg-transparent">
               <X className="h-4 w-4" />
             </Button>
@@ -109,8 +109,8 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
           <div className="bg-zinc-800/50 rounded-lg p-4 mb-6 border border-zinc-700">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="font-semibold text-white">{songData?.songName || 'Your song'}</h3>
-                <p className="text-sm text-white/70">{songData?.artistName || 'Artist'}</p>
+                <h3 className="font-semibold text-white">{songData?.songName || 'Jūsų daina'}</h3>
+                <p className="text-sm text-white/70">{songData?.artistName || 'Atlikėjas'}</p>
               </div>
               <span className="text-primary font-bold">€{(paymentAmount / 100).toFixed(2)}</span>
             </div>
@@ -218,12 +218,12 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
         {paymentProcessing ? (
           <>
             <span className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-black border-t-transparent"></span>
-            Processing...
+            Apdorojama...
           </>
         ) : (
           <>
             <CreditCard className="mr-2 h-5 w-5" />
-            Pay €{(paymentAmount / 100).toFixed(2)}
+            Mokėti €{(paymentAmount / 100).toFixed(2)}
           </>
         )}
       </Button>

@@ -130,8 +130,8 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   return (
     <>
       <div className="max-w-md mx-auto">
-        <h2 className="text-2xl font-semibold text-white mb-4">Request song</h2>
-        <p className="text-white/60 text-sm mb-6">Fill in the details of your requested song</p>
+        <h2 className="text-2xl font-semibold text-white mb-4">Užsakyti dainą</h2>
+        <p className="text-white/60 text-sm mb-6">Užpildykite išsamią informaciją apie norimą dainą</p>
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="bg-zinc-900 rounded-md p-8 shadow-lg border border-zinc-800">
@@ -143,7 +143,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
                   <FormControl>
                     <Input 
                       {...field} 
-                      placeholder="Artist" 
+                      placeholder="Atlikėjas" 
                       className="bg-zinc-800 border-zinc-700 text-white focus:ring-primary py-5 text-base"
                     />
                   </FormControl>
@@ -160,7 +160,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
                   <FormControl>
                     <Input 
                       {...field} 
-                      placeholder="Song title" 
+                      placeholder="Dainos pavadinimas" 
                       className="bg-zinc-800 border-zinc-700 text-white focus:ring-primary py-5 text-base"
                     />
                   </FormControl>
@@ -177,7 +177,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
                   <FormControl>
                     <Input 
                       {...field} 
-                      placeholder="Your name" 
+                      placeholder="Jūsų vardas" 
                       className="bg-zinc-800 border-zinc-700 text-white focus:ring-primary py-5 text-base"
                     />
                   </FormControl>
@@ -192,19 +192,19 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
               className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 px-4 rounded-md transition-all text-base"
             >
               {isFreeRequest ? (
-                'Request song for free' 
+                'Užsakyti dainą nemokamai' 
               ) : (
-                `Pay €${(requestPrice / 100).toFixed(2)} and request a song`
+                `Sumokėti €${(requestPrice / 100).toFixed(2)} ir užsakyti dainą`
               )}
             </Button>
             
             <div className="flex items-center justify-center mt-4">
               {isFreeRequest ? (
-                <span className="text-xs text-white/40">Your first request is free!</span>
+                <span className="text-xs text-white/40">Jūsų pirmas užsakymas nemokamas!</span>
               ) : (
                 <>
                   <Lock className="text-white/40 mr-1 h-3 w-3" />
-                  <span className="text-xs text-white/40">Secure payment via Stripe</span>
+                  <span className="text-xs text-white/40">Saugus mokėjimas per Stripe</span>
                 </>
               )}
             </div>
