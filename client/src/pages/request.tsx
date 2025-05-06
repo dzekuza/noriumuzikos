@@ -45,9 +45,9 @@ export default function RequestPage() {
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center bg-zinc-900 border-zinc-800 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-white">Event Not Found</CardTitle>
+            <CardTitle className="text-2xl font-bold text-white">Renginys Nerastas</CardTitle>
             <CardDescription className="text-white/70">
-              The DJ event you're looking for doesn't exist or has ended.
+              DJ renginys, kurio ieškote, neegzistuoja arba jau pasibaigęs.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -55,7 +55,7 @@ export default function RequestPage() {
               onClick={() => setLocation('/')} 
               className="mt-2 bg-primary text-black font-semibold hover:bg-primary/90"
             >
-              Go Home
+              Grįžti į pradžią
             </Button>
           </CardContent>
         </Card>
@@ -69,9 +69,9 @@ export default function RequestPage() {
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center bg-zinc-900 border-zinc-800 shadow-xl">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-white">Event Ended</CardTitle>
+            <CardTitle className="text-2xl font-bold text-white">Renginys Pasibaigės</CardTitle>
             <CardDescription className="text-white/70">
-              The DJ event "{event.name}" has ended and is no longer accepting song requests.
+              DJ renginys "{event.name}" jau pasibaigęs ir nebepriima dainų užsakymų.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -79,7 +79,7 @@ export default function RequestPage() {
               onClick={() => setLocation('/')} 
               className="mt-2 bg-primary text-black font-semibold hover:bg-primary/90"
             >
-              Go Home
+              Grįžti į pradžią
             </Button>
           </CardContent>
         </Card>
@@ -113,18 +113,18 @@ export default function RequestPage() {
             <div className="flex justify-center mb-4">
               <Lock className="h-10 w-10 text-primary" />
             </div>
-            <CardTitle className="text-2xl font-bold text-white">Event Access Required</CardTitle>
+            <CardTitle className="text-2xl font-bold text-white">Reikalingas prieigos kodas</CardTitle>
             <CardDescription className="text-white/70">
-              Enter the event code to request songs for "{event.name}" at {event.venue}
+              Įveskite renginio kodą, kad galėtumėte užsakyti dainas "{event.name}" vietoje {event.venue}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="entry-code" className="text-white/70">Event Code</Label>
+                <Label htmlFor="entry-code" className="text-white/70">Renginio kodas</Label>
                 <Input
                   id="entry-code"
-                  placeholder="Enter code provided by the DJ"
+                  placeholder="Įveskite DJ pateikimą kodą"
                   value={entryCode}
                   onChange={(e) => setEntryCode(e.target.value)}
                   className="bg-zinc-800 border-zinc-700 text-white"
@@ -142,7 +142,7 @@ export default function RequestPage() {
                 onClick={handleVerifyCode}
                 className="w-full bg-primary hover:bg-primary/90 text-black font-semibold"
               >
-                Access Event
+                Prieiti prie renginio
               </Button>
             </div>
             
@@ -151,7 +151,7 @@ export default function RequestPage() {
                 <Music className="h-5 w-5 text-primary" />
               </div>
               <p className="text-sm text-white/70">
-                Request your favorite songs and they'll be added to the DJ's playlist!
+                Užsakykite mėgstamiausias dainas ir jos bus įtrauktos į DJ grojaraštį!
               </p>
             </div>
           </CardContent>
@@ -166,7 +166,7 @@ export default function RequestPage() {
       <div className="container mx-auto py-6 px-4">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <div className="text-xs text-white/70 uppercase tracking-widest mb-1">Event</div>
+            <div className="text-xs text-white/70 uppercase tracking-widest mb-1">Renginys</div>
             <h1 className="text-xl font-bold text-white">{event.name}</h1>
           </div>
           <Button
@@ -178,7 +178,7 @@ export default function RequestPage() {
               setIsVerified(false);
             }}
           >
-            Change Event
+            Keisti renginį
           </Button>
         </div>
 
