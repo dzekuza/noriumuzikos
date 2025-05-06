@@ -87,15 +87,9 @@ export default function RequestPage() {
     );
   }
   
-  // If not verified yet, we'll automatically verify the user if they've already entered the code from event-entry
-  // This removes the need to enter the code twice
-  useEffect(() => {
-    if (!isVerified) {
-      // Set as verified to avoid asking for code twice - they already entered it on the previous screen
-      setIsVerified(true);
-      localStorage.setItem(`event-verified-${eventId}`, 'true');
-    }
-  }, [eventId, isVerified]);
+  // We don't need the second useEffect that was causing React Error #310
+  // The first useEffect on lines 24-29 already handles loading the verification from localStorage
+  // We're already automatically verified from event-entry.tsx setting the localStorage item
   
   // After verification, show the song request form
   return (
