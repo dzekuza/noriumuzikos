@@ -34,6 +34,9 @@ export default function RecentSongs({ eventId }: RecentSongsProps) {
                 <div className="w-full sm:w-auto">
                   <h3 className="font-medium text-white text-sm sm:text-base truncate">{song.songName}</h3>
                   <p className="text-xs sm:text-sm text-white/60 truncate">{song.artistName}</p>
+                  {song.wishes && (
+                    <p className="text-xs italic text-white/40 mt-1 truncate">Palinkėjimas: {song.wishes}</p>
+                  )}
                 </div>
                 <span className="text-xs text-white/40 whitespace-nowrap">
                   {song.playedTime 

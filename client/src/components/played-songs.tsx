@@ -41,6 +41,9 @@ export default function PlayedSongs({ eventId }: PlayedSongsProps) {
                   <h3 className="font-medium text-white">{song.songName}</h3>
                   <p className="text-sm text-gray-300">{song.artistName}</p>
                   <span className="text-xs text-gray-400 mt-1">Requested by: {song.requesterName}</span>
+                  {song.wishes && (
+                    <p className="text-xs italic text-gray-400 mt-1">Palinkėjimas: {song.wishes}</p>
+                  )}
                 </div>
                 <div className="flex flex-col items-end">
                   <span className="text-accent font-bold">€{(song.amount / 100).toFixed(2)}</span>
