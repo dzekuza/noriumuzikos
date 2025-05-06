@@ -37,7 +37,7 @@ export default function Header() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Link href="/dashboard" className="inline-block">
-                      <Button variant="ghost" size="sm" className="text-white/80 hover:text-primary bg-transparent">
+                      <Button variant="ghost" size="sm" className="text-white/80 hover:text-cyan-400 bg-transparent">
                         <User className="h-5 w-5 mr-1" />
                         {user.username}
                       </Button>
@@ -45,18 +45,18 @@ export default function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-zinc-900 border border-zinc-800">
                     <Link href="/dashboard">
-                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
+                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-cyan-400 hover:bg-zinc-800 focus:bg-zinc-800">
                         <LayoutDashboard className="h-4 w-4 mr-2" />
                         Valdymo Skydelis
                       </DropdownMenuItem>
                     </Link>
                     <Link href="/profile">
-                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
+                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-cyan-400 hover:bg-zinc-800 focus:bg-zinc-800">
                         <Settings className="h-4 w-4 mr-2" />
                         Mano Profilis
                       </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-cyan-400 hover:bg-zinc-800 focus:bg-zinc-800">
                       <LogOut className="h-4 w-4 mr-2" />
                       Atsijungti
                     </DropdownMenuItem>
@@ -65,7 +65,7 @@ export default function Header() {
               </>
             ) : (
               <Link href="/auth">
-                <Button variant="ghost" size="sm" className="text-white/80 hover:text-primary bg-transparent">
+                <Button variant="ghost" size="sm" className="text-white/80 hover:text-cyan-400 bg-transparent">
                   <User className="h-5 w-5 mr-1" />
                   Prisijungti
                 </Button>
