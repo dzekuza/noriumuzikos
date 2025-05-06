@@ -168,17 +168,15 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
       if (error) {
         console.error('Stripe error:', error);
         toast({
-          title: `${isTestMode ? 'Test ' : ''}Payment Failed`,
-          description: error.message || (isTestMode ? "The test card was declined. Try 4242 4242 4242 4242." : "Your card was declined. Please try a different card."),
+          title: `Payment Failed`,
+          description: error.message || "Your card was declined. Please try a different card.",
           variant: "destructive",
         });
         setPaymentProcessing(false);
       } else {
         toast({
-          title: `${isTestMode ? 'Test ' : ''}Payment Successful`,
-          description: isTestMode 
-            ? "Your test song request is being processed! No real charge occurred." 
-            : "Your song request is being processed! You'll be redirected shortly.",
+          title: `Payment Successful`,
+          description: "Your song request is being processed! You'll be redirected shortly.",
         });
         
         // Note: Stripe will handle the redirect via the return_url
@@ -186,35 +184,22 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
       }
     } catch (e) {
       console.error('Payment error:', e);
-      // Determine if we're in test mode based on the actual Stripe key or object
-      const stripeKey = window.__STRIPE_PUBLIC_KEY || import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
-      const isTestMode = stripeKey.startsWith('pk_test_');
+      // Force LIVE mode for consistent UI
+      const isTestMode = false;
       toast({
-        title: `${isTestMode ? 'Test ' : ''}Payment Error`,
-        description: isTestMode 
-          ? "An unexpected error occurred in test mode. Please try again with a different card." 
-          : "An unexpected error occurred. Please try again later.",
+        title: `Payment Error`,
+        description: "An unexpected error occurred. Please try again later.",
         variant: "destructive",
       });
       setPaymentProcessing(false);
     }
   };
   
-  // Determine if we're in test mode based on the actual Stripe key or object
-  const stripeKey = window.__STRIPE_PUBLIC_KEY || import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
-  const isTestMode = stripeKey.startsWith('pk_test_');
+  // Force LIVE mode for UI consistency 
+  const isTestMode = false;
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4 px-6 pb-6">
-      {isTestMode && (
-        <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
-          <ShieldCheck className="h-5 w-5 mr-2" />
-          <div>
-            <strong className="font-bold block">TEST MODE ONLY</strong>
-            <span>No real payments will be processed. This is a test environment.</span>
-          </div>
-        </div>
-      )}
       
       <PaymentElement />
       
@@ -270,21 +255,11 @@ function MockPaymentForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () 
     setLocation(`/thank-you?eventId=${eventId}`);
   };
   
-  // Determine if we're in test mode based on the actual Stripe key or object
-  const stripeKey = window.__STRIPE_PUBLIC_KEY || import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
-  const isTestMode = stripeKey.startsWith('pk_test_');
+  // Force LIVE mode for UI consistency
+  const isTestMode = false;
   
   return (
     <div className="space-y-4">
-      {isTestMode && (
-        <div className="bg-amber-100 text-amber-800 p-3 rounded-md text-sm flex items-center mb-4 border-2 border-amber-400">
-          <ShieldCheck className="h-5 w-5 mr-2" />
-          <div>
-            <strong className="font-bold block">TEST MODE ONLY</strong>
-            <span>No real payments will be processed. This is a test environment.</span>
-          </div>
-        </div>
-      )}
       <div>
         <label className="block text-sm font-medium text-white/70 mb-2">Card Information</label>
         <div className="bg-zinc-800 border border-zinc-700 rounded-md p-3">
