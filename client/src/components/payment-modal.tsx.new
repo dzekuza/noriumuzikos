@@ -186,7 +186,9 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
       }
     } catch (e) {
       console.error('Payment error:', e);
-      const isTestMode = import.meta.env.VITE_STRIPE_PUBLIC_KEY?.startsWith('pk_test_');
+      // Determine if we're in test mode based on the actual Stripe key or object
+      const stripeKey = window.__STRIPE_PUBLIC_KEY || import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
+      const isTestMode = stripeKey.startsWith('pk_test_');
       toast({
         title: `${isTestMode ? 'Test ' : ''}Payment Error`,
         description: isTestMode 
@@ -198,8 +200,9 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
     }
   };
   
-  // Determine if we're in test mode based on the Stripe public key
-  const isTestMode = import.meta.env.VITE_STRIPE_PUBLIC_KEY?.startsWith('pk_test_');
+  // Determine if we're in test mode based on the actual Stripe key or object
+  const stripeKey = window.__STRIPE_PUBLIC_KEY || import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
+  const isTestMode = stripeKey.startsWith('pk_test_');
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4 px-6 pb-6">
@@ -267,8 +270,9 @@ function MockPaymentForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () 
     setLocation(`/thank-you?eventId=${eventId}`);
   };
   
-  // Determine if we're in test mode based on the Stripe public key
-  const isTestMode = import.meta.env.VITE_STRIPE_PUBLIC_KEY?.startsWith('pk_test_');
+  // Determine if we're in test mode based on the actual Stripe key or object
+  const stripeKey = window.__STRIPE_PUBLIC_KEY || import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
+  const isTestMode = stripeKey.startsWith('pk_test_');
   
   return (
     <div className="space-y-4">
