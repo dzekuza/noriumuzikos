@@ -1,0 +1,54 @@
+client:536 Uncaught (in promise) DOMException: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=WWQ_n8SYR3rQ' is invalid.
+    at setupWebSocket (https://a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev/@vite/client:536:19)
+    at fallback (https://a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev/@vite/client:509:16)
+    at WebSocket.<anonymous> (https://a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev/@vite/client:555:7)
+chunk-RPCDYKBN.js?v=564af7f4:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+stripe-config.ts:26 Using TEST mode Stripe key. For production payments, use a LIVE key.
+(anonymous) @ stripe-config.ts:26
+payment-modal.tsx:44 Using custom payment amount: 500
+song-request-form.tsx:57 Free request status for event 8: false
+song-request-form.tsx:64 Using custom price 300 cents for event ID: 8
+payment-modal.tsx:44 Using custom payment amount: 300
+16Third-party cookie will be blocked. Learn more in the Issues tab.
+a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev/:1 A soft navigation has been detected: https://a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev/
+/event-entry:1 A soft navigation has been detected: https://a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev/event-entry
+wouter.js?v=564af7f4:221 A soft navigation has been detected: https://a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev/event/9/request
+payment-modal.tsx:44 Using custom payment amount: 500
+song-request-form.tsx:57 Free request status for event 9: true
+song-request-form.tsx:64 Using custom price 500 cents for event ID: 9
+song-request-form.tsx:117 This is a free first request - skipping payment
+song-request-form.tsx:80 Submitting song request for event ID: 9 with data: Object
+song-request-form.tsx:83 Using price: 500 cents (Free request: false )
+song-request-form.tsx:91 Song request API response: Object
+song-request-form.tsx:95 Song request created successfully: Object
+chunk-73YXF2EL.js?v=564af7f4:321 `DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+(anonymous) @ chunk-73YXF2EL.js?v=564af7f4:321
+Show 1 more frame
+Show less
+chunk-73YXF2EL.js?v=564af7f4:335 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-73YXF2EL.js?v=564af7f4:335
+Show 1 more frame
+Show less
+payment-modal.tsx:58 Initializing payment for event ID: 9
+chunk-73YXF2EL.js?v=564af7f4:335 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-73YXF2EL.js?v=564af7f4:335
+Show 1 more frame
+Show less
+api.stripe.com/v1/elements/sessions?client_secret=pi_3RLo99G3BtAgoCPD1WvGmaB5_secret_dTrxkjWeni1czoJfC6OvG13aj&key=pk_test_51RKlrF4g5Svxe9objBioAzejdxRVqVOVubueMQjsMTmFoonRegU9VTACgEOkH2LthXYkEsqlBdA02zGClwKOfOd3004Ubo1rv0&_stripe_version=2025-03-31.basil&type=payment_intent&locale=en-US&referrer_host=a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev&expand[0]=payment_method_preference.payment_intent.payment_method&stripe_js_id=053c6e71-ec97-4a25-8146-133138463ff6:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/elements/sessions?client_secret=pi_3RLo99G3BtAgoCPD1WvGmaB5_secret_dTrxkjWeni1czoJfC6OvG13aj&key=pk_test_51RKlrF4g5Svxe9objBioAzejdxRVqVOVubueMQjsMTmFoonRegU9VTACgEOkH2LthXYkEsqlBdA02zGClwKOfOd3004Ubo1rv0&_stripe_version=2025-03-31.basil&type=payment_intent&locale=en-US&referrer_host=a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev&expand[0]=payment_method_preference.payment_intent.payment_method&stripe_js_id=053c6e71-ec97-4a25-8146-133138463ff6:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+api.stripe.com/v1/elements/sessions?client_secret=pi_3RLo99G3BtAgoCPD1WvGmaB5_secret_dTrxkjWeni1czoJfC6OvG13aj&key=pk_test_51RKlrF4g5Svxe9objBioAzejdxRVqVOVubueMQjsMTmFoonRegU9VTACgEOkH2LthXYkEsqlBdA02zGClwKOfOd3004Ubo1rv0&_stripe_version=2025-03-31.basil&type=payment_intent&locale=en-US&referrer_host=a8efc0b9-c8e0-470a-bf78-0f6fa5792090-00-kx0bx5bl9hqq.riker.replit.dev&expand[0]=payment_method_preference.payment_intent.payment_method&stripe_js_id=053c6e71-ec97-4a25-8146-133138463ff6:1 
+        
+        
+       Failed to load resource: the server responded with a status of 400 ()
+stripe.js:1 Unhandled payment Element loaderror Object
+i._emitEvent @ stripe.js:1

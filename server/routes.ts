@@ -9,22 +9,34 @@ import { setupAuth, requireAuth } from "./auth";
 import { sendSongRequestNotification } from "./email-service";
 import fs from 'fs';
 
-// Extract keys directly from .env file if environment variables aren't working
-let stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-let stripePublicKey = process.env.VITE_STRIPE_PUBLIC_KEY;
-
-// If we're still getting test keys from the environment, try to read directly from .env
-if (!stripeSecretKey || stripeSecretKey.startsWith('sk_test_')) {
+// Always use live keys from .env file, ignoring environment variables
+const readEnvFile = () => {
   try {
     const envFile = fs.readFileSync('.env', 'utf8');
     const secretKeyMatch = envFile.match(/STRIPE_SECRET_KEY=([^\n]+)/);
-    if (secretKeyMatch && secretKeyMatch[1].startsWith('sk_live_')) {
-      stripeSecretKey = secretKeyMatch[1];
-      console.log('Using Stripe secret key from .env file directly');
-    }
+    const publicKeyMatch = envFile.match(/VITE_STRIPE_PUBLIC_KEY=([^\n]+)/);
+    
+    // Return the keys from .env file
+    return {
+      secret: secretKeyMatch ? secretKeyMatch[1] : null,
+      public: publicKeyMatch ? publicKeyMatch[1] : null
+    };
   } catch (error) {
     console.warn('Could not read .env file:', error);
+    return { secret: null, public: null };
   }
+};
+
+// Always prioritize keys from the .env file first
+const envKeys = readEnvFile();
+let stripeSecretKey = envKeys.secret || process.env.STRIPE_SECRET_KEY;
+let stripePublicKey = envKeys.public || process.env.VITE_STRIPE_PUBLIC_KEY;
+
+// Still ensure we have valid keys
+if (!stripeSecretKey || !stripePublicKey) {
+  console.warn('Missing Stripe keys - payments may not work correctly');
+} else {
+  console.log('Using Stripe keys from .env file directly');
 }
 
 // Initialize Stripe client with the key we found

@@ -32,32 +32,42 @@ export function useRekordbox() {
   const { toast } = useToast();
   
   useEffect(() => {
-    // Create WebSocket connection
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.host;
-    const wsUrl = `${protocol}//${host}/ws`;
+    // Create WebSocket connection with robust error handling
+    // This is critical to prevent app crashing when WebSocket connection fails
     
-    console.log(`Attempting to connect to WebSocket at ${wsUrl}`);
+    // Initialize a mock WebSocket first as fallback
+    let ws = {
+      onopen: null,
+      onmessage: null,
+      onclose: null,
+      onerror: null,
+      send: (data: string) => console.log('Mock WebSocket send:', data),
+      close: () => console.log('Mock WebSocket close')
+    } as unknown as WebSocket;
     
-    // Create the WebSocket connection with error handling
-    let ws: WebSocket;
     try {
-      ws = new WebSocket(wsUrl);
+      // Get the current hostname and port
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.host;
+      const wsUrl = `${protocol}//${host}/ws`;
+      
+      console.log(`Attempting to connect to WebSocket at ${wsUrl}`);
+      
+      // Only try to create a real WebSocket if we're sure the URL is valid
+      if (host && protocol) {
+        ws = new WebSocket(wsUrl);
+        console.log('WebSocket connection created successfully');
+      } else {
+        console.warn('Invalid WebSocket URL parameters, using mock connection');
+      }
     } catch (error) {
       console.error('Error creating WebSocket connection:', error);
-      // Create a mock WebSocket for fallback (to prevent app crashes)
-      ws = {
-        onopen: null,
-        onmessage: null,
-        onclose: null,
-        onerror: null,
-        send: (data: string) => console.log('Mock WebSocket send:', data),
-        close: () => console.log('Mock WebSocket close')
-      } as unknown as WebSocket;
+      // We already have the mock WebSocket initialized above
       
+      // Show a toast but make it non-destructive to avoid alarming users
       toast({
-        title: 'Connection Warning',
-        description: 'Using offline mode for DJ tracks',
+        title: 'Sync Notice',
+        description: 'Running in offline mode for track synchronization',
         variant: 'default'
       });
     }
