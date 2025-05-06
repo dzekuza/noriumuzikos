@@ -203,7 +203,24 @@ export default function EventControls({ eventId }: EventControlsProps) {
   const getEventUrl = () => {
     // Create URL to the event entry page with event name in the slug
     const eventName = event?.name ? encodeURIComponent(event.name.toLowerCase().replace(/\s+/g, '-')) : '';
-    const url = new URL(`${window.location.origin}/event-entry${eventName ? `/${eventName}` : ''}`);
+    
+    // Get the base URL without any additional Replit-specific parts
+    let origin = window.location.origin;
+    
+    // If the URL contains .riker.replit.dev or similar, clean it up
+    // This simplifies the URL for sharing purposes
+    try {
+      const originUrl = new URL(origin);
+      // Check if we're on a subdomain of replit that contains a dash (likely a random part)
+      if (originUrl.hostname.includes('.replit.') && originUrl.hostname.includes('-')) {
+        // Create a cleaner URL (e.g., just noriuMuzikos.app or similar)
+        origin = `${originUrl.protocol}//noriuMuzikos.app`;
+      }
+    } catch (error) {
+      console.error('Failed to parse origin URL:', error);
+    }
+    
+    const url = new URL(`${origin}/event-entry${eventName ? `/${eventName}` : ''}`);
     // We don't add the entry code to URL for security reasons, it should be entered manually
     return url.toString();
   };
@@ -455,21 +472,30 @@ export default function EventControls({ eventId }: EventControlsProps) {
           </DialogHeader>
           
           <div className="space-y-4 py-4">
-            <div className="flex items-center justify-between bg-zinc-800 p-3 rounded-md border border-zinc-700">
-              <p className="text-sm text-white truncate">{getEventUrl()}</p>
-              <Button 
-                onClick={handleCopyLink} 
-                size="sm" 
-                variant="ghost" 
-                className="h-8 px-2 ml-2"
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
+            <div className="bg-zinc-800 p-3 rounded-md border border-zinc-700">
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-sm font-medium text-white/80">Renginio nuoroda:</p>
+                <Button 
+                  onClick={handleCopyLink} 
+                  size="sm" 
+                  variant="outline" 
+                  className="h-7 px-2 py-0 text-xs bg-zinc-700 hover:bg-zinc-600 border-zinc-600"
+                >
+                  <Copy className="h-3 w-3 mr-1" />
+                  Kopijuoti
+                </Button>
+              </div>
+              <div className="px-3 py-2 bg-zinc-950/50 rounded border border-zinc-700/50 font-mono text-xs text-primary break-all">
+                {getEventUrl()}
+              </div>
             </div>
             
-            <div className="text-sm text-white/70 flex items-center space-x-2">
-              <p>Prisijungimo kodas: </p>
-              <span className="font-mono bg-zinc-800 px-2 py-1 rounded">{event?.entryCode}</span>
+            <div className="bg-zinc-800 p-3 rounded-md border border-zinc-700">
+              <p className="text-sm font-medium text-white/80 mb-2">Prisijungimo kodas:</p>
+              <div className="px-3 py-2 bg-zinc-950/50 rounded border border-zinc-700/50 font-mono text-sm text-primary text-center">
+                <span className="tracking-widest font-bold">{event?.entryCode}</span>
+              </div>
+              <p className="text-xs text-white/70 mt-2 italic">Svarbu: Vartotojams reikės šio kodo prisijungti</p>
             </div>
             
             <div className="flex flex-col space-y-2 pt-4">
