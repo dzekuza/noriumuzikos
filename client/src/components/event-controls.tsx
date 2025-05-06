@@ -195,7 +195,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
       
       {/* Create New Event Dialog */}
       <Dialog open={isCreateEventDialogOpen} onOpenChange={setIsCreateEventDialogOpen}>
-        <DialogContent className="bg-zinc-900 text-white border border-zinc-800 max-w-lg">
+        <DialogContent className="bg-zinc-900 text-white border border-zinc-800 max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">Create New Event</DialogTitle>
             <DialogDescription className="text-white/70">

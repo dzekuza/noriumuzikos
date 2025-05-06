@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { type Event } from '@shared/schema';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -36,9 +37,23 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [currentRequest, setCurrentRequest] = useState<FormValues | null>(null);
+  const [requestPrice, setRequestPrice] = useState(500); // Default €5.00 in cents
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Fetch the event data to get the custom price
+  const { data: event } = useQuery<Event>({
+    queryKey: [`/api/events/${eventId}`],
+  });
+  
+  // Update the request price when the event data is loaded
+  useEffect(() => {
+    if (event && event.requestPrice) {
+      setRequestPrice(event.requestPrice);
+      console.log(`Using custom price ${event.requestPrice} cents for event ID: ${eventId}`);
+    }
+  }, [event, eventId]);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -52,9 +67,10 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: FormValues) => {
       console.log('Submitting song request for event ID:', eventId, 'with data:', data);
+      console.log('Using price:', requestPrice, 'cents');
       const response = await apiRequest('POST', `/api/events/${eventId}/song-requests`, {
         ...data,
-        amount: 500, // €5.00 in cents
+        amount: requestPrice, // Use dynamic price from event
         eventId,
       });
       const responseData = await response.json();
@@ -154,7 +170,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
               disabled={isPending}
               className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 px-4 rounded-md transition-all text-base"
             >
-              Pay €5 and request a song
+              Pay €{(requestPrice / 100).toFixed(2)} and request a song
             </Button>
             
             <div className="flex items-center justify-center mt-4">
@@ -171,6 +187,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
         onPay={handlePayment}
         songData={currentRequest}
         isPending={isPending}
+        paymentAmount={requestPrice}
       />
       
       <ConfirmationModal 
