@@ -38,7 +38,7 @@ export default function Home() {
               asChild
               className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 px-10 rounded-md text-lg"
             >
-              <Link to={`/event/${events[0].id}/request`}>Prisijungti dabar</Link>
+              <Link to="/event-entry">Prisijungti dabar</Link>
             </Button>
           ) : (
             <div className="bg-zinc-900/70 rounded-md p-6 max-w-md mx-auto">
