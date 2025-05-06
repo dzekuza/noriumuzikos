@@ -2,9 +2,20 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
 
-// Load environment variables from .env file
-dotenv.config();
+// Load environment variables from .env file with expanded support
+const myEnv = dotenv.config();
+dotenvExpand.expand(myEnv);
+
+// Log loaded environment variables for debugging (without revealing full keys)
+console.log('Environment variables loaded:');
+if (process.env.STRIPE_SECRET_KEY) {
+  console.log(`STRIPE_SECRET_KEY: ${process.env.STRIPE_SECRET_KEY.substring(0, 8)}...`);
+}
+if (process.env.VITE_STRIPE_PUBLIC_KEY) {
+  console.log(`VITE_STRIPE_PUBLIC_KEY: ${process.env.VITE_STRIPE_PUBLIC_KEY.substring(0, 8)}...`);
+}
 
 const app = express();
 app.use(express.json());

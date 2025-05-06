@@ -7,15 +7,29 @@ import { z } from "zod";
 import { rekordboxService } from "./rekordbox";
 import { setupAuth, requireAuth } from "./auth";
 import { sendSongRequestNotification } from "./email-service";
+import fs from 'fs';
 
-// Validate Stripe secret key
-if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn('Missing Stripe secret key. Set STRIPE_SECRET_KEY in environment variables');
+// Extract keys directly from .env file if environment variables aren't working
+let stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+let stripePublicKey = process.env.VITE_STRIPE_PUBLIC_KEY;
+
+// If we're still getting test keys from the environment, try to read directly from .env
+if (!stripeSecretKey || stripeSecretKey.startsWith('sk_test_')) {
+  try {
+    const envFile = fs.readFileSync('.env', 'utf8');
+    const secretKeyMatch = envFile.match(/STRIPE_SECRET_KEY=([^\n]+)/);
+    if (secretKeyMatch && secretKeyMatch[1].startsWith('sk_live_')) {
+      stripeSecretKey = secretKeyMatch[1];
+      console.log('Using Stripe secret key from .env file directly');
+    }
+  } catch (error) {
+    console.warn('Could not read .env file:', error);
+  }
 }
 
-// Initialize Stripe client if secret key is available
-const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+// Initialize Stripe client with the key we found
+const stripe = stripeSecretKey
+  ? new Stripe(stripeSecretKey, {
       typescript: true,
       apiVersion: '2025-04-30.basil',
       appInfo: {
@@ -26,10 +40,10 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 // Log Stripe initialization status
-if (stripe && process.env.STRIPE_SECRET_KEY) {
-  if (process.env.STRIPE_SECRET_KEY.startsWith('sk_test_')) {
+if (stripe && stripeSecretKey) {
+  if (stripeSecretKey.startsWith('sk_test_')) {
     console.log("✅ Stripe initialized in TEST mode with test API keys");
-  } else if (process.env.STRIPE_SECRET_KEY.startsWith('sk_live_')) {
+  } else if (stripeSecretKey.startsWith('sk_live_')) {
     console.log("✅ Stripe initialized in LIVE mode with production API keys");
   } else {
     console.warn('⚠️ Warning: Unrecognized Stripe key format');
@@ -247,7 +261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // The amount is already in cents, no need to convert
       const amountInCents = amount;
-      const isTestMode = process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_');
+      const isTestMode = stripeSecretKey?.startsWith('sk_test_');
       console.log(`Creating Stripe payment intent in ${isTestMode ? 'TEST' : 'LIVE'} mode for ${amount} cents (€${(amount / 100).toFixed(2)})`);
       
       const paymentIntent = await stripe.paymentIntents.create({
@@ -321,23 +335,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       status: 'playing'
     });
     
-    res.json({ message: "Track updated successfully" });
+    res.json({ message: "Current track updated successfully" });
   });
 
   app.post("/api/rekordbox/simulate/playlist", requireAuth, (req, res) => {
     const { tracks } = req.body;
     
-    if (!Array.isArray(tracks)) {
-      return res.status(400).json({ message: "Tracks must be an array" });
+    if (!tracks || !Array.isArray(tracks)) {
+      return res.status(400).json({ message: "Tracks array is required" });
     }
     
-    rekordboxService.updatePlaylist(tracks);
+    // Format the tracks properly
+    const formattedTracks = tracks.map((track, index) => ({
+      id: track.id || `track-${Date.now()}-${index}`,
+      title: track.title,
+      artist: track.artist,
+      duration: track.duration || 180,
+      position: index,
+      status: 'queued'
+    }));
+    
+    rekordboxService.updatePlaylist(formattedTracks);
+    
     res.json({ message: "Playlist updated successfully" });
   });
 
   const httpServer = createServer(app);
   
-  // Initialize the rekordbox service with the HTTP server
+  // Initialize the WebSocket server for Rekordbox integration
   rekordboxService.init(httpServer);
+
   return httpServer;
 }
