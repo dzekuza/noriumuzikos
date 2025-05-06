@@ -78,7 +78,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         // Ensure entry code and request price are properly formatted
         entryCode: String(req.body.entryCode || ''),
-        requestPrice: Number(req.body.requestPrice || 500),
+        requestPrice: Number(req.body.requestPrice || 5),
         // Convert string dates to actual Date objects
         startTime: new Date(req.body.startTime),
         endTime: new Date(req.body.endTime),

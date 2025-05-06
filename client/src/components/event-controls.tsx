@@ -50,7 +50,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
     venue: '',
     djName: '',
     entryCode: '',
-    requestPrice: 500, // Default €5.00
+    requestPrice: 5, // Default €5.00
     startTime: new Date().toISOString().split('T')[0] + 'T20:00', // Default 8:00 PM today
     endTime: new Date().toISOString().split('T')[0] + 'T23:59', // Default 11:59 PM today
   });
@@ -357,14 +357,13 @@ export default function EventControls({ eventId }: EventControlsProps) {
                     type="number"
                     min="0"
                     step="1"
-                    value={Number(newEventData.requestPrice) / 100}
+                    value={Number(newEventData.requestPrice)}
                     onChange={(e) => {
-                      // Convert EUR to cents when saving
+                      // Store the price directly in euros
                       const valueInEur = parseFloat(e.target.value);
-                      const valueInCents = Math.round(valueInEur * 100);
                       setNewEventData(prev => ({
                         ...prev,
-                        requestPrice: valueInCents
+                        requestPrice: valueInEur
                       }));
                     }}
                     placeholder="5.00"
@@ -471,14 +470,13 @@ export default function EventControls({ eventId }: EventControlsProps) {
                     type="number"
                     min="0"
                     step="1"
-                    value={Number(eventSettings.requestPrice) / 100}
+                    value={Number(eventSettings.requestPrice)}
                     onChange={(e) => {
-                      // Convert EUR to cents when saving
+                      // Store the price directly in euros
                       const valueInEur = parseFloat(e.target.value);
-                      const valueInCents = Math.round(valueInEur * 100);
                       setEventSettings(prev => ({
                         ...prev,
-                        requestPrice: valueInCents
+                        requestPrice: valueInEur
                       }));
                     }}
                     placeholder="5.00"
