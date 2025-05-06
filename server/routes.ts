@@ -6,6 +6,7 @@ import Stripe from "stripe";
 import { z } from "zod";
 import { rekordboxService } from "./rekordbox";
 import { setupAuth, requireAuth } from "./auth";
+import { sendSongRequestNotification } from "./email-service";
 
 // Validate Stripe secret key
 if (!process.env.STRIPE_SECRET_KEY) {
