@@ -6,8 +6,10 @@ import { type Event } from "@shared/schema";
 
 export default function Home() {
   const { data: events, isLoading } = useQuery<Event[]>({
-    queryKey: ['/api/events'],
+    queryKey: ['/api/events', { active: true }],
   });
+  
+  // The events returned should already be filtered to active ones from the server
 
   if (isLoading) {
     return (

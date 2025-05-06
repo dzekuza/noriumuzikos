@@ -63,7 +63,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events", async (req, res) => {
     try {
       const events = await storage.getEvents();
-      res.json(events);
+      // Filter out demo events or return only active events if query parameter is set
+      const filteredEvents = req.query.active === 'true' 
+        ? events.filter(event => event.isActive)
+        : events;
+      res.json(filteredEvents);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch events" });
     }
