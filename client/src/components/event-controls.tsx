@@ -49,9 +49,23 @@ export default function EventControls({ eventId }: EventControlsProps) {
     venue: '',
     entryCode: '',
     requestPrice: 500, // Default 500 cents (€5)
-    startTime: new Date().toISOString().split('T')[0] + 'T20:00', // Default 8:00 PM today
-    endTime: new Date().toISOString().split('T')[0] + 'T23:59', // Default 11:59 PM today
+    startTime: getDefaultStartTime(), // Default 8:00 PM today in Lithuanian format
+    endTime: getDefaultEndTime(), // Default 11:59 PM today in Lithuanian format
   });
+  
+  // Helper function to get default start time (8:00 PM today)
+  function getDefaultStartTime() {
+    const today = new Date();
+    today.setHours(20, 0, 0, 0); // 8:00 PM
+    return today.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+  }
+  
+  // Helper function to get default end time (11:59 PM today)
+  function getDefaultEndTime() {
+    const today = new Date();
+    today.setHours(23, 59, 0, 0); // 11:59 PM
+    return today.toISOString().slice(0, 16); // Format: YYYY-MM-DDTHH:MM
+  }
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -256,35 +270,35 @@ export default function EventControls({ eventId }: EventControlsProps) {
       <Dialog open={isCreateEventDialogOpen} onOpenChange={setIsCreateEventDialogOpen}>
         <DialogContent className="bg-zinc-900 text-white border border-zinc-800 max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Create New Event</DialogTitle>
+            <DialogTitle className="text-xl font-bold">Sukurti naują renginį</DialogTitle>
             <DialogDescription className="text-white/70">
-              Set up a new event for song requests
+              Sukurkite naują renginį dainų užsakymams
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="grid gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-white/70">Event Name</Label>
+                <Label htmlFor="name" className="text-white/70">Renginio pavadinimas</Label>
                 <Input
                   id="name"
                   name="name"
                   value={newEventData.name}
                   onChange={handleInputChange}
-                  placeholder="Saturday Night Party"
+                  placeholder="Šeštadienio vakarėlis"
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="venue" className="text-white/70">Venue</Label>
+                <Label htmlFor="venue" className="text-white/70">Vieta</Label>
                 <Input
                   id="venue"
                   name="venue"
                   value={newEventData.venue}
                   onChange={handleInputChange}
-                  placeholder="Club XYZ"
+                  placeholder="Klubas XYZ"
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
@@ -294,7 +308,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="startTime" className="text-white/70">Start Time</Label>
+                  <Label htmlFor="startTime" className="text-white/70">Pradžios laikas</Label>
                   <Input
                     id="startTime"
                     name="startTime"
@@ -304,10 +318,11 @@ export default function EventControls({ eventId }: EventControlsProps) {
                     className="bg-zinc-800 border-zinc-700 text-white"
                     required
                   />
+                  <p className="text-xs text-white/50">Formato pavyzdys: 2025-05-06T20:00</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="endTime" className="text-white/70">End Time</Label>
+                  <Label htmlFor="endTime" className="text-white/70">Pabaigos laikas</Label>
                   <Input
                     id="endTime"
                     name="endTime"
@@ -317,25 +332,26 @@ export default function EventControls({ eventId }: EventControlsProps) {
                     className="bg-zinc-800 border-zinc-700 text-white"
                     required
                   />
+                  <p className="text-xs text-white/50">Formato pavyzdys: 2025-05-06T23:59</p>
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="entryCode" className="text-white/70">Entry Code</Label>
+                <Label htmlFor="entryCode" className="text-white/70">Prieigos kodas</Label>
                 <Input
                   id="entryCode"
                   name="entryCode"
                   value={newEventData.entryCode}
                   onChange={handleInputChange}
-                  placeholder="PARTY123"
+                  placeholder="VAKARĖLIS123"
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
-                <p className="text-xs text-white/50">Customers will need this code to access the request page</p>
+                <p className="text-xs text-white/50">Klientams reikalingas kodas norint prisijungti prie užsakymų puslapio</p>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="requestPrice" className="text-white/70">Request Price (cents)</Label>
+                <Label htmlFor="requestPrice" className="text-white/70">Užsakymo kaina (centais)</Label>
                 <Input
                   id="requestPrice"
                   name="requestPrice"
@@ -354,7 +370,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
-                <p className="text-xs text-white/50">Price per request in cents (500 = €5.00)</p>
+                <p className="text-xs text-white/50">Dainos užsakymo kaina centais (500 = €5,00)</p>
               </div>
             </div>
           </div>
@@ -365,14 +381,14 @@ export default function EventControls({ eventId }: EventControlsProps) {
               onClick={() => setIsCreateEventDialogOpen(false)}
               className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
             >
-              Cancel
+              Atšaukti
             </Button>
             <Button 
               onClick={handleCreateEvent} 
               disabled={createEventMutation.isPending}
               className="bg-primary hover:bg-primary/90 text-black font-semibold"
             >
-              {createEventMutation.isPending ? 'Creating...' : 'Create Event'}
+              {createEventMutation.isPending ? 'Kuriama...' : 'Sukurti renginį'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -382,35 +398,35 @@ export default function EventControls({ eventId }: EventControlsProps) {
       <Dialog open={isSettingsDialogOpen} onOpenChange={setIsSettingsDialogOpen}>
         <DialogContent className="bg-zinc-900 text-white border border-zinc-800 max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Event Settings</DialogTitle>
+            <DialogTitle className="text-xl font-bold">Renginio nustatymai</DialogTitle>
             <DialogDescription className="text-white/70">
-              Modify event details and preferences
+              Redaguokite renginio informaciją ir parametrus
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="grid gap-4">
               <div className="space-y-2">
-                <Label htmlFor="settings-name" className="text-white/70">Event Name</Label>
+                <Label htmlFor="settings-name" className="text-white/70">Renginio pavadinimas</Label>
                 <Input
                   id="settings-name"
                   name="name"
                   value={eventSettings.name}
                   onChange={handleSettingsChange}
-                  placeholder="Saturday Night Party"
+                  placeholder="Šeštadienio vakarėlis"
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="settings-venue" className="text-white/70">Venue</Label>
+                <Label htmlFor="settings-venue" className="text-white/70">Vieta</Label>
                 <Input
                   id="settings-venue"
                   name="venue"
                   value={eventSettings.venue}
                   onChange={handleSettingsChange}
-                  placeholder="Club XYZ"
+                  placeholder="Klubas XYZ"
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
@@ -419,21 +435,21 @@ export default function EventControls({ eventId }: EventControlsProps) {
               {/* DJ Name field removed as requested */}
               
               <div className="space-y-2">
-                <Label htmlFor="settings-entryCode" className="text-white/70">Entry Code</Label>
+                <Label htmlFor="settings-entryCode" className="text-white/70">Prieigos kodas</Label>
                 <Input
                   id="settings-entryCode"
                   name="entryCode"
                   value={eventSettings.entryCode}
                   onChange={handleSettingsChange}
-                  placeholder="PARTY123"
+                  placeholder="VAKARĖLIS123"
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
-                <p className="text-xs text-white/50">Customers will need this code to access the request page</p>
+                <p className="text-xs text-white/50">Klientams reikalingas kodas norint prisijungti prie užsakymų puslapio</p>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="settings-requestPrice" className="text-white/70">Request Price (cents)</Label>
+                <Label htmlFor="settings-requestPrice" className="text-white/70">Užsakymo kaina (centais)</Label>
                 <Input
                   id="settings-requestPrice"
                   name="requestPrice"
@@ -452,7 +468,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
-                <p className="text-xs text-white/50">Price per request in cents (500 = €5.00)</p>
+                <p className="text-xs text-white/50">Dainos užsakymo kaina centais (500 = €5,00)</p>
               </div>
             </div>
           </div>
@@ -463,13 +479,13 @@ export default function EventControls({ eventId }: EventControlsProps) {
               onClick={() => setIsSettingsDialogOpen(false)}
               className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
             >
-              Cancel
+              Atšaukti
             </Button>
             <Button 
               onClick={handleSaveSettings}
               className="bg-primary hover:bg-primary/90 text-black font-semibold"
             >
-              <Save className="mr-2 h-4 w-4" /> Save Settings
+              <Save className="mr-2 h-4 w-4" /> Išsaugoti
             </Button>
           </DialogFooter>
         </DialogContent>
