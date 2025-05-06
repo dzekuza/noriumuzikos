@@ -15,6 +15,8 @@ interface ConfirmationModalProps {
     artistName: string;
     requesterName: string;
     wishes?: string;
+    isFree?: boolean; // Flag to indicate if this was a free request
+    amount?: number; // Amount in cents
   } | null;
 }
 
@@ -43,7 +45,9 @@ export default function ConfirmationModal({
             <span className="text-sm text-white/50">
               Užsakė: <span className="text-white/70">{songData?.requesterName || "Jūs"}</span>
             </span>
-            <span className="text-primary font-bold">€5.00</span>
+            <span className="text-primary font-bold">
+              {songData?.isFree ? 'NEMOKAMAI' : songData?.amount ? `€${(songData.amount / 100).toFixed(2)}` : '€5.00'}
+            </span>
           </div>
         </div>
         
