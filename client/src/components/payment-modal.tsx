@@ -240,6 +240,24 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
         )}
       </Button>
       
+      {/* Show payment methods notice */}
+      <div className="flex flex-col items-center justify-center text-xs text-white/60 mt-2">
+        <div className="flex items-center mb-1">
+          <ShieldCheck className="text-white/40 mr-1 h-3 w-3" />
+          <span>Saugus ir šifruotas mokėjimas</span>
+        </div>
+        <div className="flex items-center space-x-2 mt-1">
+          <span>Palaikomi mokėjimo būdai:</span>
+          <div className="flex space-x-1">
+            <span className="h-5 w-8 bg-white/10 rounded flex items-center justify-center text-[10px]">VISA</span>
+            <span className="h-5 w-8 bg-white/10 rounded flex items-center justify-center text-[10px]">MC</span>
+            {/* Only show Apple Pay and Google Pay icons if supported by the device */}
+            <span className="h-5 w-8 bg-white/10 rounded flex items-center justify-center text-[10px]">G Pay</span>
+            <span className="h-5 w-8 bg-white/10 rounded flex items-center justify-center text-[10px]">A Pay</span>
+          </div>
+        </div>
+      </div>
+      
       {isTestMode && (
         <div className="text-sm text-white/80 mt-4 p-4 bg-zinc-800 rounded-md border border-zinc-700">
           <h4 className="font-bold mb-2">TEST CARD DETAILS</h4>

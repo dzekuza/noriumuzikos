@@ -276,11 +276,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isTestMode = stripeSecretKey?.startsWith('sk_test_');
       console.log(`Creating Stripe payment intent in ${isTestMode ? 'TEST' : 'LIVE'} mode for ${amount} cents (€${(amount / 100).toFixed(2)})`);
       
+      // Configure for both mobile and web browsers, enabling Apple Pay and Google Pay where available
       const paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents,
         currency: "eur",
+        // Enable all payment methods automatically
         automatic_payment_methods: {
           enabled: true,
+        },
+        // Enable Apple Pay and Google Pay for mobile devices
+        payment_method_types: ['card', 'alipay'],
+        payment_method_options: {
+          card: {
+            request_three_d_secure: 'automatic',
+          },
         },
         metadata: {
           integration_check: 'accept_a_payment',
