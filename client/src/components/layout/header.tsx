@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'wouter';
-import { Music, LogOut, User, LayoutDashboard } from 'lucide-react';
+import { LogOut, User, LayoutDashboard } from 'lucide-react';
+import logoSvg from '@/assets/noriumuzikos.svg';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,8 +24,7 @@ export default function Header() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <Music className="h-6 w-6 text-primary mr-2" />
-              <span className="text-xl font-bold text-white">Noriu<span className="text-primary">Muzikos</span></span>
+              <img src={logoSvg} alt="NoriuMuzikos" className="h-8" />
             </Link>
           </div>
           <div className="flex items-center space-x-4">
