@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'wouter';
-import { LogOut, User, LayoutDashboard } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Settings } from 'lucide-react';
 import logoSvg from '@/assets/noriumuzikos.svg';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
@@ -48,6 +48,12 @@ export default function Header() {
                       <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
                         <LayoutDashboard className="h-4 w-4 mr-2" />
                         Valdymo Skydelis
+                      </DropdownMenuItem>
+                    </Link>
+                    <Link href="/profile">
+                      <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Mano Profilis
                       </DropdownMenuItem>
                     </Link>
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
