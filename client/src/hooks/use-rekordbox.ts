@@ -104,7 +104,11 @@ export function useRekordbox() {
     
     // Clean up WebSocket on unmount
     return () => {
-      ws.close();
+      try {
+        ws.close();
+      } catch (error) {
+        console.error('Error closing WebSocket:', error);
+      }
     };
   }, [toast]);
   

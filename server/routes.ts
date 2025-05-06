@@ -332,7 +332,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       artist,
       duration: req.body.duration || 180,
       position: 0,
-      status: 'playing'
+      status: 'playing' as const
     });
     
     res.json({ message: "Current track updated successfully" });
