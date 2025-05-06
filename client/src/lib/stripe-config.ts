@@ -20,16 +20,17 @@ const getStripePublicKey = () => {
   return 'pk_live_51Qi27rG3BtAgoCPDVQrSmY22zj6xHhoYsEU534e7b9ajebbNlKbOD3sBRl7nwqtlVGHhtyV8M5FxwiwfzoIQBy8300auYOEHqW';
 };
 
-// Always use the live key regardless of what's configured
+// Always use the live key regardless of the environment
 const publicKey = getStripePublicKey();
-// Disable all console logs to avoid confusing messages
-// console.log('Stripe payment processor initialized');
 
-// Force the key selection - if we have a test key in environment, prioritize the hardcoded live key
-if (publicKey && publicKey.startsWith('pk_test_')) {
-  // Silent fallback to hardcoded live key
-  window.__STRIPE_PUBLIC_KEY = 'pk_live_51Qi27rG3BtAgoCPDVQrSmY22zj6xHhoYsEU534e7b9ajebbNlKbOD3sBRl7nwqtlVGHhtyV8M5FxwiwfzoIQBy8300auYOEHqW';
-}
+// Ensure we're using a live key to match the server-side configuration
+// This fixes the key mismatch issues causing Stripe API errors
+window.__STRIPE_PUBLIC_KEY = 'pk_live_51Qi27rG3BtAgoCPDVQrSmY22zj6xHhoYsEU534e7b9ajebbNlKbOD3sBRl7nwqtlVGHhtyV8M5FxwiwfzoIQBy8300auYOEHqW';
+
+// Log the chosen key without revealing too much detail
+const keyToUse = window.__STRIPE_PUBLIC_KEY || publicKey;
+const keyType = keyToUse && keyToUse.startsWith('pk_live_') ? 'LIVE' : 'TEST';
+console.log(`Stripe configured in ${keyType} mode`);
 
 // Load Stripe outside of component render to avoid recreating Stripe instance
 // Always use window.__STRIPE_PUBLIC_KEY if it exists (which we ensure above)

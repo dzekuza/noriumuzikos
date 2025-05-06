@@ -112,15 +112,34 @@ export default function PaymentModal({ isOpen, onClose, onPay, songData, isPendi
           </div>
         </DialogHeader>
         
-        {useMockImplementation ? (
+        {!clientSecret ? (
+          // Show loading indicator while waiting for clientSecret
+          <div className="px-6 pb-6 flex justify-center py-8">
+            <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+          </div>
+        ) : useMockImplementation ? (
           // Mock payment form when Stripe is not configured
           <div className="px-6 pb-6">
             <MockPaymentForm onPay={onPay} isPending={isPending} paymentAmount={paymentAmount} />
           </div>
         ) : (
-          // Real Stripe payment form
-          <Elements stripe={stripePromise} options={{ clientSecret }}>
-            <CheckoutForm onPay={onPay} isPending={isPending} paymentAmount={paymentAmount} />
+          // Real Stripe payment form - with proper description to fix accessibility warnings
+          <Elements stripe={stripePromise} options={{ 
+            clientSecret,
+            appearance: {
+              theme: 'night',
+              variables: {
+                colorPrimary: '#06b6d4', // Tailwind cyan-500
+                colorBackground: '#18181b' // Tailwind zinc-900
+              }
+            }
+          }}>
+            <div>
+              <DialogDescription className="sr-only">
+                Payment form for song request
+              </DialogDescription>
+              <CheckoutForm onPay={onPay} isPending={isPending} paymentAmount={paymentAmount} />
+            </div>
           </Elements>
         )}
       </DialogContent>
