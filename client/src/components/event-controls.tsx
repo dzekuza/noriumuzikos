@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { type Event } from '@shared/schema';
-import { Pause, Settings, StopCircle, Plus, Save } from 'lucide-react';
+import { Pause, Settings, StopCircle, Plus, Save, Share, Copy, Mail, Facebook } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -38,6 +38,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
   const [isCreateEventDialogOpen, setIsCreateEventDialogOpen] = useState(false);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [isEventActive, setIsEventActive] = useState(true); // Assume active until checked
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [eventSettings, setEventSettings] = useState({
     name: '',
     venue: '',
@@ -198,6 +199,38 @@ export default function EventControls({ eventId }: EventControlsProps) {
     });
   };
   
+  // Generate event URL for sharing
+  const getEventUrl = () => {
+    // Create URL to the event entry page with pre-filled entry code
+    const url = new URL(`${window.location.origin}/event-entry`);
+    // We don't add the entry code to URL for security reasons, it should be entered manually
+    return url.toString();
+  };
+  
+  // Handle copying to clipboard
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(getEventUrl()).then(() => {
+      toast({
+        title: "Nuoroda nukopijuota",
+        description: "Renginio nuoroda nukopijuota į iškarpinę",
+      });
+    });
+  };
+  
+  // Handle email sharing
+  const handleEmailShare = () => {
+    const subject = encodeURIComponent(`Užsisakyk dainas renginye "${event?.name || ''}"`);
+    const body = encodeURIComponent(`Sveiki,\n\nNorėčiau pakviesti jus į renginį "${event?.name || ''}"!\n\nNuoroda į renginį: ${getEventUrl()}\n\nPrisijungimo kodas: ${event?.entryCode || ''}\n\nLauksiu!`);
+    window.open(`mailto:?subject=${subject}&body=${body}`);
+  };
+  
+  // Handle Facebook sharing
+  const handleFacebookShare = () => {
+    const url = encodeURIComponent(getEventUrl());
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+    window.open(facebookShareUrl, '_blank', 'width=600,height=400');
+  };
+  
   return (
     <>
       <Card className="bg-zinc-900 border border-zinc-800 shadow-lg">
@@ -220,6 +253,15 @@ export default function EventControls({ eventId }: EventControlsProps) {
                   </span>
                 </Button>
                 
+                <Button
+                  onClick={() => setIsShareDialogOpen(true)} 
+                  variant="ghost" 
+                  className="w-full py-3 px-4 bg-zinc-800 rounded-md text-left flex items-center hover:bg-zinc-700 transition-all justify-start font-normal"
+                >
+                  <Share className="text-primary mr-3 h-5 w-5" />
+                  <span className="text-white">Dalintis renginiu</span>
+                </Button>
+
                 <Button
                   onClick={() => setIsSettingsDialogOpen(true)} 
                   variant="ghost" 
@@ -394,6 +436,70 @@ export default function EventControls({ eventId }: EventControlsProps) {
         </DialogContent>
       </Dialog>
 
+      {/* Share Dialog */}
+      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+        <DialogContent className="bg-zinc-900 text-white border border-zinc-800">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Dalintis renginiu</DialogTitle>
+            <DialogDescription className="text-white/70">
+              Dalinkites renginio "{event?.name}" nuoroda su draugais
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="flex items-center justify-between bg-zinc-800 p-3 rounded-md border border-zinc-700">
+              <p className="text-sm text-white truncate">{getEventUrl()}</p>
+              <Button 
+                onClick={handleCopyLink} 
+                size="sm" 
+                variant="ghost" 
+                className="h-8 px-2 ml-2"
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="text-sm text-white/70 flex items-center space-x-2">
+              <p>Prisijungimo kodas: </p>
+              <span className="font-mono bg-zinc-800 px-2 py-1 rounded">{event?.entryCode}</span>
+            </div>
+            
+            <div className="flex flex-col space-y-2 pt-4">
+              <p className="text-sm font-semibold text-white mb-2">Dalintis per</p>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  onClick={handleEmailShare}
+                  variant="outline" 
+                  className="bg-zinc-800 hover:bg-zinc-700 text-white border-zinc-700 py-6"
+                >
+                  <Mail className="mr-2 h-5 w-5" />
+                  El. paštas
+                </Button>
+                
+                <Button 
+                  onClick={handleFacebookShare}
+                  variant="outline" 
+                  className="bg-blue-600 hover:bg-blue-700 text-white border-blue-700 py-6"
+                >
+                  <Facebook className="mr-2 h-5 w-5" />
+                  Facebook
+                </Button>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              onClick={() => setIsShareDialogOpen(false)}
+              className="w-full bg-primary hover:bg-primary/90 text-black font-semibold"
+            >
+              Uždaryti
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
       {/* Settings Dialog */}
       <Dialog open={isSettingsDialogOpen} onOpenChange={setIsSettingsDialogOpen}>
         <DialogContent className="bg-zinc-900 text-white border border-zinc-800 max-w-lg max-h-[90vh] overflow-y-auto">
