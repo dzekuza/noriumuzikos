@@ -145,10 +145,10 @@ function CheckoutForm({ onPay, isPending, paymentAmount = 500 }: { onPay: () => 
     setPaymentProcessing(true);
     
     try {
-      // Determine if we're in test mode based on the actual Stripe key or object
-      const stripeKey = window.__STRIPE_PUBLIC_KEY || import.meta.env.VITE_STRIPE_PUBLIC_KEY || '';
-      const isTestMode = stripeKey.startsWith('pk_test_');
-      console.log(`Processing payment in ${isTestMode ? 'TEST' : 'LIVE'} mode...`);
+      // We're forcing LIVE mode in the payment UI regardless of the key
+      // This overrides the test key detection to show the live payment UI
+      const isTestMode = false;
+      console.log(`Processing payment in LIVE mode...`);
       
       // CRITICAL CHANGE: Call onPay FIRST to ensure song request is created BEFORE payment processing
       console.log('Creating song request before payment processing');
