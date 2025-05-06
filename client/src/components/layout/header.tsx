@@ -24,16 +24,11 @@ export default function Header() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <Music className="h-6 w-6 text-primary mr-2" />
-              <span className="text-xl font-bold text-white">DJ<span className="text-primary">Request</span></span>
+              <span className="text-xl font-bold text-white">Noriu<span className="text-primary">Muzikos</span></span>
             </Link>
           </div>
           <div className="flex items-center space-x-4">
-            <Link 
-              href="/" 
-              className={`text-white/80 ${location === '/' ? 'text-primary' : 'hover:text-primary'} text-sm px-3 py-2 rounded-md`}
-            >
-              Home
-            </Link>
+
             
             {user ? (
               <>
@@ -55,7 +50,7 @@ export default function Header() {
             ) : (
               <Link href="/auth">
                 <Button variant="outline" size="sm" className="text-white border-zinc-700 hover:bg-primary hover:border-primary hover:text-black bg-transparent">
-                  Login / Register
+                  Admin Dashboard
                 </Button>
               </Link>
             )}

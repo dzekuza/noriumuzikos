@@ -56,16 +56,16 @@ export default function ThankYouPage() {
             <Check className="h-10 w-10 text-primary" />
           </div>
           
-          <h1 className="text-3xl font-bold text-center text-white mb-2">Thank You!</h1>
+          <h1 className="text-3xl font-bold text-center text-white mb-2">Ačiū!</h1>
           
           <div className="bg-zinc-800/50 rounded-md p-6 mb-6 border border-zinc-700">
             <p className="text-center text-white/70 mb-4">
-              Your song request has been received and will be played as soon as possible.
+              Jūsų dainos užsakymas gautas ir bus sugrojamas kuo greičiau.
             </p>
             
             <div className="flex items-center justify-center space-x-2 mb-4">
               <Music className="h-5 w-5 text-primary" />
-              <span className="text-white">The DJ has been notified</span>
+              <span className="text-white">DJ buvo informuotas</span>
             </div>
             
             <div className="w-full bg-zinc-700 h-2 rounded-full overflow-hidden mb-2">
@@ -76,7 +76,7 @@ export default function ThankYouPage() {
             </div>
             
             <p className="text-xs text-center text-white/50">
-              Redirecting in {timeLeft} seconds...
+              Nukreipiama po {timeLeft} sekundžių...
             </p>
           </div>
           
@@ -85,7 +85,7 @@ export default function ThankYouPage() {
               onClick={handleRequestAnother}
               className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 px-4 rounded-md transition-all flex items-center justify-center"
             >
-              Request Another Song
+              Užsakyti kitą dainą
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
