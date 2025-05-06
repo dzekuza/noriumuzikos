@@ -42,7 +42,7 @@ export default function Header() {
                   <DropdownMenuContent align="end" className="bg-zinc-900 border border-zinc-800">
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-primary hover:bg-zinc-800 focus:bg-zinc-800">
                       <LogOut className="h-4 w-4 mr-2" />
-                      Logout
+                      Atsijungti
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -50,7 +50,7 @@ export default function Header() {
             ) : (
               <Link href="/auth">
                 <Button variant="outline" size="sm" className="text-white border-zinc-700 hover:bg-primary hover:border-primary hover:text-black bg-transparent">
-                  Admin Dashboard
+                  Administratoriaus Valdymo Skydelis
                 </Button>
               </Link>
             )}
