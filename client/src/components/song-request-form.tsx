@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { type Event } from '@shared/schema';
+import { hasMadeFreeRequest, markFreeRequestMade } from '@/lib/request-tracker';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,6 +39,7 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [currentRequest, setCurrentRequest] = useState<FormValues | null>(null);
   const [requestPrice, setRequestPrice] = useState(500); // Default €5.00 in cents
+  const [isFreeRequest, setIsFreeRequest] = useState(false); // Track if this is a free request
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -46,6 +48,13 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   const { data: event } = useQuery<Event>({
     queryKey: [`/api/events/${eventId}`],
   });
+  
+  // Check if this is a free request
+  useEffect(() => {
+    const hasAlreadyMadeFreeRequest = hasMadeFreeRequest(eventId);
+    setIsFreeRequest(!hasAlreadyMadeFreeRequest);
+    console.log(`Free request status for event ${eventId}: ${!hasAlreadyMadeFreeRequest}`);
+  }, [eventId]);
   
   // Update the request price when the event data is loaded
   useEffect(() => {
@@ -97,7 +106,19 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   
   const onSubmit = (data: FormValues) => {
     setCurrentRequest(data);
-    setIsPaymentModalOpen(true);
+    
+    if (isFreeRequest) {
+      // For free requests, skip payment and submit directly
+      console.log('This is a free first request - skipping payment');
+      mutate(data);
+      // Mark that this user has used their free request for this event
+      markFreeRequestMade(eventId);
+      // Update UI state
+      setIsFreeRequest(false);
+    } else {
+      // For paid requests, show payment modal
+      setIsPaymentModalOpen(true);
+    }
   };
   
   const handlePayment = () => {
@@ -170,12 +191,22 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
               disabled={isPending}
               className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-4 px-4 rounded-md transition-all text-base"
             >
-              Pay €{(requestPrice / 100).toFixed(2)} and request a song
+              {isFreeRequest ? (
+                'Request song for free' 
+              ) : (
+                `Pay €${(requestPrice / 100).toFixed(2)} and request a song`
+              )}
             </Button>
             
             <div className="flex items-center justify-center mt-4">
-              <Lock className="text-white/40 mr-1 h-3 w-3" />
-              <span className="text-xs text-white/40">Secure payment via Stripe</span>
+              {isFreeRequest ? (
+                <span className="text-xs text-white/40">Your first request is free!</span>
+              ) : (
+                <>
+                  <Lock className="text-white/40 mr-1 h-3 w-3" />
+                  <span className="text-xs text-white/40">Secure payment via Stripe</span>
+                </>
+              )}
             </div>
           </form>
         </Form>
