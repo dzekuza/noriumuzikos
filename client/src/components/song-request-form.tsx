@@ -129,12 +129,12 @@ export default function SongRequestForm({ eventId }: SongRequestFormProps) {
   
   return (
     <>
-      <div className="max-w-md mx-auto">
-        <h2 className="text-2xl font-semibold text-white mb-4">Užsakyti dainą</h2>
-        <p className="text-white/60 text-sm mb-6">Užpildykite išsamią informaciją apie norimą dainą</p>
+      <div className="w-full max-w-md mx-auto">
+        <h2 className="text-2xl font-semibold text-white mb-2 sm:mb-4">Užsakyti dainą</h2>
+        <p className="text-white/60 text-sm mb-4 sm:mb-6">Užpildykite išsamią informaciją apie norimą dainą</p>
         
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="bg-zinc-900 rounded-md p-8 shadow-lg border border-zinc-800">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="bg-zinc-900 rounded-md p-4 sm:p-8 shadow-lg border border-zinc-800">
             <FormField
               control={form.control}
               name="artistName"

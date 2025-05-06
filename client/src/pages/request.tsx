@@ -107,7 +107,7 @@ export default function RequestPage() {
   // If not verified yet, show the entry code verification form
   if (!isVerified) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center overflow-hidden p-4">
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center overflow-hidden p-4 pt-0 sm:pt-4">
         <Card className="max-w-md w-full bg-zinc-900 border-zinc-800 text-white shadow-2xl">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
@@ -163,15 +163,16 @@ export default function RequestPage() {
   // After verification, show the song request form
   return (
     <div className="min-h-screen bg-zinc-950 overflow-hidden">
-      <div className="container mx-auto py-6 px-4">
-        <div className="flex justify-between items-center mb-6">
-          <div>
+      <div className="container mx-auto py-2 sm:py-6 px-2 sm:px-4">
+        <div className="flex flex-wrap sm:flex-nowrap justify-between items-center mb-4 sm:mb-6">
+          <div className="w-full sm:w-auto mb-2 sm:mb-0">
             <div className="text-xs text-white/70 uppercase tracking-widest mb-1">Renginys</div>
-            <h1 className="text-xl font-bold text-white">{event.name}</h1>
+            <h1 className="text-xl font-bold text-white truncate">{event.name}</h1>
           </div>
           <Button
             variant="outline"
-            className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700"
+            size="sm"
+            className="bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700 w-full sm:w-auto mt-1 sm:mt-0"
             onClick={() => {
               // Clear verification and return to verification screen
               localStorage.removeItem(`event-verified-${eventId}`);
