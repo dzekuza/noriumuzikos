@@ -9,6 +9,7 @@ import RequestPage from "@/pages/request";
 import ThankYouPage from "@/pages/thank-you";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
+import ProfilePage from "@/pages/profile";
 import Header from "./components/layout/header";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
@@ -22,6 +23,7 @@ function Router() {
           <Route path="/" component={Home} />
           <ProtectedRoute path="/dashboard" component={Dashboard} />
           <ProtectedRoute path="/dashboard/:id" component={Dashboard} />
+          <ProtectedRoute path="/profile" component={ProfilePage} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/event/:id/request" component={RequestPage} />
           <Route path="/thank-you" component={ThankYouPage} />

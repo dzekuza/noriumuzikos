@@ -152,6 +152,59 @@ export function setupAuth(app: Express) {
       res.status(401).json({ authenticated: false });
     }
   });
+  
+  // Update username
+  app.patch("/api/user/profile", requireAuth, async (req, res) => {
+    try {
+      const user = req.user as SelectUser;
+      const { username } = req.body;
+      
+      // If trying to change username, verify it's not already taken
+      if (username && username !== user.username) {
+        const existingUser = await storage.getUserByUsername(username);
+        if (existingUser) {
+          return res.status(400).json({ message: "Username already taken" });
+        }
+      }
+      
+      const updatedUser = await storage.updateUser(user.id, { username });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Don't send password back to client
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      res.status(500).json({ message: `Failed to update profile: ${error.message}` });
+    }
+  });
+  
+  // Change password
+  app.post("/api/user/change-password", requireAuth, async (req, res) => {
+    try {
+      const user = req.user as SelectUser;
+      const { currentPassword, newPassword } = req.body;
+      
+      // Verify current password
+      const passwordValid = await comparePasswords(currentPassword, user.password);
+      if (!passwordValid) {
+        return res.status(401).json({ message: "Current password is incorrect" });
+      }
+      
+      // Hash and save new password
+      const newPasswordHash = await hashPassword(newPassword);
+      const updatedUser = await storage.updateUserPassword(user.id, newPasswordHash);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({ message: "Password updated successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: `Failed to change password: ${error.message}` });
+    }
+  });
 }
 
 // Middleware to require authentication

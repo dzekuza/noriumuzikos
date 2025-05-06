@@ -16,6 +16,8 @@ type AuthContextType = {
   loginMutation: UseMutationResult<Omit<User, "password">, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<Omit<User, "password">, Error, RegisterData>;
+  updateProfileMutation: UseMutationResult<Omit<User, "password">, Error, UpdateProfileData>;
+  changePasswordMutation: UseMutationResult<{ message: string }, Error, ChangePasswordData>;
 };
 
 type LoginData = {
@@ -26,6 +28,15 @@ type LoginData = {
 type RegisterData = {
   username: string;
   password: string;
+};
+
+type UpdateProfileData = {
+  username: string;
+};
+
+type ChangePasswordData = {
+  currentPassword: string;
+  newPassword: string;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -104,6 +115,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const updateProfileMutation = useMutation<Omit<User, "password">, Error, UpdateProfileData>({
+    mutationFn: async (data: UpdateProfileData) => {
+      const res = await apiRequest("PATCH", "/api/user/profile", data);
+      return await res.json();
+    },
+    onSuccess: (updatedUser) => {
+      queryClient.setQueryData(["/api/user"], updatedUser);
+      toast({
+        title: "Profile Updated",
+        description: "Your profile has been updated successfully.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Profile Update Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const changePasswordMutation = useMutation<{ message: string }, Error, ChangePasswordData>({
+    mutationFn: async (data: ChangePasswordData) => {
+      const res = await apiRequest("POST", "/api/user/change-password", data);
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Password Changed",
+        description: data.message || "Your password has been updated successfully.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Password Change Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   return (
     <AuthContext.Provider
       value={{
@@ -113,6 +165,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginMutation,
         logoutMutation,
         registerMutation,
+        updateProfileMutation,
+        changePasswordMutation,
       }}
     >
       {children}
