@@ -287,20 +287,31 @@ export default function EventControls({ eventId }: EventControlsProps) {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="requestPrice" className="text-white/70">Request Price (in cents)</Label>
-                <Input
-                  id="requestPrice"
-                  name="requestPrice"
-                  type="number"
-                  min="0"
-                  step="100"
-                  value={newEventData.requestPrice}
-                  onChange={handleInputChange}
-                  placeholder="500"
-                  className="bg-zinc-800 border-zinc-700 text-white"
-                  required
-                />
-                <p className="text-xs text-white/50">Default: 500 cents (€5.00)</p>
+                <Label htmlFor="requestPrice" className="text-white/70">Request Price (€)</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70">€</span>
+                  <Input
+                    id="requestPrice"
+                    name="requestPrice"
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={Number(newEventData.requestPrice) / 100}
+                    onChange={(e) => {
+                      // Convert EUR to cents when saving
+                      const valueInEur = parseFloat(e.target.value);
+                      const valueInCents = Math.round(valueInEur * 100);
+                      setNewEventData(prev => ({
+                        ...prev,
+                        requestPrice: valueInCents
+                      }));
+                    }}
+                    placeholder="5.00"
+                    className="bg-zinc-800 border-zinc-700 text-white pl-8"
+                    required
+                  />
+                </div>
+                <p className="text-xs text-white/50">Default: €5.00 per request</p>
               </div>
             </div>
           </div>

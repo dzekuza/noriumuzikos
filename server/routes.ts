@@ -47,13 +47,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/events", requireAuth, async (req, res) => {
     try {
       console.log('Creating new event with data:', req.body);
+      
+      // Handle date formats correctly - Convert string dates to Date objects
       const eventData = {
         ...req.body,
         // Ensure entry code and request price are properly formatted
         entryCode: String(req.body.entryCode || ''),
         requestPrice: Number(req.body.requestPrice || 500),
+        // Convert string dates to actual Date objects
+        startTime: new Date(req.body.startTime),
+        endTime: new Date(req.body.endTime),
+        isActive: req.body.isActive !== undefined ? Boolean(req.body.isActive) : true,
       };
       
+      console.log('Processed event data:', eventData);
       const createdEvent = await storage.createEvent(eventData);
       console.log('Event created successfully:', createdEvent);
       res.status(201).json(createdEvent);
