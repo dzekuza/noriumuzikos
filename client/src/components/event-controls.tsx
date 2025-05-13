@@ -244,8 +244,47 @@ export default function EventControls({ eventId }: EventControlsProps) {
   // Handle email sharing
   const handleEmailShare = () => {
     const subject = encodeURIComponent(`Užsisakyk dainas renginye "${event?.name || ''}"`);
-    const body = encodeURIComponent(`Sveiki,\n\nNorėčiau pakviesti jus į renginį "${event?.name || ''}"!\n\nNuoroda į renginį: ${getEventUrl()}\n\nPrisijungimo kodas: ${event?.entryCode || ''}\n\nLauksiu!`);
-    window.open(`mailto:?subject=${subject}&body=${body}`);
+    
+    // Create a richer email body with event details
+    let emailBody = `Sveiki,\n\nNorėčiau pakviesti jus į renginį "${event?.name || ''}"!\n\n`;
+    
+    if (event?.venue) {
+      emailBody += `Vieta: ${event.venue}\n\n`;
+    }
+    
+    // Format date and time in Lithuanian format
+    if (event?.startTime) {
+      const startTime = new Date(event.startTime);
+      const formattedDate = new Intl.DateTimeFormat('lt-LT', { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }).format(startTime);
+      
+      emailBody += `Data ir laikas: ${formattedDate}\n\n`;
+    }
+    
+    emailBody += `Nuoroda į renginį: ${getEventUrl()}\n\n`;
+    emailBody += `Prisijungimo kodas: ${event?.entryCode || ''}\n\n`;
+    
+    // If there's an event image, mention it
+    if (event?.imageUrl) {
+      emailBody += `Renginio nuotrauką ir daugiau informacijos rasite nuorodoje aukščiau.\n\n`;
+    }
+    
+    emailBody += `Lauksiu!\n\nNoriuMuzikos - Užsakyk dainą gyvam renginiui`;
+    
+    // Open email client with composed message
+    window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`);
+    
+    // Show a toast with the entry code reminder
+    toast({
+      title: "El. pašto nuoroda atidaryta",
+      description: `Nepamirškite pasidalinti prisijungimo kodu: ${event?.entryCode || ''}`,
+    });
   };
   
   // Handle Facebook sharing
