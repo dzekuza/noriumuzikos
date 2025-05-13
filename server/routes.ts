@@ -1,6 +1,6 @@
-import type { Express, Request } from "express";
+import express, { type Express, type Request } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage as dbStorage } from "./storage";
 import { insertSongRequestSchema } from "@shared/schema";
 import Stripe from "stripe";
 import { z } from "zod";
@@ -65,9 +65,61 @@ if (stripe && stripeSecretKey) {
   }
 }
 
+// Configure multer storage for file uploads
+const uploadStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'event-image-' + uniqueSuffix + ext);
+  }
+});
+
+// Create upload middleware
+const upload = multer({ 
+  storage: uploadStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept only images
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!') as any);
+    }
+  }
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication
   setupAuth(app);
+  
+  // Serve uploaded files statically
+  app.use('/uploads', express.static('public/uploads'));
+  // File upload endpoint for event images
+  app.post("/api/upload/event-image", requireAuth, upload.single('image'), (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file uploaded" });
+      }
+      
+      // Return the path to the uploaded image
+      const imagePath = `/uploads/${req.file.filename}`;
+      console.log('Image uploaded successfully:', imagePath);
+      
+      res.json({ 
+        success: true, 
+        imageUrl: imagePath 
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      res.status(500).json({ message: "Failed to upload image" });
+    }
+  });
+
   // Event entry code validation
   app.post("/api/events/entry", async (req, res) => {
     try {
@@ -78,7 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Find event with matching entry code
-      const events = await storage.getEvents();
+      const events = await dbStorage.getEvents();
       const event = events.find(e => e.entryCode === entryCode && e.isActive);
       
       if (!event) {
@@ -95,7 +147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Events endpoints
   app.get("/api/events", async (req, res) => {
     try {
-      const events = await storage.getEvents();
+      const events = await dbStorage.getEvents();
       // Filter out demo events or return only active events if query parameter is set
       const filteredEvents = req.query.active === 'true' 
         ? events.filter(event => event.isActive)
@@ -123,7 +175,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       console.log('Processed event data:', eventData);
-      const createdEvent = await storage.createEvent(eventData);
+      const createdEvent = await dbStorage.createEvent(eventData);
       console.log('Event created successfully:', createdEvent);
       res.status(201).json(createdEvent);
     } catch (error) {
@@ -138,7 +190,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/events/:id", async (req, res) => {
     try {
       const eventId = parseInt(req.params.id);
-      const event = await storage.getEvent(eventId);
+      const event = await dbStorage.getEvent(eventId);
       
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
@@ -155,7 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventId = parseInt(req.params.id);
       console.log(`Updating event ${eventId} with data:`, req.body);
       
-      const updatedEvent = await storage.updateEvent(eventId, req.body);
+      const updatedEvent = await dbStorage.updateEvent(eventId, req.body);
       
       if (!updatedEvent) {
         return res.status(404).json({ message: "Event not found" });
