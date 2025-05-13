@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertSongRequestSchema } from "@shared/schema";
@@ -8,6 +8,9 @@ import { rekordboxService } from "./rekordbox";
 import { setupAuth, requireAuth } from "./auth";
 import { sendSongRequestNotification } from "./email-service";
 import fs from 'fs';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Always use live keys from .env file, ignoring environment variables
 const readEnvFile = () => {

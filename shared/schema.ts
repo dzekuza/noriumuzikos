@@ -12,6 +12,7 @@ export const events = pgTable("events", {
   isActive: boolean("is_active").default(true).notNull(),
   entryCode: text("entry_code").notNull().default(""),  // Code needed to access the event
   requestPrice: integer("request_price").notNull().default(500),  // Price in cents (default €5.00)
+  imageUrl: text("image_url"),  // URL for the event image, optional
 });
 
 export const insertEventSchema = createInsertSchema(events).omit({
