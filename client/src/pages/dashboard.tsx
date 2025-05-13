@@ -63,7 +63,8 @@ function CreateEventDialog() {
         requestPrice, 
         startTime: eventStartTime,
         endTime: eventEndTime,
-        isActive: true
+        isActive: true,
+        imageUrl: null // Initialize with null, can be updated later in event settings
       });
       
       // Reset form and close dialog

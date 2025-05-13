@@ -255,11 +255,22 @@ export default function EventControls({ eventId }: EventControlsProps) {
     const title = encodeURIComponent(`Užsisakyk dainas renginye "${event?.name || ''}"`);
     const description = encodeURIComponent(`Prisijunk prie NoriuMuzikos ir užsisakyk savo mėgstamiausią dainą. Prisijungimo kodas: ${event?.entryCode || ''}`);
     
-    // Add OG parameters to help Facebook scraper
+    // URL for dynamic OG meta tags endpoint (if we had one)
+    // For now, we'll just use the direct share
     const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${title}`;
+    
+    // Add event image if available - though Facebook might not pick it up without meta tags
+    // Ideally we would have a server endpoint that generates proper OG tags with the image
+    // For production, we'd implement a dynamic OG meta tags endpoint for better social sharing
     
     // Open in a popup window
     window.open(facebookShareUrl, '_blank', 'width=600,height=400,resizable=yes');
+    
+    // Show a toast with the entry code reminder
+    toast({
+      title: "Dalintis pavyko",
+      description: `Nepamirškite pasidalinti prisijungimo kodu: ${event?.entryCode || ''}`,
+    });
   };
   
   return (
@@ -491,6 +502,33 @@ export default function EventControls({ eventId }: EventControlsProps) {
           </DialogHeader>
           
           <div className="space-y-4 py-4">
+            {/* Social Share Preview */}
+            {event?.imageUrl && (
+              <div className="mb-4">
+                <p className="text-sm font-medium text-white/80 mb-2">Anonsas socialiniuose tinkluose:</p>
+                <div className="bg-white rounded-md overflow-hidden border border-zinc-300">
+                  <div className="aspect-video bg-zinc-200 overflow-hidden">
+                    <img 
+                      src={event.imageUrl} 
+                      alt={event.name} 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.parentElement!.classList.add('flex', 'items-center', 'justify-center');
+                        e.currentTarget.parentElement!.innerHTML = '<div class="text-zinc-400">Nepavyko įkelti nuotraukos</div>';
+                      }}
+                    />
+                  </div>
+                  <div className="p-3">
+                    <p className="text-zinc-800 font-medium">{event.name}</p>
+                    <p className="text-zinc-500 text-sm">NoriuMuzikos - Užsakyk dainą renginys</p>
+                    <p className="text-zinc-400 text-xs mt-1">{getEventUrl()}</p>
+                  </div>
+                </div>
+                <p className="text-xs text-white/70 mt-2 italic">Pastaba: Faktinis atvaizdavimas gali skirtis skirtingose platformose</p>
+              </div>
+            )}
+            
             <div className="bg-zinc-800 p-3 rounded-md border border-zinc-700">
               <div className="flex justify-between items-center mb-2">
                 <p className="text-sm font-medium text-white/80">Renginio nuoroda:</p>
