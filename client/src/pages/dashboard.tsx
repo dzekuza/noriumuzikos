@@ -163,19 +163,20 @@ function CreateEventDialog() {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="requestPrice" className="text-white col-span-4">
-                Užsakymo kaina (centais)
+                Užsakymo kaina (€)
               </Label>
               <Input
                 id="requestPrice"
                 type="number"
-                value={requestPrice}
-                onChange={(e) => setRequestPrice(parseInt(e.target.value, 10))}
+                value={requestPrice / 100}
+                onChange={(e) => setRequestPrice(Math.round(parseFloat(e.target.value) * 100))}
                 className="col-span-4 bg-zinc-800 border-zinc-700 text-white"
                 required
                 min="0"
-                placeholder="500"
+                step="0.01"
+                placeholder="5"
               />
-              <p className="text-xs text-white/50 col-span-4">Kaina centais (500 = 5€)</p>
+              <p className="text-xs text-white/50 col-span-4">Kaina eurais (pvz., 5€)</p>
             </div>
           </div>
           <DialogFooter>

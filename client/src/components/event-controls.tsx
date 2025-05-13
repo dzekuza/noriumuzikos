@@ -418,26 +418,27 @@ export default function EventControls({ eventId }: EventControlsProps) {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="requestPrice" className="text-white/70">Užsakymo kaina (centais)</Label>
+                <Label htmlFor="requestPrice" className="text-white/70">Užsakymo kaina (€)</Label>
                 <Input
                   id="requestPrice"
                   name="requestPrice"
                   type="number"
                   min="0"
-                  value={newEventData.requestPrice}
+                  step="0.01"
+                  value={newEventData.requestPrice / 100}
                   onChange={(e) => {
-                    // Store the price directly in cents
-                    const valueInCents = parseInt(e.target.value, 10);
+                    // Convert euros to cents for storage
+                    const valueInCents = Math.round(parseFloat(e.target.value) * 100);
                     setNewEventData(prev => ({
                       ...prev,
                       requestPrice: valueInCents
                     }));
                   }}
-                  placeholder="500"
+                  placeholder="5"
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
-                <p className="text-xs text-white/50">Dainos užsakymo kaina centais (500 = €5,00)</p>
+                <p className="text-xs text-white/50">Dainos užsakymo kaina eurais (pvz., 5€)</p>
               </div>
             </div>
           </div>
@@ -589,26 +590,27 @@ export default function EventControls({ eventId }: EventControlsProps) {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="settings-requestPrice" className="text-white/70">Užsakymo kaina (centais)</Label>
+                <Label htmlFor="settings-requestPrice" className="text-white/70">Užsakymo kaina (€)</Label>
                 <Input
                   id="settings-requestPrice"
                   name="requestPrice"
                   type="number"
                   min="0"
-                  value={eventSettings.requestPrice}
+                  step="0.01"
+                  value={eventSettings.requestPrice / 100}
                   onChange={(e) => {
-                    // Store the price directly in cents
-                    const valueInCents = parseInt(e.target.value, 10);
+                    // Convert euros to cents for storage
+                    const valueInCents = Math.round(parseFloat(e.target.value) * 100);
                     setEventSettings(prev => ({
                       ...prev,
                       requestPrice: valueInCents
                     }));
                   }}
-                  placeholder="500"
+                  placeholder="5"
                   className="bg-zinc-800 border-zinc-700 text-white"
                   required
                 />
-                <p className="text-xs text-white/50">Dainos užsakymo kaina centais (500 = €5,00)</p>
+                <p className="text-xs text-white/50">Dainos užsakymo kaina eurais (pvz., 5€)</p>
               </div>
             </div>
           </div>
