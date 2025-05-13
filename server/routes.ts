@@ -228,13 +228,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Deleting event ${eventId}`);
       
       // First check if event exists
-      const event = await storage.getEvent(eventId);
+      const event = await dbStorage.getEvent(eventId);
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
       }
       
       // Delete the event
-      const result = await storage.deleteEvent(eventId);
+      const result = await dbStorage.deleteEvent(eventId);
       
       if (!result) {
         return res.status(500).json({ message: "Failed to delete event" });
@@ -254,7 +254,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventId = parseInt(req.params.eventId);
       const status = req.query.status as string | undefined;
       
-      const requests = await storage.getSongRequests(eventId, status);
+      const requests = await dbStorage.getSongRequests(eventId, status);
       res.json(requests);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch song requests" });
@@ -267,7 +267,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventId = parseInt(req.params.eventId);
       console.log('For event ID:', eventId);
       
-      const event = await storage.getEvent(eventId);
+      const event = await dbStorage.getEvent(eventId);
       
       if (!event) {
         console.error('Event not found for ID:', eventId);
@@ -285,7 +285,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = insertSongRequestSchema.parse(requestData);
       console.log('Validated data:', validatedData);
       
-      const createdRequest = await storage.createSongRequest(validatedData);
+      const createdRequest = await dbStorage.createSongRequest(validatedData);
       console.log('Song request created successfully:', createdRequest);
       
       // Send email notification to the DJ/admin
@@ -317,7 +317,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid status" });
       }
       
-      const updatedRequest = await storage.updateSongRequestStatus(id, status);
+      const updatedRequest = await dbStorage.updateSongRequestStatus(id, status);
       
       if (!updatedRequest) {
         return res.status(404).json({ message: "Song request not found" });
@@ -343,7 +343,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If eventId is provided, get the event's custom price
       if (eventId) {
         try {
-          const event = await storage.getEvent(Number(eventId));
+          const event = await dbStorage.getEvent(Number(eventId));
           if (event && event.requestPrice) {
             amount = event.requestPrice;
             console.log(`Using custom price ${amount} euros for event ${eventId}`);
