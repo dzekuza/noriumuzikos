@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import ImageUpload from '@/components/image-upload';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +45,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
     venue: '',
     entryCode: '',
     requestPrice: 0,
+    imageUrl: '',
   });
   const [newEventData, setNewEventData] = useState({
     name: '',
@@ -52,6 +54,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
     requestPrice: 500, // Default 500 cents (€5)
     startTime: getDefaultStartTime(), // Default 8:00 PM today in Lithuanian format
     endTime: getDefaultEndTime(), // Default 11:59 PM today in Lithuanian format
+    imageUrl: '', // New field for event image
   });
   
   // Helper function to get default start time (8:00 PM today)
@@ -86,6 +89,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
         venue: event.venue,
         entryCode: event.entryCode || '',
         requestPrice: event.requestPrice,
+        imageUrl: event.imageUrl || '',
       });
       console.log(`Event ${eventId} loaded:`, event);
     }
@@ -141,7 +145,8 @@ export default function EventControls({ eventId }: EventControlsProps) {
       requestPrice: Number(newEventData.requestPrice),
       startTime: new Date(newEventData.startTime),
       endTime: new Date(newEventData.endTime),
-      isActive: true // Default to active for new events
+      isActive: true, // Default to active for new events
+      imageUrl: newEventData.imageUrl || null // Include image URL if available
     };
     
     createEventMutation.mutate(eventData, {
