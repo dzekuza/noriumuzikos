@@ -193,6 +193,7 @@ export default function EventControls({ eventId }: EventControlsProps) {
       djName: "", // Providing empty value for djName since it's required but field was removed
       entryCode: eventSettings.entryCode,
       requestPrice: Number(eventSettings.requestPrice),
+      imageUrl: eventSettings.imageUrl || null,
     };
     
     updateEvent(updateData);
@@ -445,6 +446,18 @@ export default function EventControls({ eventId }: EventControlsProps) {
                 />
                 <p className="text-xs text-white/50">Dainos užsakymo kaina eurais (pvz., 5€)</p>
               </div>
+              
+              {/* Image Upload Component */}
+              <ImageUpload 
+                onImageUploaded={(imageUrl) => {
+                  setNewEventData(prev => ({
+                    ...prev,
+                    imageUrl
+                  }));
+                }}
+                existingImageUrl={newEventData.imageUrl}
+                className="mt-4"
+              />
             </div>
           </div>
           
@@ -616,6 +629,22 @@ export default function EventControls({ eventId }: EventControlsProps) {
                   required
                 />
                 <p className="text-xs text-white/50">Dainos užsakymo kaina eurais (pvz., 5€)</p>
+              </div>
+              
+              {/* Image Upload Component */}
+              <div className="space-y-2">
+                <Label className="text-white/70">Renginio nuotrauka</Label>
+                <ImageUpload 
+                  onImageUploaded={(imageUrl) => {
+                    setEventSettings(prev => ({
+                      ...prev,
+                      imageUrl
+                    }));
+                  }}
+                  existingImageUrl={eventSettings.imageUrl}
+                  className="mt-2"
+                />
+                <p className="text-xs text-white/50">Nuotrauka bus rodoma dalinantis renginiu socialiniuose tinkluose</p>
               </div>
             </div>
           </div>

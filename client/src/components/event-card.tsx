@@ -43,9 +43,27 @@ export default function EventCard({
   return (
     <div className="mb-8 bg-secondary rounded-xl p-6 shadow-lg">
       <div className="flex items-center">
-        <div className="h-16 w-16 bg-primary/20 rounded-full flex items-center justify-center mr-4">
-          <Music className="h-8 w-8 text-primary" />
-        </div>
+        {event.imageUrl ? (
+          <div className="h-16 w-16 rounded-lg overflow-hidden mr-4 bg-primary/20 flex items-center justify-center">
+            <img 
+              src={event.imageUrl} 
+              alt={event.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // If image fails to load, show fallback icon
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                const icon = document.createElement('div');
+                icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>';
+                e.currentTarget.parentElement?.appendChild(icon);
+              }}
+            />
+          </div>
+        ) : (
+          <div className="h-16 w-16 bg-primary/20 rounded-full flex items-center justify-center mr-4">
+            <Music className="h-8 w-8 text-primary" />
+          </div>
+        )}
         <div className="flex-1">
           <div className="flex justify-between items-start">
             <h2 className="text-xl font-bold text-white">{event.name}</h2>
