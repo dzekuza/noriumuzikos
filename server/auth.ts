@@ -115,6 +115,17 @@ export function setupAuth(app: Express) {
       if (!user) {
         return res.status(401).json({ message: info?.message || "Authentication failed" });
       }
+      
+      // Check if "Remember Me" was requested
+      const rememberMe = req.body.rememberMe === true;
+      
+      // If rememberMe is true, set cookie to expire in 30 days, otherwise use session cookie
+      if (rememberMe && req.session.cookie) {
+        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+      } else if (req.session.cookie) {
+        req.session.cookie.expires = undefined; // Session cookie (expires when browser closes)
+      }
+      
       req.login(user, (err) => {
         if (err) return next(err);
         // Don't send password back to client

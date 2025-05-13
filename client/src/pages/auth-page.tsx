@@ -1,29 +1,62 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/use-auth";
 import { Redirect } from "wouter";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 type LoginFormValues = {
   username: string;
   password: string;
+  rememberMe?: boolean;
 };
 
 export default function AuthPage() {
   const { user, loginMutation } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [savedUsername, setSavedUsername] = useState("");
+  
+  // Load saved username from localStorage when component mounts
+  useEffect(() => {
+    const remembered = localStorage.getItem("rememberedUser");
+    if (remembered) {
+      setSavedUsername(remembered);
+    }
+  }, []);
 
   const loginForm = useForm<LoginFormValues>({
     defaultValues: {
-      username: "",
+      username: savedUsername,
       password: "",
+      rememberMe: !!savedUsername,
     },
   });
 
+  // Update form defaults when savedUsername changes
+  useEffect(() => {
+    if (savedUsername) {
+      loginForm.setValue("username", savedUsername);
+      loginForm.setValue("rememberMe", true);
+    }
+  }, [savedUsername, loginForm]);
+
   const onLoginSubmit = (data: LoginFormValues) => {
-    loginMutation.mutate(data);
+    // Handle the remember me functionality
+    if (data.rememberMe) {
+      localStorage.setItem("rememberedUser", data.username);
+    } else {
+      localStorage.removeItem("rememberedUser");
+    }
+    
+    loginMutation.mutate({
+      username: data.username,
+      password: data.password,
+      rememberMe: !!data.rememberMe
+    });
   };
 
   // Redirect to dashboard if the user is already logged in
@@ -56,15 +89,42 @@ export default function AuthPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-white/70">Slaptažodis</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    className="bg-zinc-800 border-zinc-700 text-white focus:border-primary"
-                    {...loginForm.register("password", { required: "Būtina įvesti slaptažodį" })}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      className="bg-zinc-800 border-zinc-700 text-white focus:border-primary pr-10"
+                      {...loginForm.register("password", { required: "Būtina įvesti slaptažodį" })}
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-white/70 hover:text-white"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" aria-hidden="true" />
+                      ) : (
+                        <Eye className="h-5 w-5" aria-hidden="true" />
+                      )}
+                    </button>
+                  </div>
                   {loginForm.formState.errors.password && (
                     <p className="text-sm text-red-500">{loginForm.formState.errors.password.message}</p>
                   )}
+                </div>
+                
+                <div className="flex items-center space-x-2 mt-2">
+                  <Checkbox 
+                    id="rememberMe" 
+                    className="border-zinc-600 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    {...loginForm.register("rememberMe")} 
+                  />
+                  <Label 
+                    htmlFor="rememberMe" 
+                    className="text-sm text-white/70 cursor-pointer"
+                  >
+                    Prisiminti mane
+                  </Label>
                 </div>
               </CardContent>
               <CardFooter>
