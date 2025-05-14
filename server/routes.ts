@@ -418,6 +418,169 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Subscription endpoints
+  app.get("/api/subscription", requireAuth, async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+      
+      const user = await dbStorage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({
+        isSubscribed: user.isSubscribed,
+        status: user.subscriptionStatus,
+        stripeCustomerId: user.stripeCustomerId,
+        stripeSubscriptionId: user.stripeSubscriptionId
+      });
+    } catch (error) {
+      console.error('Error fetching subscription:', error);
+      res.status(500).json({ message: "Failed to fetch subscription status" });
+    }
+  });
+  
+  // Create a subscription checkout session
+  app.post("/api/subscription/checkout", requireAuth, async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+      
+      const user = await dbStorage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      if (!user.email) {
+        return res.status(400).json({ message: "User email is required for subscription" });
+      }
+      
+      let customer;
+      
+      // If user already has a Stripe customer ID, use it
+      if (user.stripeCustomerId) {
+        customer = { id: user.stripeCustomerId };
+      } else {
+        // Create a new customer in Stripe
+        if (!stripe) {
+          return res.status(500).json({ message: "Stripe is not initialized" });
+        }
+        
+        customer = await stripe.customers.create({
+          email: user.email,
+          name: user.username,
+          metadata: {
+            userId: user.id.toString()
+          }
+        });
+        
+        // Save the customer ID to the user record
+        await dbStorage.updateSubscription(userId, {
+          stripeCustomerId: customer.id
+        });
+      }
+      
+      // Create a checkout session
+      if (!stripe) {
+        return res.status(500).json({ message: "Stripe is not initialized" });
+      }
+      
+      const session = await stripe.checkout.sessions.create({
+        customer: customer.id,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: process.env.STRIPE_PRICE_ID,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: `${req.protocol}://${req.get('host')}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.protocol}://${req.get('host')}/subscription/cancel`,
+        metadata: {
+          userId: userId.toString()
+        }
+      });
+      
+      res.json({ url: session.url });
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      res.status(500).json({ message: "Failed to create checkout session" });
+    }
+  });
+  
+  // Process subscription webhook
+  app.post("/api/subscription/webhook", express.raw({type: 'application/json'}), async (req, res) => {
+    const signature = req.headers['stripe-signature'] as string;
+    
+    let event;
+    
+    try {
+      if (!stripe) {
+        return res.status(500).json({ message: "Stripe is not initialized" });
+      }
+      
+      event = stripe.webhooks.constructEvent(
+        req.body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET || ''
+      );
+    } catch (err: any) {
+      console.error(`Webhook signature verification failed: ${err.message}`);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    
+    // Handle the event
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object;
+        // Get user ID from metadata
+        const userId = session.metadata?.userId ? parseInt(session.metadata.userId) : null;
+        
+        if (userId) {
+          const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+          
+          // Update user's subscription status
+          await dbStorage.updateSubscription(userId, {
+            stripeSubscriptionId: subscription.id,
+            isSubscribed: true,
+            subscriptionStatus: subscription.status
+          });
+          
+          console.log(`Subscription activated for user ${userId}`);
+        }
+        break;
+        
+      case 'customer.subscription.updated':
+      case 'customer.subscription.deleted':
+        const subscription = event.data.object;
+        // We need to find the user by their Stripe customer ID
+        const customer = subscription.customer as string;
+        const user = await dbStorage.getUserByStripeCustomerId(customer);
+        
+        if (user && user.id) {
+          await dbStorage.updateSubscription(user.id, {
+            isSubscribed: subscription.status === 'active',
+            subscriptionStatus: subscription.status
+          });
+          
+          console.log(`Subscription ${subscription.status} for user ${users.id}`);
+        }
+        break;
+    }
+    
+    res.json({received: true});
+  });
+  
   // Rekordbox integration endpoints
   app.get("/api/rekordbox/current-track", (req, res) => {
     const currentTrack = rekordboxService.getCurrentTrack();
