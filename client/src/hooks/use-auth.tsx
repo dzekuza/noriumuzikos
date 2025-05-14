@@ -29,6 +29,7 @@ type LoginData = {
 type RegisterData = {
   username: string;
   password: string;
+  email: string;
 };
 
 type UpdateProfileData = {
