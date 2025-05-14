@@ -120,6 +120,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to upload image" });
     }
   });
+  
+  // File upload endpoint for profile pictures
+  app.post("/api/upload/profile-picture", requireAuth, upload.single('image'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file uploaded" });
+      }
+      
+      const user = req.user;
+      
+      // Return the path to the uploaded image
+      const imagePath = `/uploads/${req.file.filename}`;
+      console.log('Profile picture uploaded successfully:', imagePath);
+      
+      // Update the user's profile with the image URL
+      const updatedUser = await dbStorage.updateUser(user.id, { profilePicture: imagePath });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Don't send password back to client
+      const { password, ...userWithoutPassword } = updatedUser;
+      
+      res.json({ 
+        success: true, 
+        imageUrl: imagePath,
+        user: userWithoutPassword
+      });
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      res.status(500).json({ message: "Failed to upload profile picture" });
+    }
+  });
 
   // Event entry code validation
   app.post("/api/events/entry", async (req, res) => {

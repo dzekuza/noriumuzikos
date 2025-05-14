@@ -8,6 +8,7 @@ import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
+import { sendVerificationCode } from "./email-service";
 
 declare global {
   namespace Express {
@@ -217,6 +218,137 @@ export function setupAuth(app: Express) {
       res.json({ message: "Password updated successfully" });
     } catch (error: any) {
       res.status(500).json({ message: `Failed to change password: ${error.message}` });
+    }
+  });
+
+  // Update user profile with additional fields
+  app.patch("/api/user/profile/extended", requireAuth, async (req, res) => {
+    try {
+      const user = req.user as SelectUser;
+      const { email, phoneNumber, profilePicture } = req.body;
+      
+      // Build update object with only provided fields
+      const updateData: Partial<SelectUser> = {};
+      
+      if (phoneNumber !== undefined) {
+        updateData.phoneNumber = phoneNumber;
+      }
+      
+      if (profilePicture !== undefined) {
+        updateData.profilePicture = profilePicture;
+      }
+      
+      // Handle email update separately (requires verification)
+      if (email !== undefined && email !== user.email) {
+        // Check if email is already in use by another user
+        const existingUser = await storage.getUserByEmail(email);
+        if (existingUser && existingUser.id !== user.id) {
+          return res.status(400).json({ message: "Email already in use" });
+        }
+        
+        updateData.email = email;
+        updateData.isEmailVerified = false; // Reset verification when email changes
+        
+        // Create and send verification code
+        try {
+          const verificationCode = await storage.createVerificationCode(user.id, email);
+          await sendVerificationCode(verificationCode, user.username);
+        } catch (emailError) {
+          console.error("Failed to send verification email:", emailError);
+          // We still update the profile but inform the user about the email issue
+          return res.status(200).json({ 
+            ...user, 
+            ...updateData,
+            warning: "Profile updated but verification email could not be sent. Please try verifying later."
+          });
+        }
+      }
+      
+      // Update the user profile
+      if (Object.keys(updateData).length > 0) {
+        const updatedUser = await storage.updateUser(user.id, updateData);
+        
+        if (!updatedUser) {
+          return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Don't send password back to client
+        const { password, ...userWithoutPassword } = updatedUser;
+        return res.json(userWithoutPassword);
+      }
+      
+      // If no fields to update, just return current user
+      const { password, ...userWithoutPassword } = user;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      res.status(500).json({ message: `Failed to update profile: ${error.message}` });
+    }
+  });
+  
+  // Request email verification code
+  app.post("/api/user/verify-email/request", requireAuth, async (req, res) => {
+    try {
+      const user = req.user as SelectUser;
+      
+      // Check if user has an email
+      if (!user.email) {
+        return res.status(400).json({ message: "No email address associated with account" });
+      }
+      
+      // Create and send verification code
+      const verificationCode = await storage.createVerificationCode(user.id, user.email);
+      const emailSent = await sendVerificationCode(verificationCode, user.username);
+      
+      if (!emailSent) {
+        return res.status(500).json({ message: "Failed to send verification email" });
+      }
+      
+      res.json({ message: "Verification email sent successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: `Failed to send verification email: ${error.message}` });
+    }
+  });
+  
+  // Verify email with code
+  app.post("/api/user/verify-email/verify", requireAuth, async (req, res) => {
+    try {
+      const user = req.user as SelectUser;
+      const { code } = req.body;
+      
+      if (!user.email) {
+        return res.status(400).json({ message: "No email address associated with account" });
+      }
+      
+      if (!code) {
+        return res.status(400).json({ message: "Verification code is required" });
+      }
+      
+      // Verify the code
+      const verificationCode = await storage.getVerificationCode(code, user.email);
+      
+      if (!verificationCode) {
+        return res.status(400).json({ message: "Invalid or expired verification code" });
+      }
+      
+      // Mark code as used
+      await storage.markVerificationCodeAsUsed(verificationCode.id);
+      
+      // Mark email as verified
+      const updatedUser = await storage.verifyUserEmail(user.id);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Don't send password back to client
+      const { password, ...userWithoutPassword } = updatedUser;
+      
+      res.json({
+        message: "Email verified successfully",
+        user: userWithoutPassword
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: `Failed to verify email: ${error.message}` });
     }
   });
 }

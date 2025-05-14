@@ -123,6 +123,63 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
+  // Verification code methods
+  async createVerificationCode(userId: number, email: string): Promise<VerificationCode> {
+    // Generate a random 6-digit code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Set expiration time to 30 minutes from now
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + 30);
+    
+    // Create the verification code record
+    const [verificationCode] = await db
+      .insert(verificationCodes)
+      .values({
+        userId,
+        email,
+        code,
+        expiresAt,
+        isUsed: false
+      })
+      .returning();
+    
+    return verificationCode;
+  }
+  
+  async getVerificationCode(code: string, email: string): Promise<VerificationCode | undefined> {
+    const now = new Date();
+    
+    // Get an unused, non-expired verification code
+    const [verificationCode] = await db
+      .select()
+      .from(verificationCodes)
+      .where(
+        and(
+          eq(verificationCodes.code, code),
+          eq(verificationCodes.email, email),
+          eq(verificationCodes.isUsed, false)
+        )
+      );
+    
+    // Check if code exists and has not expired
+    if (verificationCode && verificationCode.expiresAt > now) {
+      return verificationCode;
+    }
+    
+    return undefined;
+  }
+  
+  async markVerificationCodeAsUsed(id: number): Promise<VerificationCode | undefined> {
+    const [verificationCode] = await db
+      .update(verificationCodes)
+      .set({ isUsed: true })
+      .where(eq(verificationCodes.id, id))
+      .returning();
+    
+    return verificationCode;
+  }
+
   // Event methods
   async getEvents(userId?: number): Promise<Event[]> {
     if (userId) {
