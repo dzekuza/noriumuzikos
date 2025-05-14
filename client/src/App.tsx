@@ -14,6 +14,7 @@ import EventEntry from "@/pages/event-entry";
 import SubscriptionPage from "@/pages/subscription-page";
 import SubscriptionSuccessPage from "@/pages/subscription-success";
 import SubscriptionCancelPage from "@/pages/subscription-cancel";
+import AdminDashboard from "@/pages/admin-dashboard";
 import Header from "./components/layout/header";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/lib/protected-route";
@@ -32,6 +33,7 @@ function Router() {
           <ProtectedRoute path="/subscription" component={SubscriptionPage} requireSubscription={false} />
           <ProtectedRoute path="/subscription/success" component={SubscriptionSuccessPage} requireSubscription={false} />
           <ProtectedRoute path="/subscription/cancel" component={SubscriptionCancelPage} requireSubscription={false} />
+          <ProtectedRoute path="/admin" component={AdminDashboard} requireSubscription={false} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/event-entry" component={EventEntry} />
           <Route path="/event-entry/:eventName" component={EventEntry} />

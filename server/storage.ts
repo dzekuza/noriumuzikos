@@ -28,6 +28,11 @@ export interface IStorage {
   getSongRequest(id: number): Promise<SongRequest | undefined>;
   createSongRequest(request: InsertSongRequest): Promise<SongRequest>;
   updateSongRequestStatus(id: number, status: string): Promise<SongRequest | undefined>;
+  
+  // Admin methods
+  getAllUsers(): Promise<User[]>;
+  getAllEventsWithCreators(): Promise<(Event & { username: string })[]>;
+  getAllSongRequests(): Promise<SongRequest[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -202,6 +207,38 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return songRequest || undefined;
+  }
+  
+  // Admin methods
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+  
+  async getAllEventsWithCreators(): Promise<(Event & { username: string })[]> {
+    // Join events with users to get creator usernames
+    const result = await db
+      .select({
+        id: events.id,
+        name: events.name,
+        venue: events.venue,
+        djName: events.djName,
+        startTime: events.startTime,
+        endTime: events.endTime,
+        isActive: events.isActive,
+        entryCode: events.entryCode,
+        requestPrice: events.requestPrice,
+        imageUrl: events.imageUrl,
+        userId: events.userId,
+        username: users.username
+      })
+      .from(events)
+      .leftJoin(users, eq(events.userId, users.id));
+      
+    return result;
+  }
+  
+  async getAllSongRequests(): Promise<SongRequest[]> {
+    return await db.select().from(songRequests);
   }
 }
 
