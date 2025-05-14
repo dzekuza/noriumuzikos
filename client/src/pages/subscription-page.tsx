@@ -88,38 +88,38 @@ export default function SubscriptionPage() {
     <div className="container mx-auto py-8 px-4">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl">NoriuMuzikos Subscription</CardTitle>
+          <CardTitle className="text-2xl">NoriuMuzikos Prenumerata</CardTitle>
           <CardDescription>
-            Subscribe to gain full access to the DJ event management platform
+            Užsisakykite prenumeratą, kad gautumėte prieigą prie DJ renginių valdymo platformos
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="bg-secondary/20 p-6 rounded-lg">
-              <h3 className="text-xl font-semibold mb-2">Premium DJ Plan</h3>
+              <h3 className="text-xl font-semibold mb-2">Premium DJ Planas</h3>
               <p className="text-3xl font-bold mb-4">
-                €10<span className="text-sm font-normal text-muted-foreground"> / month</span>
+                €10<span className="text-sm font-normal text-muted-foreground"> / mėnesiui</span>
               </p>
               <ul className="space-y-2">
                 <li className="flex items-center">
                   <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-                  Create unlimited events
+                  Kurkite neribotą kiekį renginių
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-                  Collect song requests with payments
+                  Rinkite dainų užsakymus su mokėjimais
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-                  Real-time dashboard with analytics
+                  Realaus laiko valdymo skydelis su analitika
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-                  QR code sharing for events
+                  QR kodo dalinimasis renginiams
                 </li>
                 <li className="flex items-center">
                   <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-                  Custom request pricing
+                  Individuali užsakymų kainodara
                 </li>
               </ul>
             </div>
@@ -127,12 +127,12 @@ export default function SubscriptionPage() {
             {subscriptionStatus === "active" ? (
               <div className="flex items-center justify-center bg-green-500/10 p-4 rounded-lg">
                 <CheckCircle className="mr-2 h-6 w-6 text-green-500" />
-                <span className="font-medium">Your subscription is active</span>
+                <span className="font-medium">Jūsų prenumerata yra aktyvi</span>
               </div>
             ) : (
               <div className="flex items-center justify-center bg-destructive/10 p-4 rounded-lg">
                 <XCircle className="mr-2 h-6 w-6 text-destructive" />
-                <span className="font-medium">You don't have an active subscription</span>
+                <span className="font-medium">Jūs neturite aktyvios prenumeratos</span>
               </div>
             )}
           </div>
@@ -140,7 +140,7 @@ export default function SubscriptionPage() {
         <CardFooter className="flex flex-col sm:flex-row gap-4">
           {subscriptionStatus === "active" ? (
             <Button className="w-full" onClick={handleGoToDashboard}>
-              Go to Dashboard
+              Eiti į Valdymo Skydelį
             </Button>
           ) : (
             <Button 
@@ -151,10 +151,10 @@ export default function SubscriptionPage() {
               {isCheckoutLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
+                  Apdorojama...
                 </>
               ) : (
-                <>Subscribe Now</>
+                <>Užsisakyti Dabar</>
               )}
             </Button>
           )}
