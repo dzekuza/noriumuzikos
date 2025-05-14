@@ -11,13 +11,15 @@ interface RekordboxPanelProps {
 }
 
 export default function RekordboxPanel({ eventId }: RekordboxPanelProps) {
+  // Always declare all hooks at the top level, before any conditional logic
   const [showSimulator, setShowSimulator] = useState(false);
-  const { connected, simulatePlayingTrack, simulatePlaylist } = useRekordbox();
-  
-  // Form state for the simulator
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [playlistItems, setPlaylistItems] = useState('');
+  
+  // Always use the hook, regardless of conditions
+  const rekordbox = useRekordbox();
+  const { connected, simulatePlayingTrack, simulatePlaylist } = rekordbox;
   
   const handlePlayTrack = () => {
     if (title && artist) {

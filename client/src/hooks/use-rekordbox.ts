@@ -31,16 +31,17 @@ export function useRekordbox() {
   });
   const { toast } = useToast();
   
-  useEffect(() => {
-    // Create WebSocket connection with robust error handling
-    // This is critical to prevent app crashing when WebSocket connection fails
-    
-    // Initialize a mock WebSocket first as fallback
-    let ws = {
+  // This function is used to create the WebSocket safely without throwing errors
+  // and is defined outside the useEffect to avoid any potential issues
+  const createSafeWebSocket = () => {
+    // Create a mock WebSocket as fallback
+    const mockWebSocket = {
       onopen: null,
       onmessage: null,
       onclose: null,
       onerror: null,
+      readyState: 3, // CLOSED
+      OPEN: 1,       // WebSocket.OPEN constant
       send: (data: string) => console.log('Mock WebSocket send:', data),
       close: () => console.log('Mock WebSocket close')
     } as unknown as WebSocket;
@@ -49,38 +50,51 @@ export function useRekordbox() {
       // Get the current hostname and port
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const host = window.location.host;
-      const wsUrl = `${protocol}//${host}/ws`;
       
+      if (!host || !protocol) {
+        console.warn('Invalid WebSocket URL parameters, using mock connection');
+        return mockWebSocket;
+      }
+      
+      const wsUrl = `${protocol}//${host}/ws`;
       console.log(`Attempting to connect to WebSocket at ${wsUrl}`);
       
-      // Only try to create a real WebSocket if we're sure the URL is valid
-      if (host && protocol) {
-        ws = new WebSocket(wsUrl);
+      try {
+        // Try to create a real WebSocket with error handling
+        const realWebSocket = new WebSocket(wsUrl);
         console.log('WebSocket connection created successfully');
-      } else {
-        console.warn('Invalid WebSocket URL parameters, using mock connection');
+        return realWebSocket;
+      } catch (wsError) {
+        console.error('Error creating WebSocket:', wsError);
+        return mockWebSocket;
       }
     } catch (error) {
-      console.error('Error creating WebSocket connection:', error);
-      // We already have the mock WebSocket initialized above
-      
-      // Show a toast but make it non-destructive to avoid alarming users
-      toast({
-        title: 'Sync Notice',
-        description: 'Running in offline mode for track synchronization',
-        variant: 'default'
-      });
+      console.error('Error in WebSocket setup:', error);
+      return mockWebSocket;
     }
+  };
+  
+  useEffect(() => {
+    // Create WebSocket connection with robust error handling
+    const ws = createSafeWebSocket();
+    let isComponentMounted = true;
     
-    ws.onopen = () => {
-      setConnected(true);
-      console.log('Connected to Rekordbox WebSocket');
-      
-      // Request initial state
-      ws.send(JSON.stringify({ type: 'get_state' }));
+    // Setup event handlers
+    const handleOpen = () => {
+      if (isComponentMounted) {
+        setConnected(true);
+        console.log('Connected to Rekordbox WebSocket');
+        
+        // Request initial state
+        if (ws.readyState === ws.OPEN) {
+          ws.send(JSON.stringify({ type: 'get_state' }));
+        }
+      }
     };
     
-    ws.onmessage = (event) => {
+    const handleMessage = (event: MessageEvent) => {
+      if (!isComponentMounted) return;
+      
       try {
         const data = JSON.parse(event.data);
         
@@ -96,26 +110,40 @@ export function useRekordbox() {
       }
     };
     
-    ws.onclose = () => {
-      setConnected(false);
-      console.log('Disconnected from Rekordbox WebSocket');
+    const handleClose = () => {
+      if (isComponentMounted) {
+        setConnected(false);
+        console.log('Disconnected from Rekordbox WebSocket');
+      }
     };
     
-    ws.onerror = (error) => {
+    const handleError = (error: Event) => {
       console.error('WebSocket error:', error);
-      toast({
-        title: 'Connection Error',
-        description: 'Could not connect to Rekordbox service',
-        variant: 'destructive'
-      });
+      if (isComponentMounted) {
+        toast({
+          title: 'Connection Notice',
+          description: 'Running in offline mode for track synchronization',
+          variant: 'default'
+        });
+      }
     };
+    
+    // Assign event handlers
+    ws.onopen = handleOpen;
+    ws.onmessage = handleMessage;
+    ws.onclose = handleClose;
+    ws.onerror = handleError;
     
     setSocket(ws);
     
     // Clean up WebSocket on unmount
     return () => {
+      isComponentMounted = false;
+      
       try {
-        ws.close();
+        if (ws && ws.readyState === ws.OPEN) {
+          ws.close();
+        }
       } catch (error) {
         console.error('Error closing WebSocket:', error);
       }
