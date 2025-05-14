@@ -5,9 +5,11 @@ import { Redirect, Route } from "wouter";
 export function ProtectedRoute({
   path,
   component: Component,
+  requireSubscription = true,
 }: {
   path: string;
   component: () => React.JSX.Element;
+  requireSubscription?: boolean;
 }) {
   const { user, isLoading } = useAuth();
 
@@ -25,6 +27,18 @@ export function ProtectedRoute({
     return (
       <Route path={path}>
         <Redirect to="/auth" />
+      </Route>
+    );
+  }
+
+  // If subscription is required and user isn't subscribed,
+  // redirect to subscription page unless we're already there
+  if (requireSubscription && 
+      !user.isSubscribed && 
+      !path.startsWith("/subscription")) {
+    return (
+      <Route path={path}>
+        <Redirect to="/subscription" />
       </Route>
     );
   }

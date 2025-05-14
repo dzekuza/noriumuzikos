@@ -60,6 +60,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
   email: true,
+  isSubscribed: true,
+  subscriptionStatus: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

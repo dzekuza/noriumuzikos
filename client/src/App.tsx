@@ -26,12 +26,12 @@ function Router() {
       <div className="flex-1">
         <Switch>
           <Route path="/" component={Home} />
-          <ProtectedRoute path="/dashboard" component={Dashboard} />
-          <ProtectedRoute path="/dashboard/:id" component={Dashboard} />
-          <ProtectedRoute path="/profile" component={ProfilePage} />
-          <ProtectedRoute path="/subscription" component={SubscriptionPage} />
-          <ProtectedRoute path="/subscription/success" component={SubscriptionSuccessPage} />
-          <ProtectedRoute path="/subscription/cancel" component={SubscriptionCancelPage} />
+          <ProtectedRoute path="/dashboard" component={Dashboard} requireSubscription={true} />
+          <ProtectedRoute path="/dashboard/:id" component={Dashboard} requireSubscription={true} />
+          <ProtectedRoute path="/profile" component={ProfilePage} requireSubscription={false} />
+          <ProtectedRoute path="/subscription" component={SubscriptionPage} requireSubscription={false} />
+          <ProtectedRoute path="/subscription/success" component={SubscriptionSuccessPage} requireSubscription={false} />
+          <ProtectedRoute path="/subscription/cancel" component={SubscriptionCancelPage} requireSubscription={false} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/event-entry" component={EventEntry} />
           <Route path="/event-entry/:eventName" component={EventEntry} />
