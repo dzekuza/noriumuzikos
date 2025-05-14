@@ -10,30 +10,30 @@ export default function SubscriptionCancelPage() {
     <div className="container mx-auto py-8 px-4">
       <Card className="max-w-md mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Subscription Cancelled</CardTitle>
+          <CardTitle className="text-2xl text-center">Užsakymas Atšauktas</CardTitle>
           <CardDescription className="text-center">
-            Your subscription process was cancelled
+            Prenumeratos procesas buvo atšauktas
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center">
           <XCircle className="h-24 w-24 text-destructive mb-4" />
           <p className="text-center mb-4">
-            You've cancelled the subscription process. You can subscribe anytime to access all features.
+            Jūs atšaukėte prenumeratos procesą. Jokie mokesčiai nebuvo nuskaityti nuo jūsų sąskaitos.
           </p>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row gap-4">
           <Button 
             variant="outline" 
             className="w-full" 
-            onClick={() => setLocation("/")}
+            onClick={() => setLocation("/dashboard")}
           >
-            Go to Dashboard
+            Grįžti į Valdymo Skydelį
           </Button>
           <Button 
             className="w-full" 
             onClick={() => setLocation("/subscription")}
           >
-            Try Again
+            Bandyti dar kartą
           </Button>
         </CardFooter>
       </Card>
