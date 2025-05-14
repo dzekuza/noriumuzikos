@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'wouter';
-import { LogOut, User, LayoutDashboard, Settings } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Settings, Shield } from 'lucide-react';
 import logoSvg from '@/assets/noriumuzikos.svg';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
@@ -56,6 +56,16 @@ export default function Header() {
                         Mano Profilis
                       </DropdownMenuItem>
                     </Link>
+                    
+                    {/* Admin dashboard link - only for admin user (user ID 1) */}
+                    {user.id === 1 && (
+                      <Link href="/admin">
+                        <DropdownMenuItem className="cursor-pointer text-white/80 hover:text-black hover:bg-cyan-400 focus:bg-cyan-400">
+                          <Shield className="h-4 w-4 mr-2" />
+                          Admin Skydelis
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-white/80 hover:text-black hover:bg-cyan-400 focus:bg-cyan-400">
                       <LogOut className="h-4 w-4 mr-2" />
                       Atsijungti
