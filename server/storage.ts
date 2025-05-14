@@ -15,7 +15,7 @@ export interface IStorage {
   updateUserPassword(id: number, newPasswordHash: string): Promise<User | undefined>;
   
   // Event methods
-  getEvents(): Promise<Event[]>;
+  getEvents(userId?: number): Promise<Event[]>;
   getEvent(id: number): Promise<Event | undefined>;
   createEvent(event: InsertEvent): Promise<Event>;
   updateEvent(id: number, event: Partial<Event>): Promise<Event | undefined>;
@@ -75,7 +75,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Event methods
-  async getEvents(): Promise<Event[]> {
+  async getEvents(userId?: number): Promise<Event[]> {
+    if (userId) {
+      // Filter events by user ID if provided
+      return await db.select().from(events).where(eq(events.userId, userId));
+    }
+    // Return all events if no userId is provided (admin access)
     return await db.select().from(events);
   }
 

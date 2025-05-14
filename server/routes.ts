@@ -145,13 +145,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Events endpoints
-  app.get("/api/events", async (req, res) => {
+  app.get("/api/events", requireAuth, async (req, res) => {
     try {
-      const events = await dbStorage.getEvents();
-      // Filter out demo events or return only active events if query parameter is set
+      // Get the logged-in user's ID from the session
+      const userId = req.user?.id;
+      
+      // Fetch events for this specific user
+      const events = await dbStorage.getEvents(userId);
+      
+      // Filter by active status if requested
       const filteredEvents = req.query.active === 'true' 
         ? events.filter(event => event.isActive)
         : events;
+        
       res.json(filteredEvents);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch events" });
