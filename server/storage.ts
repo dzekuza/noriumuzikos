@@ -13,6 +13,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, userData: Partial<User>): Promise<User | undefined>;
   updateUserPassword(id: number, newPasswordHash: string): Promise<User | undefined>;
+  updateSubscription(userId: number, subscriptionData: { stripeCustomerId?: string, stripeSubscriptionId?: string, isSubscribed?: boolean, subscriptionStatus?: string }): Promise<User | undefined>;
   
   // Event methods
   getEvents(userId?: number): Promise<Event[]>;
@@ -70,6 +71,20 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ password: newPasswordHash })
       .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+  
+  async updateSubscription(userId: number, subscriptionData: { 
+    stripeCustomerId?: string, 
+    stripeSubscriptionId?: string, 
+    isSubscribed?: boolean, 
+    subscriptionStatus?: string 
+  }): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set(subscriptionData)
+      .where(eq(users.id, userId))
       .returning();
     return user || undefined;
   }
