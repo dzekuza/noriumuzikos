@@ -6,9 +6,9 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
+import { sendVerificationCode } from "./email-service";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
-import { sendVerificationCode } from "./email-service";
 
 declare global {
   namespace Express {
@@ -92,6 +92,14 @@ export function setupAuth(app: Express) {
       if (existingUser) {
         return res.status(400).json({ message: "Username already exists" });
       }
+      
+      // Check if email already exists
+      if (req.body.email) {
+        const existingEmail = await storage.getUserByEmail(req.body.email);
+        if (existingEmail) {
+          return res.status(400).json({ message: "Email already in use" });
+        }
+      }
 
       const hashedPassword = await hashPassword(req.body.password);
       const user = await storage.createUser({
@@ -102,11 +110,32 @@ export function setupAuth(app: Express) {
         subscriptionStatus: "inactive",
       });
 
+      // Send verification email if email is provided
+      if (req.body.email) {
+        try {
+          const verificationCode = await storage.createVerificationCode(user.id, req.body.email);
+          await sendVerificationCode(verificationCode, user.username);
+          console.log("Verification email sent during registration");
+        } catch (emailError) {
+          console.error("Failed to send verification email during registration:", emailError);
+          // We still proceed with registration even if email sending fails
+        }
+      }
+
       req.login(user, (err) => {
         if (err) return next(err);
         // Don't send password back to client
         const { password, ...userWithoutPassword } = user;
-        res.status(201).json(userWithoutPassword);
+        
+        // Return the user data with a message about verification
+        const response = {
+          ...userWithoutPassword,
+          message: req.body.email 
+            ? "Registration successful. A verification email has been sent to your email address." 
+            : "Registration successful."
+        };
+        
+        res.status(201).json(response);
       });
     } catch (error) {
       next(error);
