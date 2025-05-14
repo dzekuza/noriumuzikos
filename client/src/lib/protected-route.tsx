@@ -31,6 +31,15 @@ export function ProtectedRoute({
     );
   }
 
+  // Special case for admin dashboard - only user ID 1 can access
+  if (path === "/admin" && user.id !== 1) {
+    return (
+      <Route path={path}>
+        <Redirect to="/dashboard" />
+      </Route>
+    );
+  }
+
   // If subscription is required and user isn't subscribed,
   // redirect to subscription page unless we're already there
   if (requireSubscription && 
