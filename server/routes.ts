@@ -128,11 +128,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No image file uploaded" });
       }
       
-      const user = req.user;
+      // TypeScript doesn't recognize that requireAuth middleware ensures user exists
+      const user = req.user!; // Use non-null assertion because requireAuth guarantees user exists
       
       // Return the path to the uploaded image
       const imagePath = `/uploads/${req.file.filename}`;
       console.log('Profile picture uploaded successfully:', imagePath);
+      
+      // Make sure user exists
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
       
       // Update the user's profile with the image URL
       const updatedUser = await dbStorage.updateUser(user.id, { profilePicture: imagePath });
