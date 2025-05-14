@@ -18,6 +18,9 @@ type AuthContextType = {
   registerMutation: UseMutationResult<Omit<User, "password">, Error, RegisterData>;
   updateProfileMutation: UseMutationResult<Omit<User, "password">, Error, UpdateProfileData>;
   changePasswordMutation: UseMutationResult<{ message: string }, Error, ChangePasswordData>;
+  updateExtendedProfileMutation: UseMutationResult<Omit<User, "password">, Error, ExtendedProfileData>;
+  requestVerificationCodeMutation: UseMutationResult<{ message: string }, Error, void>;
+  verifyEmailMutation: UseMutationResult<{ message: string, user: Omit<User, "password"> }, Error, VerifyEmailData>;
 };
 
 type LoginData = {
@@ -34,6 +37,16 @@ type RegisterData = {
 
 type UpdateProfileData = {
   username: string;
+};
+
+type ExtendedProfileData = {
+  email?: string;
+  phoneNumber?: string;
+  profilePicture?: string;
+};
+
+type VerifyEmailData = {
+  code: string;
 };
 
 type ChangePasswordData = {
@@ -158,6 +171,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const updateExtendedProfileMutation = useMutation<Omit<User, "password">, Error, ExtendedProfileData>({
+    mutationFn: async (data: ExtendedProfileData) => {
+      const res = await apiRequest("PATCH", "/api/user/profile/extended", data);
+      return await res.json();
+    },
+    onSuccess: (user) => {
+      queryClient.setQueryData(["/api/user"], user);
+      toast({
+        title: "Profilis atnaujintas",
+        description: "Jūsų profilis buvo sėkmingai atnaujintas.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Nepavyko atnaujinti profilio",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  const requestVerificationCodeMutation = useMutation<{ message: string }, Error, void>({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/user/verify-email/request");
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Patvirtinimo kodas išsiųstas",
+        description: data.message || "Patvirtinimo kodas buvo išsiųstas į jūsų el. paštą.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Nepavyko išsiųsti patvirtinimo kodo",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  const verifyEmailMutation = useMutation<{ message: string, user: Omit<User, "password"> }, Error, VerifyEmailData>({
+    mutationFn: async (data: VerifyEmailData) => {
+      const res = await apiRequest("POST", "/api/user/verify-email/verify", data);
+      return await res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["/api/user"], data.user);
+      toast({
+        title: "El. paštas patvirtintas",
+        description: data.message || "Jūsų el. paštas buvo sėkmingai patvirtintas.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Nepavyko patvirtinti el. pašto",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   return (
     <AuthContext.Provider
       value={{
@@ -169,6 +244,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         registerMutation,
         updateProfileMutation,
         changePasswordMutation,
+        updateExtendedProfileMutation,
+        requestVerificationCodeMutation,
+        verifyEmailMutation,
       }}
     >
       {children}
