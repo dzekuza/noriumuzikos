@@ -1,7 +1,8 @@
 import { 
   users, type User, type InsertUser,
   events, type Event, type InsertEvent,
-  songRequests, type SongRequest, type InsertSongRequest
+  songRequests, type SongRequest, type InsertSongRequest,
+  verificationCodes, type VerificationCode, type InsertVerificationCode
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and } from "drizzle-orm";
@@ -11,10 +12,17 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, userData: Partial<User>): Promise<User | undefined>;
   updateUserPassword(id: number, newPasswordHash: string): Promise<User | undefined>;
   updateSubscription(userId: number, subscriptionData: { stripeCustomerId?: string, stripeSubscriptionId?: string, isSubscribed?: boolean, subscriptionStatus?: string }): Promise<User | undefined>;
+  verifyUserEmail(userId: number): Promise<User | undefined>;
+  
+  // Verification code methods
+  createVerificationCode(userId: number, email: string): Promise<VerificationCode>;
+  getVerificationCode(code: string, email: string): Promise<VerificationCode | undefined>;
+  markVerificationCodeAsUsed(id: number): Promise<VerificationCode | undefined>;
   
   // Event methods
   getEvents(userId?: number): Promise<Event[]>;
@@ -50,6 +58,21 @@ export class DatabaseStorage implements IStorage {
   async getUserByStripeCustomerId(stripeCustomerId: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.stripeCustomerId, stripeCustomerId));
     return user || undefined;
+  }
+  
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+  
+  async verifyUserEmail(userId: number): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ isEmailVerified: true })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {

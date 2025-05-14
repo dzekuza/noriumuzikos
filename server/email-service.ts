@@ -20,6 +20,69 @@ transporter.verify(function (error: any, success: boolean) {
 });
 
 /**
+ * Send a verification code email to the user
+ */
+export async function sendVerificationCode(verificationCode: VerificationCode, username: string): Promise<boolean> {
+  try {
+    // Format the email content
+    const subject = 'Verify Your Email - NoriuMuzikos';
+    const text = `
+Hello ${username},
+
+Thank you for registering with NoriuMuzikos!
+
+Your verification code is: ${verificationCode.code}
+
+This code will expire in 30 minutes.
+
+Please enter this code in the verification page to confirm your email address.
+
+If you did not request this verification, please ignore this email.
+`;
+    
+    const html = `
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px; background-color: #1c1c1c; color: #ffffff;">
+  <h2 style="color: #00b4d8; border-bottom: 2px solid #00b4d8; padding-bottom: 10px;">Verify Your Email</h2>
+  
+  <p style="margin: 20px 0;">Hello <strong>${username}</strong>,</p>
+  
+  <p>Thank you for registering with NoriuMuzikos! Please verify your email address to continue.</p>
+  
+  <div style="margin: 30px auto; text-align: center; background-color: #333333; padding: 15px; border-radius: 5px; font-size: 24px; letter-spacing: 5px; font-weight: bold; color: #00b4d8;">
+    ${verificationCode.code}
+  </div>
+  
+  <p>This code will expire in 30 minutes.</p>
+  
+  <p style="margin-top: 30px; font-size: 12px; color: #999999; text-align: center;">
+    If you did not request this verification, please ignore this email.
+  </p>
+  
+  <p style="margin-top: 30px; font-size: 12px; color: #999999; text-align: center;">
+    This is an automated message from NoriuMuzikos. Please do not reply to this email.
+  </p>
+</div>
+`;
+    
+    // Send the email to the user's email address
+    const mailOptions = {
+      from: process.env.GMAIL_EMAIL,
+      to: verificationCode.email,
+      subject,
+      text,
+      html,
+    };
+    
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Verification email sent successfully:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Failed to send verification email:', error);
+    return false;
+  }
+}
+
+/**
  * Send notification for a new song request to the admin
  */
 export async function sendSongRequestNotification(songRequest: SongRequest): Promise<boolean> {
