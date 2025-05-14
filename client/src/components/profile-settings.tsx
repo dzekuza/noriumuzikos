@@ -179,7 +179,7 @@ export default function ProfileSettings() {
       formData.append('image', file);
       
       // Upload image
-      const res = await fetch('/api/user/upload-avatar', {
+      const res = await fetch('/api/upload/profile-picture', {
         method: 'POST',
         body: formData,
       });
@@ -276,6 +276,25 @@ export default function ProfileSettings() {
               Atnaujinkite savo profilį ir vartotojo vardą
             </CardDescription>
           </CardHeader>
+          
+          {/* Profile update success alert */}
+          {updateProfileMutation.isSuccess && (
+            <Alert className="mx-6 mb-4 bg-green-900/30 border-green-800">
+              <BadgeCheck className="h-4 w-4 text-green-400 mr-2" />
+              <AlertDescription className="text-green-400">
+                Profilis sėkmingai atnaujintas
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Profile update error alert */}
+          {updateProfileMutation.isError && (
+            <Alert className="mx-6 mb-4 bg-red-900/30 border-red-800">
+              <AlertDescription className="text-red-400">
+                {updateProfileMutation.error?.message || "Įvyko klaida atnaujinant profilį"}
+              </AlertDescription>
+            </Alert>
+          )}
           <form onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-center mb-4">
@@ -327,6 +346,44 @@ export default function ProfileSettings() {
               Atnaujinkite savo kontaktinę informaciją ir nuotrauką
             </CardDescription>
           </CardHeader>
+          
+          {/* Extended profile update success alert */}
+          {updateExtendedProfileMutation.isSuccess && (
+            <Alert className="mx-6 mb-4 bg-green-900/30 border-green-800">
+              <BadgeCheck className="h-4 w-4 text-green-400 mr-2" />
+              <AlertDescription className="text-green-400">
+                Kontaktinė informacija sėkmingai atnaujinta
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Extended profile update error alert */}
+          {updateExtendedProfileMutation.isError && (
+            <Alert className="mx-6 mb-4 bg-red-900/30 border-red-800">
+              <AlertDescription className="text-red-400">
+                {updateExtendedProfileMutation.error?.message || "Įvyko klaida atnaujinant kontaktinę informaciją"}
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Email verification success alert */}
+          {verifyEmailMutation.isSuccess && (
+            <Alert className="mx-6 mb-4 bg-green-900/30 border-green-800">
+              <BadgeCheck className="h-4 w-4 text-green-400 mr-2" />
+              <AlertDescription className="text-green-400">
+                El. paštas sėkmingai patvirtintas
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Email verification error alert */}
+          {verifyEmailMutation.isError && (
+            <Alert className="mx-6 mb-4 bg-red-900/30 border-red-800">
+              <AlertDescription className="text-red-400">
+                {verifyEmailMutation.error?.message || "Įvyko klaida tvirtinant el. paštą"}
+              </AlertDescription>
+            </Alert>
+          )}
           <form onSubmit={extendedProfileForm.handleSubmit(onExtendedProfileSubmit)}>
             <CardContent className="space-y-4">
               {/* Profile Picture Section */}
@@ -480,6 +537,26 @@ export default function ProfileSettings() {
               Atnaujinkite savo prisijungimo slaptažodį
             </CardDescription>
           </CardHeader>
+          
+          {/* Password change success alert */}
+          {changePasswordMutation.isSuccess && (
+            <Alert className="mx-6 mb-4 bg-green-900/30 border-green-800">
+              <BadgeCheck className="h-4 w-4 text-green-400 mr-2" />
+              <AlertDescription className="text-green-400">
+                Slaptažodis sėkmingai pakeistas
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Password change error alert */}
+          {changePasswordMutation.isError && (
+            <Alert className="mx-6 mb-4 bg-red-900/30 border-red-800">
+              <AlertDescription className="text-red-400">
+                {changePasswordMutation.error?.message || "Įvyko klaida keičiant slaptažodį"}
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -489,7 +566,7 @@ export default function ProfileSettings() {
                     id="currentPassword"
                     type={showCurrentPassword ? "text" : "password"}
                     className="bg-zinc-800 border-zinc-700 text-white focus:border-primary pr-10"
-                    {...passwordForm.register("currentPassword", { required: "Įveskite dabartinį slaptažodį" })}
+                    {...passwordForm.register("currentPassword")}
                   />
                   <button
                     type="button"
@@ -515,10 +592,7 @@ export default function ProfileSettings() {
                     id="newPassword"
                     type={showNewPassword ? "text" : "password"}
                     className="bg-zinc-800 border-zinc-700 text-white focus:border-primary pr-10"
-                    {...passwordForm.register("newPassword", { 
-                      required: "Įveskite naują slaptažodį",
-                      minLength: { value: 6, message: "Slaptažodis turi būti bent 6 simbolių ilgio" }
-                    })}
+                    {...passwordForm.register("newPassword")}
                   />
                   <button
                     type="button"
@@ -544,10 +618,7 @@ export default function ProfileSettings() {
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     className="bg-zinc-800 border-zinc-700 text-white focus:border-primary pr-10"
-                    {...passwordForm.register("confirmPassword", { 
-                      required: "Pakartokite naują slaptažodį",
-                      validate: value => value === passwordForm.watch("newPassword") || "Slaptažodžiai nesutampa"
-                    })}
+                    {...passwordForm.register("confirmPassword")}
                   />
                   <button
                     type="button"
@@ -564,6 +635,11 @@ export default function ProfileSettings() {
                 {passwordForm.formState.errors.confirmPassword && (
                   <p className="text-sm text-red-500">{passwordForm.formState.errors.confirmPassword.message}</p>
                 )}
+              </div>
+              
+              <div className="text-xs text-white/60 bg-zinc-800/50 p-3 rounded-md border border-zinc-700/50">
+                <p>• Slaptažodis turi būti bent 6 simbolių ilgio</p>
+                <p>• Naudokite unikalų slaptažodį, kurio nenaudojate kituose tinklalapiuose</p>
               </div>
             </CardContent>
             <CardFooter>

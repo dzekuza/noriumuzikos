@@ -74,7 +74,12 @@ const uploadStorage = multer.diskStorage({
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
-    cb(null, 'event-image-' + uniqueSuffix + ext);
+    
+    // Determine prefix based on upload endpoint
+    const isProfilePicture = req.path.includes('profile-picture');
+    const prefix = isProfilePicture ? 'profile-' : 'event-';
+    
+    cb(null, prefix + uniqueSuffix + ext);
   }
 });
 
