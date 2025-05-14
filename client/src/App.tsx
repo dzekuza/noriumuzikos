@@ -29,6 +29,9 @@ function Router() {
           <ProtectedRoute path="/dashboard" component={Dashboard} />
           <ProtectedRoute path="/dashboard/:id" component={Dashboard} />
           <ProtectedRoute path="/profile" component={ProfilePage} />
+          <ProtectedRoute path="/subscription" component={SubscriptionPage} />
+          <ProtectedRoute path="/subscription/success" component={SubscriptionSuccessPage} />
+          <ProtectedRoute path="/subscription/cancel" component={SubscriptionCancelPage} />
           <Route path="/auth" component={AuthPage} />
           <Route path="/event-entry" component={EventEntry} />
           <Route path="/event-entry/:eventName" component={EventEntry} />

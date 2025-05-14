@@ -1,10 +1,10 @@
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
 
 export default function SubscriptionCancelPage() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -25,13 +25,13 @@ export default function SubscriptionCancelPage() {
           <Button 
             variant="outline" 
             className="w-full" 
-            onClick={() => navigate("/")}
+            onClick={() => setLocation("/")}
           >
             Go to Dashboard
           </Button>
           <Button 
             className="w-full" 
-            onClick={() => navigate("/subscription")}
+            onClick={() => setLocation("/subscription")}
           >
             Try Again
           </Button>

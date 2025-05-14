@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 
 export default function SubscriptionSuccessPage() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     // You could update user data here if needed
@@ -27,7 +27,7 @@ export default function SubscriptionSuccessPage() {
           </p>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" onClick={() => navigate("/")}>
+          <Button className="w-full" onClick={() => setLocation("/")}>
             Go to Dashboard
           </Button>
         </CardFooter>

@@ -41,7 +41,7 @@ export default function SubscriptionPage() {
     if (user) {
       fetchSubscription();
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isLoading, setLocation]);
 
   const handleSubscribe = async () => {
     setIsCheckoutLoading(true);
@@ -73,7 +73,7 @@ export default function SubscriptionPage() {
   };
 
   const handleGoToDashboard = () => {
-    navigate("/");
+    setLocation("/");
   };
 
   if (isLoading || isSubscriptionLoading) {
