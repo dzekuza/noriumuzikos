@@ -547,7 +547,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const userId = session.metadata?.userId ? parseInt(session.metadata.userId) : null;
         
         if (userId) {
-          const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+          if (!stripe) {
+          return res.status(500).json({ message: "Stripe is not initialized" });
+        }
+        
+        const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
           
           // Update user's subscription status
           await dbStorage.updateSubscription(userId, {
@@ -573,7 +577,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             subscriptionStatus: subscription.status
           });
           
-          console.log(`Subscription ${subscription.status} for user ${users.id}`);
+          console.log(`Subscription ${subscription.status} for user ${user.id}`);
         }
         break;
     }
