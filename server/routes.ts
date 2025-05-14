@@ -129,8 +129,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Renginio kodas yra privalomas" });
       }
       
-      // Find event with matching entry code
-      const events = await dbStorage.getEvents();
+      // Find event with matching entry code - this should still work for all users
+      // as we want anyone to be able to enter an event with the right code
+      const events = await dbStorage.getEvents(); // Get all events, regardless of user
       const event = events.find(e => e.entryCode === entryCode && e.isActive);
       
       if (!event) {
@@ -168,9 +169,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log('Creating new event with data:', req.body);
       
+      // Get the logged-in user's ID from the session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User must be logged in to create events" });
+      }
+      
       // Handle date formats correctly - Convert string dates to Date objects
       const eventData = {
         ...req.body,
+        // Associate the event with the current user
+        userId: userId,
         // Ensure entry code and request price are properly formatted
         entryCode: String(req.body.entryCode || ''),
         requestPrice: Number(req.body.requestPrice || 5),
@@ -211,13 +221,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/events/:id", requireAuth, async (req, res) => {
     try {
       const eventId = parseInt(req.params.id);
+      const userId = req.user?.id;
+      
       console.log(`Updating event ${eventId} with data:`, req.body);
       
-      const updatedEvent = await dbStorage.updateEvent(eventId, req.body);
+      // First check if the event exists and belongs to this user
+      const event = await dbStorage.getEvent(eventId);
       
-      if (!updatedEvent) {
+      if (!event) {
         return res.status(404).json({ message: "Event not found" });
       }
+      
+      // Check if the event belongs to the current user
+      if (event.userId !== userId) {
+        return res.status(403).json({ message: "You do not have permission to update this event" });
+      }
+      
+      const updatedEvent = await dbStorage.updateEvent(eventId, req.body);
       
       console.log('Event updated successfully:', updatedEvent);
       res.json(updatedEvent);
@@ -231,12 +251,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/events/:id", requireAuth, async (req, res) => {
     try {
       const eventId = parseInt(req.params.id);
+      const userId = req.user?.id;
+      
       console.log(`Deleting event ${eventId}`);
       
       // First check if event exists
       const event = await dbStorage.getEvent(eventId);
       if (!event) {
         return res.status(404).json({ message: "Event not found" });
+      }
+      
+      // Check if the event belongs to the current user
+      if (event.userId !== userId) {
+        return res.status(403).json({ message: "You do not have permission to delete this event" });
       }
       
       // Delete the event
