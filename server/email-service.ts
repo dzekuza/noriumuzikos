@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { SongRequest } from '@shared/schema';
+import { SongRequest, VerificationCode } from '@shared/schema';
 
 // Configure nodemailer with Gmail credentials
 const transporter = nodemailer.createTransport({
