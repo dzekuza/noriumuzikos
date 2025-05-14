@@ -7,6 +7,7 @@ import { z } from "zod";
 import { rekordboxService } from "./rekordbox";
 import { setupAuth, requireAuth } from "./auth";
 import { sendSongRequestNotification } from "./email-service";
+import { requireAdmin, getAllUsers, getAllEvents, getPaymentStats } from "./admin";
 import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
@@ -658,6 +659,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     res.json({ message: "Playlist updated successfully" });
   });
+
+  // Admin dashboard endpoints
+  app.get("/api/admin/users", requireAuth, requireAdmin, getAllUsers);
+  app.get("/api/admin/events", requireAuth, requireAdmin, getAllEvents);
+  app.get("/api/admin/payment-stats", requireAuth, requireAdmin, getPaymentStats);
 
   const httpServer = createServer(app);
   

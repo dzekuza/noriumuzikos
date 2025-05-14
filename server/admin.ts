@@ -20,7 +20,8 @@ export async function getAllUsers(req: Request, res: Response) {
     const users = await storage.getAllUsers();
     
     // Remove password from user data
-    const safeUsers = users.map(user => {
+    const safeUsers = users.map((user) => {
+      // Destructure with explicit typing for password
       const { password, ...safeUser } = user;
       return safeUser;
     });
@@ -55,7 +56,7 @@ export async function getPaymentStats(req: Request, res: Response) {
     
     // Get song request payments
     const songRequests = await storage.getAllSongRequests();
-    const songRequestRevenue = songRequests.reduce((total, request) => total + request.amount, 0);
+    const songRequestRevenue = songRequests.reduce((total: number, request) => total + request.amount, 0);
     
     // Calculate total amount
     const totalAmount = subscriptionRevenue + songRequestRevenue;

@@ -234,7 +234,11 @@ export class DatabaseStorage implements IStorage {
       .from(events)
       .leftJoin(users, eq(events.userId, users.id));
       
-    return result;
+    // Filter out any potential null usernames and replace with a default value
+    return result.map(event => ({
+      ...event,
+      username: event.username || 'Unknown User' // Ensure username is never null
+    }));
   }
   
   async getAllSongRequests(): Promise<SongRequest[]> {
