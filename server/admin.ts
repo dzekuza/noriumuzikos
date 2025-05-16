@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import { storage } from "./storage";
 
-// Middleware to check if user is admin (user ID 1 is considered admin)
+// Middleware to check if user is admin (user IDs 1 and 3 are considered admins)
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "Not authenticated" });
   }
 
-  if (req.user?.id !== 1) {
+  // User with ID 1 (platform owner) and ID 3 (dannie) are super admins
+  if (req.user?.id !== 1 && req.user?.id !== 3) {
     return res.status(403).json({ message: "Access denied. Admin privileges required." });
   }
 
