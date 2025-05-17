@@ -66,7 +66,7 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center relative">
       {/* Hero Section */}
-      <section className="w-full min-h-screen flex flex-col items-center justify-center relative">
+      <section className="w-full min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
         {/* Background Image with scroll animation */}
         <motion.div 
           className="absolute inset-0 w-full h-full z-0"
@@ -77,10 +77,10 @@ export default function Home() {
             alt="Background" 
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/70"></div>
         </motion.div>
         
-        <div className="container px-4 max-w-6xl mx-auto py-16 relative z-10">
+        <div className="container px-4 max-w-6xl mx-auto py-8 md:py-16 relative z-10">
           <motion.div 
             className="text-center"
             initial={{ opacity: 0, y: 20 }}
@@ -91,7 +91,7 @@ export default function Home() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-xs text-white/70 uppercase tracking-widest mb-4"
+              className="text-xs sm:text-sm text-white/70 uppercase tracking-widest mb-2 md:mb-4"
             >
               Užsakyti dainą
             </motion.div>
@@ -100,15 +100,16 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-5xl md:text-7xl font-bold text-white leading-tight mb-8"
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 md:mb-8"
             >
               <motion.span
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
               >
-                Užsisakyk sau dainą<br />
+                Užsisakyk sau dainą
               </motion.span>
+              <br className="hidden sm:block" />
               <motion.span
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -120,42 +121,42 @@ export default function Home() {
             </motion.h1>
             
             <motion.div 
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto mb-10 mt-12 text-center"
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-8 max-w-3xl mx-auto mb-6 sm:mb-10 mt-6 sm:mt-12 text-center"
               variants={containerVariants}
               initial="hidden"
               animate="visible"
             >
               <motion.div 
-                className="bg-zinc-900/70 rounded-lg p-6"
+                className="bg-zinc-900/70 rounded-lg p-4 sm:p-6"
                 variants={stepCardVariants}
                 custom={0}
               >
-                <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-black">1</span>
+                <div className="h-10 w-10 sm:h-12 sm:w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4">
+                  <span className="text-xl sm:text-2xl font-bold text-black">1</span>
                 </div>
-                <p className="text-lg text-white/90">Spausk "Prisijungti"</p>
+                <p className="text-base sm:text-lg text-white/90">Spausk "Prisijungti"</p>
               </motion.div>
               
               <motion.div 
-                className="bg-zinc-900/70 rounded-lg p-6"
+                className="bg-zinc-900/70 rounded-lg p-4 sm:p-6"
                 variants={stepCardVariants}
                 custom={1}
               >
-                <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-black">2</span>
+                <div className="h-10 w-10 sm:h-12 sm:w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4">
+                  <span className="text-xl sm:text-2xl font-bold text-black">2</span>
                 </div>
-                <p className="text-lg text-white/90">Įvesk kodą</p>
+                <p className="text-base sm:text-lg text-white/90">Įvesk kodą</p>
               </motion.div>
               
               <motion.div 
-                className="bg-zinc-900/70 rounded-lg p-6"
+                className="bg-zinc-900/70 rounded-lg p-4 sm:p-6"
                 variants={stepCardVariants}
                 custom={2}
               >
-                <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-black">3</span>
+                <div className="h-10 w-10 sm:h-12 sm:w-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-4">
+                  <span className="text-xl sm:text-2xl font-bold text-black">3</span>
                 </div>
-                <p className="text-lg text-white/90">Užsisakyk dainą</p>
+                <p className="text-base sm:text-lg text-white/90">Užsisakyk dainą</p>
               </motion.div>
             </motion.div>
             
@@ -165,10 +166,11 @@ export default function Home() {
               transition={{ delay: 1.2, type: "spring", stiffness: 200 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
+              className="mt-6 md:mt-8"
             >
               <Button 
                 asChild
-                className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-4 px-10 rounded-md text-lg"
+                className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 sm:py-4 px-8 sm:px-10 rounded-md text-base sm:text-lg w-full sm:w-auto"
               >
                 <Link to="/event-entry">Prisijungti dabar</Link>
               </Button>
