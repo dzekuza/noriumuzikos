@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Allow Facebook crawler
+User-agent: facebookexternalhit
+Allow: /
+
+# Allow Facebook image crawler
+User-agent: Facebot
+Allow: /
